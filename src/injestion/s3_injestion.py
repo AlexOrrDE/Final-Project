@@ -41,13 +41,13 @@ def fetch_data_from_tables():
     for table in table_names:
         try:
             cursor = conn.cursor()
-            query = f"SELECT * FROM {table}"
+            query = f"SELECT * FROM {table};"
             cursor.execute(query)
             data = cursor.fetchall()
             print(data)
 
         except pg8000.Error as e:
-            print(f"Error: Unable to fetch table names")
+            print(f"Error: Unable to fetch {table} data")
             raise e
 
 
