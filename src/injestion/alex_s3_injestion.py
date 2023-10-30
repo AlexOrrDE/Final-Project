@@ -39,6 +39,7 @@ def fetch_tables():
 def fetch_data_from_tables():
     conn = connect_to_database()
     table_names = fetch_tables()
+    # Might be easier to store these as dictionaries
     results = []
     pandas_results = []
     csv_results = []
@@ -65,9 +66,11 @@ def fetch_data_from_tables():
             print(f"Error: Unable to fetch {table} data")
             raise e
 
-    # print(pandas_data)
-    # print(csv_results)
-    print(results)
+    # Print all tables in Pandas form (it limits the number of rows output so it's readable)
+    print(pandas_results)
+    # Prints all csv results
+    print(csv_results[0])
+    #print(results)
     return results
 
 
