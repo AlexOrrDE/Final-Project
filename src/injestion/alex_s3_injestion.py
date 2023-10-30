@@ -1,7 +1,6 @@
 import pg8000.dbapi
 import pandas as pd
 
-
 def connect_to_database():
     try:
         return pg8000.dbapi.Connection(
@@ -53,6 +52,7 @@ def fetch_data_from_tables():
             rows = cursor.fetchall()
             keys = [k[0] for k in cursor.description]
 
+            # Pandas is adding an extra index column here, need to deal with this
             pandas_data = pd.DataFrame(rows)
             pandas_data.columns = keys
             pandas_results.append(pandas_data)
