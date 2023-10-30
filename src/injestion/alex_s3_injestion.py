@@ -1,4 +1,5 @@
 import pg8000.dbapi
+import pandas as pd
 
 
 def connect_to_database():
@@ -39,6 +40,8 @@ def fetch_data_from_tables():
     conn = connect_to_database()
     table_names = fetch_tables()
     results = []
+    pandas_results = []
+    csv_results = []
 
     for table in table_names:
         try:
@@ -49,6 +52,11 @@ def fetch_data_from_tables():
             rows = cursor.fetchall()
             keys = [k[0] for k in cursor.description]
 
+            pandas_data = pd.DataFrame(rows)
+            pandas_data.columns = keys
+            pandas_results.append(pandas_data)
+            csv_results.append(pandas_data.to_csv())
+
             result = [dict(zip(keys, row)) for row in rows]
 
             results.append({f"{table}": f"{result}"})
@@ -57,6 +65,8 @@ def fetch_data_from_tables():
             print(f"Error: Unable to fetch {table} data")
             raise e
 
+    # print(pandas_data)
+    # print(csv_results)
     print(results)
     return results
 
