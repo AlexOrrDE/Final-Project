@@ -1,3 +1,5 @@
+# The terraform state is stored in an S3 bucket which is not created here. It was created before
+# and shouldn't be touched.
 terraform {
   required_providers {
     aws = {

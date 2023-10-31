@@ -1,3 +1,12 @@
 We need to make sure that the .terraform folder is in the .gitignore, or we will have problems when pushing.
 
 We used the security credentials found on the IAM page/ make access key (need to change these later) and stored them locally
+
+We added a .gitkeep file to the layer/python folder as it is otherwise empty
+
+To fill out the layer/python folder we need to pip install there with (check this command)
+
+pip install -r requirements.txt -t ./layer/python
+
+As of writing the requirements.txt file only has pg8000
+
