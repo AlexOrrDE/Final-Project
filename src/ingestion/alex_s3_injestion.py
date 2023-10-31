@@ -90,3 +90,4 @@ def fetch_data_from_tables(event, context):
 
 def lambda_handler(event, context):
     return fetch_data_from_tables(event, context)
+
