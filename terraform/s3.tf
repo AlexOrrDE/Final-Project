@@ -4,7 +4,7 @@ resource "aws_s3_bucket" "code_bucket" {
 #  Zip up modules
 data "archive_file" "pg8000" {
   type        = "zip"
-  source_dir = "../layers"
+  source_dir = "../layer"
   output_path = "../layer.zip"
 }
 # Turn modules to s3 object
