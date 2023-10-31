@@ -46,14 +46,20 @@ def upload_data_to_bucket(bucket_name, key, data):
     s3.put_object(Bucket=bucket_name, Key=key, Body=data)
 
 
+def convert_to_csv(table_data):
+    table_name = table_data["table_name"]
+    csv_data = pd.DataFrame(table_data["data"]).to_csv(index=False)
+    return table_name, csv_data
+
+
 def fetch_data_from_tables(event, context):
     logging.info("Injesting data...")
+
     conn = connect_to_database()
     table_names = fetch_tables()
-    # Might be easier to store these as dictionaries
-    results = []
-    pandas_results = []
-    csv_results = []
+
+    s3_bucket = "marble-test-bucket"
+    name_prefix = datetime.now()
 
     for table in table_names:
         try:
@@ -69,30 +75,17 @@ def fetch_data_from_tables(event, context):
                 "data": pd.DataFrame(rows, columns=keys).to_dict(orient="records"),
             }
 
-            pandas_results.append(table_data)
+            table_name, csv_data = convert_to_csv(table_data)
 
-            # result = [dict(zip(keys, row)) for row in rows]
+            s3_key = f"{name_prefix}-{table_name}.csv"
 
-            # results.append({f"{table}": f"{result}"})
+            upload_data_to_bucket(s3_bucket, s3_key, csv_data)
 
         except pg8000.Error as e:
             print(f"Error: Unable to fetch {table} data")
             raise e
 
-    s3_bucket = "marble-test-bucket"
-    name_prefix = datetime.now()
-
-    for table_data in pandas_results:
-        table_name = table_data["table_name"]
-        csv_data = pd.DataFrame(table_data["data"]).to_csv(index=False)
-
-        s3_key = f"{name_prefix}-{table_name}.csv"
-
-        upload_data_to_bucket(s3_bucket, s3_key, csv_data)
-
     logging.info("Data injested...")
-
-    # return results
 
 
 def lambda_handler(event, context):
