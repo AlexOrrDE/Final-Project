@@ -1,4 +1,5 @@
 import pg8000.dbapi
+import logging
 
 
 def connect_to_database():
@@ -35,7 +36,8 @@ def fetch_tables():
         raise e
 
 
-def fetch_data_from_tables():
+def fetch_data_from_tables(event, context):
+    logging.info("Injesting data...")
     conn = connect_to_database()
     table_names = fetch_tables()
     results = []
@@ -51,14 +53,18 @@ def fetch_data_from_tables():
 
             result = [dict(zip(keys, row)) for row in rows]
 
+            print({f"{table}": f"{result}"})
+            print("\n\n")
+
             results.append({f"{table}": f"{result}"})
 
         except pg8000.Error as e:
             print(f"Error: Unable to fetch {table} data")
             raise e
 
-    print(results)
+    logging.info("Data injested...")
     return results
 
 
-fetch_data_from_tables()
+def lambda_handler(event, context):
+    return fetch_data_from_tables(event, context)
