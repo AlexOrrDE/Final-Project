@@ -10,3 +10,5 @@ pip install -r requirements.txt -t ./layer/python
 
 As of writing the requirements.txt file only has pg8000
 
+In the lambda.tf file we have set specific runtimes for Python. These are required for a zip file but we can change them to be more recent ones probably.
+
