@@ -1,6 +1,12 @@
 import pg8000.dbapi
 import logging
 import pandas as pd
+import boto3
+from datetime import datetime
+
+
+s3 = boto3.client("s3")
+
 
 def connect_to_database():
     try:
@@ -36,6 +42,10 @@ def fetch_tables():
         raise e
 
 
+def upload_data_to_bucket(bucket_name, key, data):
+    s3.put_object(Bucket=bucket_name, Key=key, Body=data)
+
+
 def fetch_data_from_tables(event, context):
     logging.info("Injesting data...")
     conn = connect_to_database()
@@ -54,30 +64,35 @@ def fetch_data_from_tables(event, context):
             rows = cursor.fetchall()
             keys = [k[0] for k in cursor.description]
 
-            # Pandas is adding an extra index column here, need to deal with this
-            pandas_data = pd.DataFrame(rows)
-            pandas_data.columns = keys
-            pandas_results.append(pandas_data)
-            csv_results.append(pandas_data.to_csv())
+            table_data = {
+                "table_name": table,
+                "data": pd.DataFrame(rows, columns=keys).to_dict(orient="records"),
+            }
 
-            result = [dict(zip(keys, row)) for row in rows]
+            pandas_results.append(table_data)
 
-            print({f"{table}": f"{result}"})
-            print("\n\n")
+            # result = [dict(zip(keys, row)) for row in rows]
 
-            results.append({f"{table}": f"{result}"})
+            # results.append({f"{table}": f"{result}"})
 
         except pg8000.Error as e:
             print(f"Error: Unable to fetch {table} data")
             raise e
 
+    s3_bucket = "marble-test-bucket"
+    name_prefix = datetime.now()
+
+    for table_data in pandas_results:
+        table_name = table_data["table_name"]
+        csv_data = pd.DataFrame(table_data["data"]).to_csv(index=False)
+
+        s3_key = f"{name_prefix}-{table_name}.csv"
+
+        upload_data_to_bucket(s3_bucket, s3_key, csv_data)
+
     logging.info("Data injested...")
-    # Print all tables in Pandas form (it limits the number of rows output so it's readable)
-    print(pandas_results)
-    # Prints all csv results
-    print(csv_results[0])
-    #print(results)
-    return results
+
+    # return results
 
 
 def lambda_handler(event, context):
