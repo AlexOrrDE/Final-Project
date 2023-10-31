@@ -1,6 +1,6 @@
 import pg8000.dbapi
 import logging
-
+import pandas as pd
 
 def connect_to_database():
     try:
@@ -40,7 +40,10 @@ def fetch_data_from_tables(event, context):
     logging.info("Injesting data...")
     conn = connect_to_database()
     table_names = fetch_tables()
+    # Might be easier to store these as dictionaries
     results = []
+    pandas_results = []
+    csv_results = []
 
     for table in table_names:
         try:
@@ -50,6 +53,12 @@ def fetch_data_from_tables(event, context):
 
             rows = cursor.fetchall()
             keys = [k[0] for k in cursor.description]
+
+            # Pandas is adding an extra index column here, need to deal with this
+            pandas_data = pd.DataFrame(rows)
+            pandas_data.columns = keys
+            pandas_results.append(pandas_data)
+            csv_results.append(pandas_data.to_csv())
 
             result = [dict(zip(keys, row)) for row in rows]
 
@@ -63,6 +72,11 @@ def fetch_data_from_tables(event, context):
             raise e
 
     logging.info("Data injested...")
+    # Print all tables in Pandas form (it limits the number of rows output so it's readable)
+    print(pandas_results)
+    # Prints all csv results
+    print(csv_results[0])
+    #print(results)
     return results
 
 
