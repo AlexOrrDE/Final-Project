@@ -4,9 +4,9 @@ import pg8000
 def fetch_tables(conn):
     """Retrieve names of all tables in a database.
 
-    Connects to database,
-    Queries table names,
-    Returns list of all names.
+    - Connects to database,
+    - Queries table names,
+    - Returns list of all names.
 
     Typical usage example:
 
