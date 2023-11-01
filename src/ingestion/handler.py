@@ -7,7 +7,7 @@ from check_for_updates import check_for_updates
 from find_latest import get_previous_update_dt
 import logging
 from boto3 import client, resource
-
+from pg8000 import DatabaseError
 
 def handler():
     """"connects to database - logs when successful
@@ -43,7 +43,7 @@ def handler():
             for table in table_names:
                 latest_update = get_previous_update_dt(table)  
                 print(latest_update, "LATEST UPDATE")              
-                if check_for_updates(conn, table, latest_update) is True:
+                if check_for_updates(conn, "error", latest_update) is True:
                     need_to_update = True
                     logging.info("Data has been updated, pulling new dataset.")
         else:
@@ -66,8 +66,7 @@ def handler():
 
     except RuntimeError as e:
         print(f'Error: {e}')
-    #database error but needs to be somewhere else 
-    # except exceptions.DatabaseError as db:
-    #     print(f"Error: {db}")
+    except DatabaseError as db:
+        print(f"Error: {db}")
 
 handler()
