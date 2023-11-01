@@ -34,3 +34,9 @@ https://developer.hashicorp.com/terraform/tutorials/aws/aws-iam-policy
 
 tells us how to turn this into a policy and attach this to the eventbridge role.
 
+For the logs permissions there is a good tutorial here
+
+https://stackoverflow.com/questions/59949808/write-aws-lambda-logs-to-cloudwatch-log-group-with-terraform#:~:text=If%20you%20want%20Terraform%20to,change%20the%20name%20at%20all.
+
+Note that the name for the cloudwatch log group in the iam is important and connected to the function.
+

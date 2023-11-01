@@ -66,3 +66,35 @@ resource "aws_iam_role" "eventbride_role" {
     ]
 })
 }
+
+# Cloudwatch policies
+
+resource "aws_iam_policy" "cloudwatch_log_policy" {
+  name   = "function-logging-policy"
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        Action : [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Effect : "Allow",
+        Resource : "arn:aws:logs:*:*:*"
+      }
+    ]
+  })
+}
+
+# Attach policy to role
+resource "aws_iam_role_policy_attachment" "test_joe_attach" {
+  role = aws_iam_role.lambda_role.id
+  policy_arn = aws_iam_policy.cloudwatch_log_policy.arn
+}
+
+# Define the log group
+# https://stackoverflow.com/questions/59949808/write-aws-lambda-logs-to-cloudwatch-log-group-with-terraform#:~:text=If%20you%20want%20Terraform%20to,change%20the%20name%20at%20all.
+
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
+    name              = "/aws/lambda/alex_s3_injestion"
+}

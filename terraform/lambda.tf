@@ -14,4 +14,5 @@ resource "aws_lambda_function" "alex_s3_injestion" {
   layers = [aws_lambda_layer_version.packages_layer.arn]
   handler = "reader.lambda_handler"
   runtime = "python3.9"
+  depends_on    = [aws_cloudwatch_log_group.lambda_log_group]
 }
