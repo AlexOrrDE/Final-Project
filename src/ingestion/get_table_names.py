@@ -17,7 +17,7 @@ def fetch_tables(conn):
 
     try:
         cursor = conn.cursor()
-        query = f"""
+        query = """
                 SELECT table_name
                 FROM information_schema.tables
                 WHERE table_schema = 'public';"""
@@ -27,5 +27,5 @@ def fetch_tables(conn):
         return table_names
 
     except pg8000.Error as e:
-        print(f"Error: Unable to fetch table names")
+        print("Error: Unable to fetch table names")
         raise e

@@ -13,7 +13,10 @@ def connect_to_database():
     try:
         return pg8000.dbapi.Connection(
             user="project_user_1",
-            host="nc-data-eng-totesys-production.chpsczt8h1nu.eu-west-2.rds.amazonaws.com",
+            host=(
+                "nc-data-eng-totesys-production.chpsczt8h1nu."
+                "eu-west-2.rds.amazonaws.com"
+            ),
             database="totesys",
             port=5432,
             password="WfAsWSh4nvEUEOw6",
