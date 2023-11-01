@@ -30,7 +30,6 @@ def handler(event, context):
     try:
         conn = connect_to_database()
         logging.info("Connected to database")
-        logging.info("Connected to database")
         table_names = fetch_tables(conn)
 
         update = True
@@ -63,4 +62,23 @@ def handler(event, context):
         print("Error: %s", ae)
 
 
-handler()
+    # """ "connects to database - logs when successful
+    # uses function fetch_tables to get table_names
+
+    # initialises a need_to_update variable to False
+
+    # uses check_objects to see if bucket is empty, if so it will go straight to else block where it changes need_to_update to True
+
+    # if the bucket is not empty it will:
+    #     get the latest_update for each table
+    #     use that latest update time in the check_for_updates function with table name to see if any updates have taken place
+
+    #     if check_for_updates returns True for any table:
+    #         need_to_update will get set to True
+    #         log a message saying updates found, creating new dataset
+
+    # after checks, if need_to_update is True:
+    #     push a new copy of each table to s3 bucket
+    # else:
+    #     log message saying checks complete, no need to update
+    # """
