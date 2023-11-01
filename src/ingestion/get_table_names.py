@@ -10,7 +10,10 @@ def fetch_tables(conn):
                 WHERE table_schema = 'public';"""
         cursor.execute(query)
         data = cursor.fetchall()
+
         table_names = [row[0] for row in data]
+        table_names.remove("_prisma_migrations")
+
         return table_names
 
     except pg8000.Error as e:
