@@ -44,3 +44,5 @@ https://stackoverflow.com/questions/59949808/write-aws-lambda-logs-to-cloudwatch
 
 Note that the name for the cloudwatch log group in the iam is important and connected to the function.
 
+Because (?) pandas depends on numpy we need to install that too.
+

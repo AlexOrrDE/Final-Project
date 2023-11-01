@@ -98,3 +98,26 @@ resource "aws_iam_role_policy_attachment" "test_joe_attach" {
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
     name              = "/aws/lambda/handler"
 }
+
+# Policies for accessing secrets
+# https://docs.aws.amazon.com/secretsmanager/latest/userguide/auth-and-access_examples.html
+
+resource "aws_iam_policy" "secrets_policy" {
+  name   = "secrets-policy"
+  policy = jsonencode({
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "secretsmanager:GetSecretValue",
+      "Resource": "arn:aws:secretsmanager:eu-west-2:377515970402:secret:Totesys-Credentials-WT7z06"
+    }
+  ]
+})
+}
+
+# Attach policy to role
+resource "aws_iam_role_policy_attachment" "secrets_policy_attach" {
+  role = aws_iam_role.lambda_role.id
+  policy_arn = aws_iam_policy.secrets_policy.arn
+}
