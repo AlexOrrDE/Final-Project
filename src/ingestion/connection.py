@@ -10,7 +10,13 @@ class InvalidStoredCredentials(Exception):
     
 
 def connect_to_database():
-    '''Returns a connection to the source database totesys, using credentials stored on aws secrets manager'''
+    """Starts connection with totesys database.
+
+    Typical usage example:
+
+      conn = connect_to_database()
+      data = get_data(conn)
+    """
     try:
         totesys_credentials = retrieve_totesys_credentials('Totesys-Credentials-1')
         return Connection(
@@ -19,6 +25,8 @@ def connect_to_database():
             database=totesys_credentials['database'],
             user=totesys_credentials['user'],
             password=totesys_credentials['password']
+
+
         )
     except InterfaceError as db_connection_error:
         logging.info('Error: %s', db_connection_error)
@@ -37,4 +45,3 @@ def retrieve_totesys_credentials(secret_name):
     if sorted(valid_keys) != sorted(credentials_keys):
         raise InvalidStoredCredentials()
     return credentials
-
