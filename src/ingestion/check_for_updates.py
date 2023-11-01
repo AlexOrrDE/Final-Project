@@ -20,6 +20,6 @@ def check_for_updates(conn, table, previous_instance):
     except RuntimeError as re:
         logging.info("error raised in check_for_updates")
         raise re
-
-
-    
+    except AttributeError as ae:
+        logging.info("error raised in check_for_updates")
+        raise ae

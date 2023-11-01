@@ -31,7 +31,7 @@ def handler():
             log message saying checks complete, no need to update
     """
     try:
-        conn = connect_to_database()
+        conn = connect_to_database
         logging.info('Connected to database')
         table_names = fetch_tables(conn)
         table_names.remove('_prisma_migrations')
@@ -43,7 +43,7 @@ def handler():
             for table in table_names:
                 latest_update = get_previous_update_dt(table)  
                 print(latest_update, "LATEST UPDATE")              
-                if check_for_updates(conn, "error", latest_update) is True:
+                if check_for_updates(conn, table, latest_update) is True:
                     need_to_update = True
                     logging.info("Data has been updated, pulling new dataset.")
         else:
@@ -68,5 +68,7 @@ def handler():
         print(f'Error: {e}')
     except DatabaseError as db:
         print(f"Error: {db}")
+    except AttributeError as ae:
+        print("Error: %s", ae)
 
 handler()
