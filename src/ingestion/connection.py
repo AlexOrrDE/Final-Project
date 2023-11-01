@@ -18,7 +18,7 @@ def connect_to_database():
     """
 
     try:
-        totesys_credentials = retrieve_totesys_credentials("Totesys-Credentials-1")
+        totesys_credentials = retrieve_totesys_credentials("Totesys-Credentials")
         return Connection(
             host=totesys_credentials["host"],
             port=totesys_credentials["port"],
@@ -29,6 +29,7 @@ def connect_to_database():
 
     except InterfaceError as db_connection_error:
         logging.info("Error: %s", db_connection_error)
+        raise db_connection_error
 
 
 def retrieve_totesys_credentials(secret_name):
@@ -63,6 +64,7 @@ def retrieve_totesys_credentials(secret_name):
 
     except json.JSONDecodeError as decode_error:
         logging.info("Error: %s", decode_error)
+        raise decode_error
 
     valid_keys = ["host", "port", "database", "user", "password"]
     credentials_keys = list(credentials.keys())
