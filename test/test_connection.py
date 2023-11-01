@@ -75,7 +75,7 @@ def test_retrieve_totesys_credentials_throws_InvalidCredentials_error(secrets_cl
 
 @mock_secretsmanager
 def test_totesys_connection_throws_InterfaceError_when_cannot_connect_to_database(secrets_client):
-    '''chech that totesys_connection returns an InterfaceError when it fails to connect to the datbase, when aws secret has all the required keys but the credentials are wrong.'''
+    '''check that totesys_connection returns an InterfaceError when it fails to connect to the datbase. Example when the aws secret has all the required keys but the credentials are wrong.'''
 
     secrets_client.create_secret(Name='Totesys-Credentials',
                          SecretString='''
