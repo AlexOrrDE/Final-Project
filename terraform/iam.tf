@@ -34,7 +34,7 @@ resource "aws_iam_policy" "test_policy" {
 data "aws_iam_policy_document" "example" {
   statement {
     actions   = ["lambda:InvokeFunction"]
-    resources = ["${aws_lambda_function.alex_s3_injestion.arn}"]
+    resources = ["${aws_lambda_function.handler.arn}"]
     effect = "Allow"
   }
 }
@@ -96,5 +96,5 @@ resource "aws_iam_role_policy_attachment" "test_joe_attach" {
 # https://stackoverflow.com/questions/59949808/write-aws-lambda-logs-to-cloudwatch-log-group-with-terraform#:~:text=If%20you%20want%20Terraform%20to,change%20the%20name%20at%20all.
 
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
-    name              = "/aws/lambda/alex_s3_injestion"
+    name              = "/aws/lambda/handler"
 }

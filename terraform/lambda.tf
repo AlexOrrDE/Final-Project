@@ -6,8 +6,8 @@ resource "aws_lambda_layer_version" "packages_layer" {
   compatible_runtimes = ["python3.9"]
 }
 
-resource "aws_lambda_function" "alex_s3_injestion" {
-  function_name = "alex_s3_injestion"
+resource "aws_lambda_function" "handler" {
+  function_name = "handler"
   role = aws_iam_role.lambda_role.arn
   s3_bucket = aws_s3_bucket.code_bucket.id
   s3_key = aws_s3_object.lambda_code.key

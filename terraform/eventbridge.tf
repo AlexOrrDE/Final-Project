@@ -9,7 +9,7 @@ resource "aws_scheduler_schedule" "lambdascheduler" {
   schedule_expression = "rate(1 minutes)"
 
   target {
-    arn      = aws_lambda_function.alex_s3_injestion.arn
+    arn      = aws_lambda_function.handler.arn
     role_arn = aws_iam_role.eventbride_role.arn
   }
 }
