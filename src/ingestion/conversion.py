@@ -19,6 +19,8 @@ def convert_to_csv(table_data):
 def write_to_s3(table_name, csv_data):
     """Uploads files to AWS s3 bucket.
 
+    Puts objects in s3 bucket with a timestamp in the filename.
+
     Typical usage example:
 
       write_to_s3(file_name, file_data)
