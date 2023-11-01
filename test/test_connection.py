@@ -22,11 +22,13 @@ def secrets_client(aws_credentials):
     with mock_secretsmanager():
         yield boto3.client("secretsmanager", region_name="eu-west-2")
 
-@mock_secretsmanager
+
+
 def test_retrieve_totesys_credentials_returns_dictionary(secrets_client):
     '''check retrieve_totesys_credentials function always return a dictionary when secret stored in a valid json format'''
-    secrets_client.create_secret(Name='Totesys-Credentials',
-                         SecretString='''
+    secrets_client.create_secret(
+                        Name='Totesys-Credentials',
+                        SecretString='''
                         {
                             "host": "x",
                             "port": "x",
@@ -40,7 +42,7 @@ def test_retrieve_totesys_credentials_returns_dictionary(secrets_client):
     assert type(output) == dict
     assert (sorted(list(output))) == ['database', 'host', 'password', 'port', 'user']
 
-@mock_secretsmanager
+
 def test_retrieve_totesys_credentials_returns_error_when_json_invalid(secrets_client):
     '''check retrieve_totesys_credentials function returns a json.JSONDecodeError when secret stored with invalid json format. Example no key-value format'''
 
@@ -55,8 +57,6 @@ def test_retrieve_totesys_credentials_returns_error_when_json_invalid(secrets_cl
         retrieve_totesys_credentials('Totesys-Credentials')
     
 
-
-@mock_secretsmanager
 def test_retrieve_totesys_credentials_throws_InvalidCredentials_error(secrets_client):
     '''check retrieve_totesys_credentials function returns InvalidStoredCredentials error when secret stored doesn't have all the credentials required to connect. Example when the json is missing a required keys like 'database' for example '''
 
@@ -73,9 +73,9 @@ def test_retrieve_totesys_credentials_throws_InvalidCredentials_error(secrets_cl
         retrieve_totesys_credentials('Totesys-Credentials')
 
 
-@mock_secretsmanager
 def test_totesys_connection_throws_InterfaceError_when_cannot_connect_to_database(secrets_client):
-    '''check that totesys_connection returns an InterfaceError when it fails to connect to the datbase. Example when the aws secret has all the required keys but the credentials are wrong.'''
+    '''chech that totesys_connection returns an InterfaceError when it fails to connect to the datbase, when aws secret has all the required keys but the credentials are wrong.'''
+
 
     secrets_client.create_secret(Name='Totesys-Credentials',
                          SecretString='''
@@ -88,5 +88,6 @@ def test_totesys_connection_throws_InterfaceError_when_cannot_connect_to_databas
                         }
                         '''
                          )
+
     with pytest.raises(InterfaceError):
         connect_to_database()
