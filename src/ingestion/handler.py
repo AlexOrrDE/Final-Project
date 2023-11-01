@@ -9,30 +9,27 @@ import logging
 from pg8000 import DatabaseError
 
 
-def handler():
-    """ "connects to database - logs when successful
-    uses function fetch_tables to get table_names
+def handler(event, context):
+    """Manages invocation of functions to use in AWS Lambda.
 
-    initialises a need_to_update variable to False
+    In addition to logging and error handling, it:
+        Connects to database,
+        Gets list of table names,
+        Fetches data from each table in list,
+        Converts retrieved data to csv. format,
+        Uploads csv. data files to an AWS s3 bucket.
 
-    uses check_objects to see if bucket is empty, if so it will go straight to else block where it changes need_to_update to True
 
-    if the bucket is not empty it will:
-        get the latest_update for each table
-        use that latest update time in the check_for_updates function with table name to see if any updates have taken place
+    Typical usage example:
 
-        if check_for_updates returns True for any table:
-            need_to_update will get set to True
-            log a message saying updates found, creating new dataset
-
-    after checks, if need_to_update is True:
-        push a new copy of each table to s3 bucket
-    else:
-        log message saying checks complete, no need to update
+      Upload ingestion directory to AWS Lambda as .zip,
+      Add pg8000 and pandas as layers on Lambda function,
+      Set this function as the handler for the Lambda.
     """
 
     try:
         conn = connect_to_database()
+        logging.info("Connected to database")
         logging.info("Connected to database")
         table_names = fetch_tables(conn)
 
