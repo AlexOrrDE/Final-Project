@@ -23,7 +23,7 @@ def retrieve_totesys_credentials(secret_name):
 def totesys_connection():
     '''Returns a connection to the source database totesys, using credentials stored on aws secrets manager'''
     try:
-        totesys_credentials = retrieve_totesys_credentials('Totesys-Credentials-1')
+        totesys_credentials = retrieve_totesys_credentials('Totesys-Credentials')
         return Connection(
             host=totesys_credentials['host'],
             port=totesys_credentials['port'],
