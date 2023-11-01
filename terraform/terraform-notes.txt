@@ -1,0 +1,42 @@
+We need to make sure that the .terraform folder is in the .gitignore, or we will have problems when pushing.
+
+We used the security credentials found on the IAM page/ make access key (need to change these later) and stored them locally
+
+We added a .gitkeep file to the layer/python folder as it is otherwise empty
+
+To fill out the layer/python folder we need to pip install there with (check this command)
+
+pip install -r requirements.txt -t ./layer/python
+
+As of writing the requirements.txt file only has pg8000
+
+In the lambda.tf file we have set specific runtimes for Python. These are required for a zip file but we can change them to be more recent ones probably.
+
+When setting up the scheduler (in eventbridge.tf), according to 
+
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/scheduler_schedule
+
+the role_arn is the role for the scheduler itself (not the lambda as it might seem). It links to 
+
+https://docs.aws.amazon.com/scheduler/latest/UserGuide/setting-up.html#setting-up-execution-role
+
+which gives the execution role for the scheduler. In iam.tf we make an eventbridge role (this doesn't let it use the lambda yet, it just makes a role).
+
+The JSON we need to actually allow use of the lambda is given here:
+
+https://docs.aws.amazon.com/scheduler/latest/UserGuide/setting-up.html#setting-up-execution-role
+
+step 3 (lambda invoke box).
+
+Finally 
+
+https://developer.hashicorp.com/terraform/tutorials/aws/aws-iam-policy
+
+tells us how to turn this into a policy and attach this to the eventbridge role.
+
+For the logs permissions there is a good tutorial here
+
+https://stackoverflow.com/questions/59949808/write-aws-lambda-logs-to-cloudwatch-log-group-with-terraform#:~:text=If%20you%20want%20Terraform%20to,change%20the%20name%20at%20all.
+
+Note that the name for the cloudwatch log group in the iam is important and connected to the function.
+
