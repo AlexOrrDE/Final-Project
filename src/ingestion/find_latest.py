@@ -14,15 +14,16 @@ def get_previous_update_dt(table_name):
     bucket = s3.Bucket('totesys-test')
     previous_updates = []
     for obj in bucket.objects.all():
-        # added 2 because i have a test file in my bucket which doesnt have a date that was breaking it, but all our files will have dates
-        if f'{table_name}2' in obj.key:
+        if f'{table_name}' in obj.key:
             date = re.search(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{6}', obj.key)
             previous_updates.append(date.group())
     # sort list - maybe have to use a method like the example below -line 22  
-    previous_updates.sort()
+
 
     # returns highest value dt which will be our most recent
-    return previous_updates[0]
+    if len(previous_updates) > 0:
+        previous_updates.sort(reverse=True)
+        return previous_updates[0]
 
 # print(get_previous_update_dt("test"))
 

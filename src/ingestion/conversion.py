@@ -10,4 +10,5 @@ def convert_to_csv(table_data):
 def write_to_s3(table_name, csv_data):
     name_prefix = datetime.now()
     s3_key = f"{name_prefix}-{table_name}.csv"
-    boto3.client('s3').put_object(Bucket='marble-test-bucket', Key=s3_key, Body=csv_data)
+    # need to change bucket name 
+    boto3.client('s3').put_object(Bucket='totesys-test', Key=s3_key, Body=csv_data)

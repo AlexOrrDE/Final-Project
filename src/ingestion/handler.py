@@ -34,25 +34,31 @@ def handler():
         conn = connect_to_database()
         logging.info('Connected to database')
         table_names = fetch_tables(conn)
+        table_names.remove('_prisma_migrations')
 
         need_to_update = False
 
         if check_objects():
+            print("in check_objects, bucket has returned true")
             for table in table_names:
-                latest_update = get_previous_update_dt(table)                
+                latest_update = get_previous_update_dt(table)  
+                print(latest_update, "LATEST UPDATE")              
                 if check_for_updates(conn, table, latest_update) is True:
                     need_to_update = True
                     logging.info("Data has been updated, pulling new dataset.")
         else:
+            print("bucket has returned false for check_objects")
             need_to_update = True
             logging.info("Pulling initial data.")
 
-        if need_to_update = True:
+        if need_to_update == True:
+            print("bucket is trying to load data to s3")
             for table in table_names:
                 table_data = fetch_data_from_tables(conn, table)
                 table_name, csv_data = convert_to_csv(table_data)
                 write_to_s3(table_name, csv_data)
         else:
+            print("no need to update")
             logging.info("No need to update data.")
                 
         
@@ -60,4 +66,8 @@ def handler():
 
     except RuntimeError as e:
         print(f'Error: {e}')
+    #database error but needs to be somewhere else 
+    # except exceptions.DatabaseError as db:
+    #     print(f"Error: {db}")
 
+handler()
