@@ -1,4 +1,4 @@
 venv
 .env
-terraform/.terraform
-docs/*
+/__pycache__/*
+test/__pycache__/*
