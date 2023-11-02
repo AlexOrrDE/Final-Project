@@ -19,7 +19,7 @@ def get_previous_update_dt(table_name, bucket_name="marble-test-bucket"):
         previous_updates = []
         for obj in bucket.objects.all():
             if f"{obj.key}".endswith(f"{table_name}.csv"):
-                date = re.search(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{6}", obj.key)
+                date = re.search(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}", obj.key)
                 previous_updates.append(date.group())
 
         if len(previous_updates) == 0:

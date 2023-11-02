@@ -70,12 +70,12 @@ def handler(event, context):
             logging.info("No need to update.")
 
     except RuntimeError as e:
-        print("Error:", e)
+        logging.error("Error:", e)
     except DatabaseError as db:
-        print("Error:", db)
+        logging.error("Error:", db)
     except AttributeError as ae:
-        print("Error:", ae)
+        logging.error("Error:", ae)
     except NoPreviousInstanceError as npi:
-        print(npi.message)
+        logging.error(npi.message)
     except ClientError as ce:
-        print("Error:", ce.response["Error"]["Message"])
+        logging.error("Error:", ce.response["Error"]["Message"])
