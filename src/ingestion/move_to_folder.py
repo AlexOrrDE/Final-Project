@@ -3,7 +3,7 @@ from datetime import datetime
 import re
 
 
-def move_files_to_folder(timestamp, bucket_name="marble-test-bucket"):
+def move_files_to_folder(timestamp, bucket_name="ingestion-data-bucket-marble"):
     """Moves old .csv files in bucket into timestamped folder.
 
     - Connects to AWS s3 service,
