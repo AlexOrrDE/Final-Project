@@ -1,7 +1,7 @@
 import json
 import boto3
 import logging
-from pg8000.native import Connection, InterfaceError
+from pg8000.dbapi import Connection, InterfaceError
 
 
 class InvalidStoredCredentials(Exception):
@@ -18,15 +18,15 @@ def connect_to_database():
     """
 
     try:
-
         totesys_credentials = retrieve_totesys_credentials("Totesys-Credentials")
-        return Connection(
+        conn = Connection(
             host=totesys_credentials["host"],
             port=totesys_credentials["port"],
             database=totesys_credentials["database"],
             user=totesys_credentials["user"],
             password=totesys_credentials["password"],
         )
+        return conn
 
     except InterfaceError as db_connection_error:
         logging.info("Error: %s", db_connection_error)
@@ -73,3 +73,6 @@ def retrieve_totesys_credentials(secret_name):
         raise InvalidStoredCredentials()
 
     return credentials
+
+
+connect_to_database()

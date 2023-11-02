@@ -4,12 +4,13 @@ from get_table_names import fetch_tables
 from get_table_data import fetch_data_from_tables
 from check_objects import check_objects
 from check_for_updates import check_for_updates
-from find_latest import get_previous_update_dt
+from find_latest import get_previous_update_dt, NoPreviousInstanceError
+from botocore.exceptions import ClientError
 import logging
 from pg8000 import DatabaseError
 
 
-def handler(event, context):
+def handler():
     """Manages invocation of functions to use in AWS Lambda.
 
     In addition to logging and error handling, it:
@@ -59,8 +60,15 @@ def handler(event, context):
                 write_to_s3(table_name, csv_data)
 
     except RuntimeError as e:
-        print(f"Error: {e}")
+        print(f"Error:", e)
     except DatabaseError as db:
-        print(f"Error: {db}")
+        print(f"Error:", db)
     except AttributeError as ae:
-        print("Error: %s", ae)
+        print("Error:", ae)
+    except NoPreviousInstanceError as npi:
+        print(npi.message)
+    except ClientError as ce:
+        print("Error:", ce.response["Error"]["Message"])
+
+
+# 
