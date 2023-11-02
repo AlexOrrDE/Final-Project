@@ -1,4 +1,5 @@
 import pg8000
+from connection import connect_to_database
 
 
 def fetch_tables(conn):
@@ -32,4 +33,3 @@ def fetch_tables(conn):
     except pg8000.Error as e:
         print("Error: Unable to fetch table names")
         raise e
-

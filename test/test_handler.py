@@ -26,6 +26,7 @@ def s3(aws_credentials):
 
 def test_handler_calls_connect_to_database():
     with patch("src.ingestion.handler"):
+        pass
 
 # def test_handler_invokes_insert_secret_with_user_input_e(self):
 #         with patch("src.password_manager.insert_secret", return_value=True) as mock:
