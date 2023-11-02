@@ -27,6 +27,7 @@ def get_previous_update_dt(table_name, bucket_name="marble-test-bucket"):
         if len(previous_updates) > 0:
             previous_updates.sort(reverse=True)
             return previous_updates[0]
+
     except NoPreviousInstanceError as npi:
         raise npi
     except ClientError as e:

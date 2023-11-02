@@ -43,6 +43,7 @@ def handler(event, context):
         table_names = fetch_tables(conn)
 
         update = False
+        latest_update = ""
 
         if check_objects():
             for table in table_names:
@@ -50,17 +51,15 @@ def handler(event, context):
 
                 if check_for_updates(conn, table, latest_update):
                     update = True
-                    logging.info("Data has been updated, pulling new dataset.")
-
-                else:
-                    logging.info("No need to update data.")
+                    logging.info(f"{table} has been updated.")
 
         else:
             update = True
-            logging.info("Pulling initial data.")
+            logging.info("Bucket is empty.")
 
         if update:
-            move_files_to_folder()
+            logging.info("\nPulling dataset.\n")
+            move_files_to_folder(latest_update)
 
             for table in table_names:
                 table_data = fetch_data_from_tables(conn, table)

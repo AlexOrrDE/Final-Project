@@ -3,7 +3,7 @@ from datetime import datetime
 import re
 
 
-def move_files_to_folder(bucket_name="marble-test-bucket"):
+def move_files_to_folder(timestamp, bucket_name="marble-test-bucket"):
     """Moves old .csv files in bucket into timestamped folder.
 
     - Connects to AWS s3 service,
@@ -14,7 +14,6 @@ def move_files_to_folder(bucket_name="marble-test-bucket"):
     s3 = boto3.client("s3")
     response = s3.list_objects_v2(Bucket=bucket_name)
 
-    timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     folder_name = f"{timestamp}/"
 
     csv_pattern = re.compile(r"^[^/]*\.csv$")
