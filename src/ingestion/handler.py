@@ -10,6 +10,8 @@ import logging
 from pg8000 import DatabaseError
 
 
+logging.getLogger().setLevel(logging.INFO)
+
 def handler():
     """Manages invocation of functions to use in AWS Lambda.
 
@@ -44,11 +46,11 @@ def handler():
                 latest_update = get_previous_update_dt(table)
 
                 if check_for_updates(conn, table, latest_update):
-                    logging.info("Data has been updated, pulling new dataset.")
+                    logging.info(f"Data has been updated, pulling new dataset from {table} table.")
 
                 else:
                     update = False
-                    logging.info("No need to update data.")
+                    logging.info(f"No need to update data from {table} table.")
 
         else:
             logging.info("Pulling initial data.")
