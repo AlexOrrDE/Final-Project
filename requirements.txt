@@ -1,6 +1,9 @@
 asn1crypto==1.5.1
+boto3==1.28.76
+botocore==1.31.76
 distlib==0.3.7
 filelock==3.13.1
+jmespath==1.0.1
 numpy==1.26.1
 pandas==2.1.2
 pbr==5.11.1
@@ -8,10 +11,12 @@ pg8000==1.30.2
 platformdirs==3.11.0
 python-dateutil==2.8.2
 pytz==2023.3.post1
+s3transfer==0.7.0
 scramp==1.4.4
 six==1.16.0
 stevedore==5.1.0
 tzdata==2023.3
+urllib3==2.0.7
 virtualenv==20.24.6
 virtualenv-clone==0.5.7
 virtualenvwrapper==4.8.4
