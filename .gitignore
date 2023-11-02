@@ -3,4 +3,4 @@ venv
 /__pycache__/*
 test/__pycache__/*
 docs/credentials.md
-terraform./terraform
+terraform/.terraform
