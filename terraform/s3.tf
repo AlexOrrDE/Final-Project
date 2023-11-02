@@ -1,16 +1,20 @@
 # Create a bucket to store function code
 resource "aws_s3_bucket" "code_bucket" {
-  bucket_prefix = "shabbir-code-bucket"
+  bucket_prefix = "ingestion-code-bucket"
 }
 
-# Zip up our function
+resource "aws_s3_bucket" "ingestion_data_bucket" {
+  bucket = "ingestion-data-bucket-marble"
+}
+
+# If we just want to zip one python file (with not local dependencies)
 # data "archive_file" "lambda_zip" {
 #   type        = "zip"
 #   source_file = "${path.module}/../src/ingestion/handler.py"
 #   output_path = "${path.module}/../handler.zip"
 # }
 
-# Trying to zip directory with each of our python files
+# Zip directory with each of our python files
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_dir = "../src/ingestion"
