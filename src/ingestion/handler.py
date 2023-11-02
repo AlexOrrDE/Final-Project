@@ -13,7 +13,8 @@ from pg8000 import DatabaseError
 
 logging.getLogger().setLevel(logging.INFO)
 
-def handler():
+
+def handler(event, context):
     """Manages invocation of functions to use in AWS Lambda.
 
     In addition to logging and error handling, it:
@@ -23,6 +24,7 @@ def handler():
             - checks if bucket is empty
             - checks if database has been updated since
             previous data retrieval
+        - Moves any previous .csv files in bucket into a directory
         - Fetches data from each table in list,
         - Converts retrieved data to csv. format,
         - Uploads csv. data files to an AWS s3 bucket.
@@ -53,7 +55,6 @@ def handler():
                 else:
                     logging.info("No need to update data.")
 
-
         else:
             update = True
             logging.info("Pulling initial data.")
@@ -67,9 +68,9 @@ def handler():
                 write_to_s3(table_name, csv_data)
 
     except RuntimeError as e:
-        print(f"Error:", e)
+        print("Error:", e)
     except DatabaseError as db:
-        print(f"Error:", db)
+        print("Error:", db)
     except AttributeError as ae:
         print("Error:", ae)
     except NoPreviousInstanceError as npi:

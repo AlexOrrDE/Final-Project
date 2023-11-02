@@ -4,6 +4,13 @@ import re
 
 
 def move_files_to_folder(bucket_name="marble-test-bucket"):
+    """Moves old .csv files in bucket into timestamped folder.
+
+    - Connects to AWS s3 service,
+    - Checks if files in root directory of bucket are .csv,
+    - Copies these files to timestamped directory,
+    - Deletes files in root bucket directory.
+    """
     s3 = boto3.client("s3")
     response = s3.list_objects_v2(Bucket=bucket_name)
 

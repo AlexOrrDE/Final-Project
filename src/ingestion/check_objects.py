@@ -2,6 +2,7 @@ from boto3 import client
 from botocore.exceptions import ClientError
 import logging
 
+
 def check_objects(bucket_name="marble-test-bucket"):
     """Connects to the s3 client and checks if bucket is empty.
 
@@ -16,5 +17,3 @@ def check_objects(bucket_name="marble-test-bucket"):
     except ClientError as ce:
         logging.error("error occured in check_objects")
         raise ce
-
-# 

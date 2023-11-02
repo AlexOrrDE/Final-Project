@@ -1,5 +1,4 @@
 import pg8000
-from connection import connect_to_database
 
 
 def fetch_tables(conn):
