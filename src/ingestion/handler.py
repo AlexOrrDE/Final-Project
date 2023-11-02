@@ -5,6 +5,7 @@ from get_table_data import fetch_data_from_tables
 from check_objects import check_objects
 from check_for_updates import check_for_updates
 from find_latest import get_previous_update_dt, NoPreviousInstanceError
+from move_to_folder import move_files_to_folder
 from botocore.exceptions import ClientError
 import logging
 from pg8000 import DatabaseError
@@ -39,23 +40,27 @@ def handler():
         logging.info("Connected to database")
         table_names = fetch_tables(conn)
 
-        update = True
+        update = False
 
         if check_objects():
             for table in table_names:
                 latest_update = get_previous_update_dt(table)
 
                 if check_for_updates(conn, table, latest_update):
-                    logging.info(f"Data has been updated, pulling new dataset from {table} table.")
+                    update = True
+                    logging.info("Data has been updated, pulling new dataset.")
 
                 else:
-                    update = False
-                    logging.info(f"No need to update data from {table} table.")
+                    logging.info("No need to update data.")
+
 
         else:
+            update = True
             logging.info("Pulling initial data.")
 
         if update:
+            move_files_to_folder()
+
             for table in table_names:
                 table_data = fetch_data_from_tables(conn, table)
                 table_name, csv_data = convert_to_csv(table_data)
@@ -71,6 +76,3 @@ def handler():
         print(npi.message)
     except ClientError as ce:
         print("Error:", ce.response["Error"]["Message"])
-
-
-# 
