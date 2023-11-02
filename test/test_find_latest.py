@@ -55,8 +55,10 @@ def test_should_extract_most_recent_datetime_from_keys(s3_client):
 
 def test_should_extract_datetime_from_correct_table(s3_client):
     s3_client.create_bucket(
-        Bucket="totesys-test",
-        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+            Bucket='marble-test-bucket',
+            CreateBucketConfiguration={
+            'LocationConstraint': 'eu-west-2'
+        }
     )
     s3_client.put_object(
         Bucket="marble-test-bucket",
@@ -80,8 +82,10 @@ def test_should_extract_datetime_from_correct_table(s3_client):
 def test_should_raise_error_if_no_matches_are_found_in_the_bucket(s3_client):
     with raises(NoPreviousInstanceError):
         s3_client.create_bucket(
-            Bucket="totesys-test",
-            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+            Bucket='marble-test-bucket',
+            CreateBucketConfiguration={
+            'LocationConstraint': 'eu-west-2'
+            }
         )
         get_previous_update_dt("test-table")
 
@@ -91,8 +95,10 @@ def test_should_raise_client_errors_to_be_handled_in_the_handler_if_target_bucke
 ):
     with raises(ClientError):
         s3_client.create_bucket(
-            Bucket="totesys-test",
-            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+            Bucket='marble-test-bucket',
+            CreateBucketConfiguration={
+            'LocationConstraint': 'eu-west-2'
+            }
         )
         s3_client.put_object(
             Bucket="no-bucket",

@@ -3,7 +3,7 @@ resource "aws_lambda_layer_version" "packages_layer" {
   s3_bucket =  aws_s3_bucket.code_bucket.id
   s3_key = aws_s3_object.packages.key
   layer_name = "packages_layer"
-  compatible_runtimes = ["python3.9"]
+  compatible_runtimes = ["python3.11"]
 }
 
 resource "aws_lambda_function" "handler" {
@@ -12,7 +12,8 @@ resource "aws_lambda_function" "handler" {
   s3_bucket = aws_s3_bucket.code_bucket.id
   s3_key = aws_s3_object.lambda_code.key
   layers = [aws_lambda_layer_version.packages_layer.arn]
-  handler = "reader.lambda_handler"
-  runtime = "python3.9"
+  handler = "handler.handler"
+  runtime = "python3.11"
+  timeout = 300
   depends_on    = [aws_cloudwatch_log_group.lambda_log_group]
 }

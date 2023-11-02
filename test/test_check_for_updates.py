@@ -12,8 +12,7 @@ def test_should_return_None_when_no_updates_are_found():
 
             def fetchall(self):
                 return []
-
-    assert check_for_updates(MockConn, "staff", "2023-11-01 11:18:34.305980") is None
+    assert check_for_updates(MockConn, "staff", '2023-11-01 11:18:34.305980') is False
 
 
 def test_should_return_True_when_updates_are_found():

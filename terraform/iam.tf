@@ -19,6 +19,31 @@ resource "aws_iam_role" "lambda_role" {
     })
 }
 
+# Lambda access to S3 policy
+# https://us-east-1.console.aws.amazon.com/iam/home#/policies/arn:aws:iam::aws:policy/AmazonS3FullAccess$jsonEditor
+resource "aws_iam_policy" "lambda_access_s3_policy" {
+  name   = "lambda_access_s3_policy"
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:*",
+                "s3-object-lambda:*"
+            ],
+            "Resource": "*"
+        }
+    ]
+})
+}
+
+# Attach policy to role
+resource "aws_iam_role_policy_attachment" "lambda_access_s3_attach" {
+  role = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.lambda_access_s3_policy.arn
+}
+
 # https://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html
 # https://developer.hashicorp.com/terraform/tutorials/aws/aws-iam-policy
 
@@ -97,4 +122,27 @@ resource "aws_iam_role_policy_attachment" "test_joe_attach" {
 
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
     name              = "/aws/lambda/handler"
+}
+
+# Policies for accessing secrets
+# https://docs.aws.amazon.com/secretsmanager/latest/userguide/auth-and-access_examples.html
+
+resource "aws_iam_policy" "secrets_policy" {
+  name   = "secrets-policy"
+  policy = jsonencode({
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "secretsmanager:GetSecretValue",
+      "Resource": "arn:aws:secretsmanager:eu-west-2:377515970402:secret:Totesys-Credentials-WT7z06"
+    }
+  ]
+})
+}
+
+# Attach policy to role
+resource "aws_iam_role_policy_attachment" "secrets_policy_attach" {
+  role = aws_iam_role.lambda_role.id
+  policy_arn = aws_iam_policy.secrets_policy.arn
 }
