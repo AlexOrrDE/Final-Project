@@ -16,7 +16,7 @@ def convert_to_csv(table_data):
     return table_name, csv_data
 
 
-def write_to_s3(table_name, csv_data):
+def write_to_s3(table_name, csv_data, bucket_name="marble-test-bucket"):
     """Uploads files to AWS s3 bucket.
 
     Puts objects in s3 bucket with a timestamp in the filename.
@@ -28,5 +28,5 @@ def write_to_s3(table_name, csv_data):
     name_prefix = datetime.now()
     s3_key = f"{name_prefix}-{table_name}.csv"
     boto3.client("s3").put_object(
-        Bucket="marble-test-bucket", Key=s3_key, Body=csv_data
+        Bucket=bucket_name, Key=s3_key, Body=csv_data
     )

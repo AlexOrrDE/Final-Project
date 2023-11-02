@@ -4,7 +4,7 @@ from botocore.exceptions import ClientError
 import logging
 
 
-def get_previous_update_dt(table_name):
+def get_previous_update_dt(table_name, bucket_name="marble-test-bucket"):
     """Connects to s3 bucket using boto resource
     searches the bucket for keys with table name
     pushes the date from the key to a previous updates list
@@ -16,7 +16,7 @@ def get_previous_update_dt(table_name):
     try:
         s3 = boto3.resource("s3")
         # CHANGEBUCKETNAME
-        bucket = s3.Bucket("marble-test-bucket")
+        bucket = s3.Bucket(bucket_name)
         previous_updates = []
         for obj in bucket.objects.all():
             if f'{obj.key}'.endswith(f'{table_name}.csv'):
