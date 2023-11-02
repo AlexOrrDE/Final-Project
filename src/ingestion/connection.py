@@ -59,7 +59,11 @@ def retrieve_totesys_credentials(secret_name):
 
 #     secrets_manager = boto3.client("secretsmanager")
 #     response = secrets_manager.get_secret_value(SecretId=secret_name)
+#     secrets_manager = boto3.client("secretsmanager")
+#     response = secrets_manager.get_secret_value(SecretId=secret_name)
 
+#     try:
+#         credentials = json.loads(response["SecretString"])
 #     try:
 #         credentials = json.loads(response["SecretString"])
 
@@ -71,8 +75,13 @@ def retrieve_totesys_credentials(secret_name):
 
 #     if sorted(valid_keys) != sorted(credentials_keys):
 #         raise InvalidStoredCredentials()
+#     if sorted(valid_keys) != sorted(credentials_keys):
+#         raise InvalidStoredCredentials()
 
 #     return credentials
+
+
+connect_to_database()
 
 
 connect_to_database()
