@@ -29,5 +29,6 @@ def write_to_s3(table_name, csv_data):
     name_prefix = datetime.now()
     s3_key = f"{name_prefix}-{table_name}.csv"
     boto3.client("s3").put_object(
+        # CHANGE BUCKET NAME
         Bucket="marble-test-bucket", Key=s3_key, Body=csv_data
     )

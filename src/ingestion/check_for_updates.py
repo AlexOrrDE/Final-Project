@@ -19,6 +19,7 @@ def check_for_updates(conn, table, previous_instance):
 
     except DatabaseError as de:
         logging.info("error raised in check_for_updates")
+        print("raised from check for updates")
         raise de
     except RuntimeError as re:
         logging.info("error raised in check_for_updates")

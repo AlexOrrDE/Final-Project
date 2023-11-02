@@ -1,4 +1,5 @@
 import pandas as pd
+from connection import connect_to_database
 
 
 def fetch_data_from_tables(conn, table):
