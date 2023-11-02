@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_log_metric_filter" "error" {
   name           = "any_alarm"
   pattern        = "ERROR"
-  log_group_name = "/aws/lambda/handler"
+  log_group_name = aws_cloudwatch_log_group.lambda_log_group.name
 
   metric_transformation {
     name      = "EventCount"
