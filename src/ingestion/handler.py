@@ -11,6 +11,8 @@ import logging
 from pg8000 import DatabaseError
 
 
+logging.getLogger().setLevel(logging.INFO)
+
 def handler():
     """Manages invocation of functions to use in AWS Lambda.
 
@@ -50,6 +52,7 @@ def handler():
 
                 else:
                     logging.info("No need to update data.")
+
 
         else:
             update = True
