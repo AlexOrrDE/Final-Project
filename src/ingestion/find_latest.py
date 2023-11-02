@@ -3,7 +3,7 @@ import re
 from botocore.exceptions import ClientError
 
 
-def get_previous_update_dt(table_name, bucket_name="marble-test-bucket"):
+def get_previous_update_dt(table_name, bucket_name="ingestion-data-bucket-marble"):
     """Connects to s3 bucket using boto resource
     searches the bucket for keys with table name
     pushes the date from the key to a previous updates list
