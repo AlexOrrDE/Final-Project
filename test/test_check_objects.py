@@ -23,8 +23,10 @@ def s3_client(aws_credentials):
 
 def test_should_return_False_if_no_objects_in_the_bucket(s3_client):
     s3_client.create_bucket(
-        Bucket="totesys-test",
-        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+            Bucket='marble-test-bucket',
+            CreateBucketConfiguration={
+            'LocationConstraint': 'eu-west-2'
+        }
     )
 
     assert not check_objects()
@@ -32,8 +34,10 @@ def test_should_return_False_if_no_objects_in_the_bucket(s3_client):
 
 def test_should_return_True_if_one_object_in_the_bucket(s3_client):
     s3_client.create_bucket(
-        Bucket="totesys-test",
-        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+            Bucket='marble-test-bucket',
+            CreateBucketConfiguration={
+            'LocationConstraint': 'eu-west-2'
+        }
     )
 
     s3_client.put_object(
@@ -45,8 +49,10 @@ def test_should_return_True_if_one_object_in_the_bucket(s3_client):
 
 def test_should_return_True_if_more_than_one_object_is_in_the_bucket(s3_client):
     s3_client.create_bucket(
-        Bucket="totesys-test",
-        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+            Bucket='marble-test-bucket',
+            CreateBucketConfiguration={
+            'LocationConstraint': 'eu-west-2'
+        }
     )
 
     s3_client.put_object(
