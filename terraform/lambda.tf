@@ -14,5 +14,6 @@ resource "aws_lambda_function" "handler" {
   layers = [aws_lambda_layer_version.packages_layer.arn]
   handler = "handler.handler"
   runtime = "python3.11"
+  timeout = 300
   depends_on    = [aws_cloudwatch_log_group.lambda_log_group]
 }

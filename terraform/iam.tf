@@ -19,6 +19,31 @@ resource "aws_iam_role" "lambda_role" {
     })
 }
 
+# Lambda access to S3 policy
+# https://us-east-1.console.aws.amazon.com/iam/home#/policies/arn:aws:iam::aws:policy/AmazonS3FullAccess$jsonEditor
+resource "aws_iam_policy" "lambda_access_s3_policy" {
+  name   = "lambda_access_s3_policy"
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:*",
+                "s3-object-lambda:*"
+            ],
+            "Resource": "*"
+        }
+    ]
+})
+}
+
+# Attach policy to role
+resource "aws_iam_role_policy_attachment" "lambda_access_s3_attach" {
+  role = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.lambda_access_s3_policy.arn
+}
+
 # https://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html
 # https://developer.hashicorp.com/terraform/tutorials/aws/aws-iam-policy
 
