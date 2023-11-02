@@ -1,12 +1,8 @@
-from src.ingestion.handler import handler
 import boto3
 import os
 from moto import mock_s3
-import botocore
-import botocore.session
 import pytest
-import pg8000
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 
 @pytest.fixture(scope="function")
@@ -24,9 +20,11 @@ def s3(aws_credentials):
     with mock_s3:
         yield boto3.client("s3", region_name="eu-west-2")
 
+
 def test_handler_calls_connect_to_database():
     with patch("src.ingestion.handler"):
         pass
+
 
 # def test_handler_invokes_insert_secret_with_user_input_e(self):
 #         with patch("src.password_manager.insert_secret", return_value=True) as mock:

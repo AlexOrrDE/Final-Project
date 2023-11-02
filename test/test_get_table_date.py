@@ -1,12 +1,7 @@
-from src.ingestion.handler import handler
 import boto3
 import os
 from moto import mock_s3
-import botocore
-import botocore.session
 import pytest
-import pg8000
-from unittest.mock import Mock
 
 
 @pytest.fixture(scope="function")
@@ -23,5 +18,3 @@ def aws_credentials():
 def s3(aws_credentials):
     with mock_s3:
         yield boto3.client("s3", region_name="eu-west-2")
-
-
