@@ -58,13 +58,16 @@ def handler(event, context):
             logging.info("Bucket is empty.")
 
         if update:
-            logging.info("\nPulling dataset.\n")
+            logging.info("Pulling dataset.")
             move_files_to_folder(latest_update)
 
             for table in table_names:
                 table_data = fetch_data_from_tables(conn, table)
                 table_name, csv_data = convert_to_csv(table_data)
                 write_to_s3(table_name, csv_data)
+
+        else:
+            logging.info("No need to update.")
 
     except RuntimeError as e:
         print("Error:", e)
