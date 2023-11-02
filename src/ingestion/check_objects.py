@@ -11,8 +11,10 @@ def check_objects():
     try:
         s3client = client("s3")
         # CHANGE BUCKET NAME
-        response = s3client.list_objects(Bucket="totesys-test")
+        response = s3client.list_objects(Bucket="marble-test-bucket")
         return "Contents" in response
     except ClientError as ce:
         logging.error("error occured in check_objects")
         raise ce
+
+# 

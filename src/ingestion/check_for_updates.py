@@ -27,3 +27,4 @@ def check_for_updates(conn, table, previous_instance):
     except AttributeError as ae:
         logging.info("error raised in check_for_updates")
         raise ae
+# 

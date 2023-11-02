@@ -38,3 +38,5 @@ class NoPreviousInstanceError(Exception):
     def __init__(self, table):
         self.table = table
         self.message = f"There are no previous instances of '{self.table}' table"
+
+# 

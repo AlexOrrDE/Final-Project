@@ -33,3 +33,5 @@ def test_should_raise_database_errors_to_be_handled_in_the_handler():
 def test_should_raise_attribute_error_if_connection_to_database_is_not_valid():
     with raises(AttributeError):
         check_for_updates(connect_to_database, "staff", '2023-11-01 12:06:35.943017')
+
+# 
