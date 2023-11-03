@@ -62,7 +62,7 @@ dev-setup: bandit safety flake coverage
 # Build / Run
 ## Run autopep8 to fix PEP8 issues
 autopep8:
-	$(call execute_in_env, autopep8 --in-place --aggressive --aggressive */*/*.py)
+	$(call execute_in_env, autopep8 --in-place --aggressive --aggressive */*.py)
 
 
 ## Run the security test (bandit + safety)
