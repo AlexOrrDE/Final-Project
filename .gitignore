@@ -6,3 +6,4 @@ docs/credentials.md
 terraform/.terraform
 handler.zip
 layer.zip
+processing_handler.zip

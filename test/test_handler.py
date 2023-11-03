@@ -28,7 +28,8 @@ def db_credentials():
         "port": os.environ.get("PORT"),
         "database": os.environ.get("DATABASE"),
         "user": os.environ.get("USERNAME"),
-        "password": os.environ.get("PASSWORD")}
+        "password": os.environ.get("PASSWORD"),
+    }
     yield json.dumps(cred_dict)
 
 
@@ -47,62 +48,59 @@ def secrets_client(aws_credentials):
 
 
 def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
-        s3_client, secrets_client, caplog, db_credentials):
+    s3_client, secrets_client, caplog, db_credentials
+):
     """Tests the handler produces logs for pulling data when a bucket is empty.
-        Tests for incorrect logs being sent."""
+    Tests for incorrect logs being sent."""
+
     secrets_client.create_secret(
-        Name="Totesys-Credentials",
-        SecretString=db_credentials
+        Name="Totesys-Credentials", SecretString=db_credentials
     )
     s3_client.create_bucket(
         Bucket="ingestion-data-bucket-marble",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
-    handler('event', 'context')
+    handler("event", "context")
 
-    assert 'Bucket is empty.' in caplog.text
-    assert 'Pulling dataset.' in caplog.text
-    assert 'No need to update.' not in caplog.text
-
-# This worked on my previous commit. Unsure why it's broken,
-# and why the other tests work inherently.
-# Error - TypeError: not all arguments converted during string formatting.
+    assert "Bucket is empty." in caplog.text
+    assert "Pulling dataset." in caplog.text
+    assert "No need to update." not in caplog.text
 
 
-def xtest_handler_logs_no_need_to_update_if_bucket_has_file(
-        s3_client, secrets_client, caplog, db_credentials):
+def test_handler_logs_no_need_to_update_if_bucket_has_file(
+    s3_client, secrets_client, caplog, db_credentials
+):
     """Tests the handler produces logs for not pulling data
     when most recent file is up to date. Tests for incorrect
     logs being sent."""
     secrets_client.create_secret(
-        Name="Totesys-Credentials",
-        SecretString=db_credentials
+        Name="Totesys-Credentials", SecretString=db_credentials
     )
     s3_client.create_bucket(
         Bucket="ingestion-data-bucket-marble",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
     file_names = [
-        'currency',
-        'payment',
-        'department',
-        'design',
-        'counterparty',
-        'purchase_order',
-        'payment_type',
-        'sales_order',
-        'address',
-        'staff',
-        'transaction']
+        "currency",
+        "payment",
+        "department",
+        "design",
+        "counterparty",
+        "purchase_order",
+        "payment_type",
+        "sales_order",
+        "address",
+        "staff",
+        "transaction",
+    ]
     prefix = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     for name in file_names:
         s3_client.put_object(
-            Bucket="ingestion-data-bucket-marble",
-            Key=f"{prefix}-{name}.csv"
+            Bucket="ingestion-data-bucket-marble", Key=f"{prefix}-{name}.csv"
         )
 
-    handler('event', 'context')
+    handler("event", "context")
 
-    assert 'Bucket is empty.' not in caplog.text
-    assert 'Pulling dataset.' not in caplog.text
-    assert 'No need to update.' in caplog.text
+    assert "Bucket is empty." not in caplog.text
+    assert "Pulling dataset." not in caplog.text
+    assert "No need to update." in caplog.text
