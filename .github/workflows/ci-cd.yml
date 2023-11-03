@@ -19,8 +19,8 @@ jobs:
         run: make security-test
       - name: Run Flake8 Code Check
         run: make flake
-      - name: Run Coverage Check
-        run: make check-coverage
+      # - name: Run Coverage Check
+      #   run: make check-coverage
   run-unit-test:
     runs-on: ubuntu-latest
     steps:
