@@ -28,7 +28,9 @@ def secrets_client(aws_credentials):
 
 
 def test_retrieve_totesys_credentials_returns_dictionary(secrets_client):
-    """check retrieve_totesys_credentials function always return a dictionary when secret stored in a valid json format"""
+    """check retrieve_totesys_credentials function always return
+    a dictionary when secret stored in a valid json format"""
+
     secrets_client.create_secret(
         Name="Totesys-Credentials",
         SecretString="""
@@ -42,17 +44,21 @@ def test_retrieve_totesys_credentials_returns_dictionary(secrets_client):
                         """,
     )
     output = retrieve_totesys_credentials("Totesys-Credentials")
-    assert type(output) is dict
-    assert (sorted(list(output))) == ["database", "host", "password", "port", "user"]
+    assert isinstance(output, dict)
+    assert (sorted(list(output))) == [
+        "database", "host", "password", "port", "user"
+    ]
 
 
-def test_retrieve_totesys_credentials_returns_error_when_json_invalid(secrets_client):
-    """check retrieve_totesys_credentials function returns a json.JSONDecodeError when secret stored with invalid json format. Example no key-value format"""
+def test_retrieve_credentials_returns_error_when_json_invalid(secrets_client):
+    """check retrieve_totesys_credentials function returns
+    a json.JSONDecodeError when secret stored with invalid json format.
+    Example no key-value format"""
 
     secrets_client.create_secret(
         Name="Totesys-Credentials",
         SecretString="""
-                        {   
+                        {
                             Invalid Json format
                         }
                         """,
@@ -61,8 +67,12 @@ def test_retrieve_totesys_credentials_returns_error_when_json_invalid(secrets_cl
         retrieve_totesys_credentials("Totesys-Credentials")
 
 
-def test_retrieve_totesys_credentials_throws_InvalidCredentials_error(secrets_client):
-    """check retrieve_totesys_credentials function returns InvalidStoredCredentials error when secret stored doesn't have all the credentials required to connect. Example when the json is missing a required keys like 'database' for example"""
+def test_retrieve_credentials_throws_InvalidCredentials_error(secrets_client):
+    """check retrieve_totesys_credentials function returns
+    InvalidStoredCredentials error when secret
+    stored doesn't have all the required to connect.
+    Example when the json is missing a required keys
+    like 'database' for example"""
 
     secrets_client.create_secret(
         Name="Totesys-Credentials",
@@ -78,10 +88,12 @@ def test_retrieve_totesys_credentials_throws_InvalidCredentials_error(secrets_cl
         retrieve_totesys_credentials("Totesys-Credentials")
 
 
-def test_totesys_connection_throws_InterfaceError_when_cannot_connect_to_database(
+def test_connection_throws_InterfaceError_when_cannot_connect_to_database(
     secrets_client,
 ):
-    """chech that totesys_connection returns an InterfaceError when it fails to connect to the datbase, when aws secret has all the required keys but the credentials are wrong."""
+    """chech that totesys_connection returns an InterfaceError when
+    it fails to connect to the datbase, when aws secret has all
+    the required keys but the credentials are wrong."""
 
     secrets_client.create_secret(
         Name="Totesys-Credentials",

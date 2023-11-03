@@ -5,7 +5,6 @@ from moto import mock_s3, mock_secretsmanager
 import pytest
 from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
-import sys
 import json
 
 
@@ -18,13 +17,21 @@ def aws_credentials():
     os.environ["AWS_SESSION_TOKEN"] = "testing"
     os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
 
+
 @pytest.fixture(scope="function")
 def db_credentials():
-    """Actual credentials for db, create a .env file in root directory to store locally."""
+    """Actual credentials for db, create a .env file in root
+    directory to store locally."""
+
     load_dotenv(find_dotenv())
-    cred_dict = {"host": os.environ.get("HOST"), "port": os.environ.get("PORT"), "database": os.environ.get("DATABASE"), "user": os.environ.get("USERNAME"), "password": os.environ.get("PASSWORD")}
+    cred_dict = {
+        "host": os.environ.get("HOST"),
+        "port": os.environ.get("PORT"),
+        "database": os.environ.get("DATABASE"),
+        "user": os.environ.get("USERNAME"),
+        "password": os.environ.get("PASSWORD")}
     yield json.dumps(cred_dict)
-    
+
 
 @pytest.fixture(scope="function")
 def s3_client(aws_credentials):
@@ -37,13 +44,15 @@ def secrets_client(aws_credentials):
     with mock_secretsmanager():
         yield boto3.client("secretsmanager", region_name="eu-west-2")
 
-def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(s3_client, secrets_client, caplog, db_credentials):
+
+def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
+        s3_client, secrets_client, caplog, db_credentials):
     print(db_credentials)
     secrets_client.create_secret(
         Name="Totesys-Credentials",
         SecretString=db_credentials
     )
-    #print(db_credentials)
+    # print(db_credentials)
     s3_client.create_bucket(
         Bucket="ingestion-data-bucket-marble",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
@@ -55,7 +64,8 @@ def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(s3_client, se
     assert 'No need to update.' not in caplog.text
 
 
-def test_handler_logs_no_need_to_update_if_bucket_has_file(s3_client, secrets_client, caplog, db_credentials):
+def test_handler_logs_no_need_to_update_if_bucket_has_file(
+        s3_client, secrets_client, caplog, db_credentials):
     secrets_client.create_secret(
         Name="Totesys-Credentials",
         SecretString=db_credentials
@@ -64,7 +74,18 @@ def test_handler_logs_no_need_to_update_if_bucket_has_file(s3_client, secrets_cl
         Bucket="ingestion-data-bucket-marble",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
-    file_names = ['currency', 'payment', 'department', 'design', 'counterparty', 'purchase_order', 'payment_type', 'sales_order', 'address', 'staff', 'transaction']
+    file_names = [
+        'currency',
+        'payment',
+        'department',
+        'design',
+        'counterparty',
+        'purchase_order',
+        'payment_type',
+        'sales_order',
+        'address',
+        'staff',
+        'transaction']
     prefix = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     for name in file_names:
         s3_client.put_object(
