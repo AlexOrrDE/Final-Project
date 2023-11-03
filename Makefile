@@ -8,7 +8,7 @@ PROJECT_NAME = Final-Project
 REGION = eu-west-2
 PYTHON_INTERPRETER = python
 WD=$(shell pwd)
-PYTHONPATH=${WD}
+PYTHONPATH=${WD}:./src/ingestion
 SHELL := /bin/bash
 PROFILE = default
 PIP:=pip
@@ -62,7 +62,7 @@ dev-setup: bandit safety flake coverage
 # Build / Run
 ## Run autopep8 to fix PEP8 issues
 autopep8:
-	$(call execute_in_env, autopep8 --in-place --aggressive --aggressive *.py)
+	$(call execute_in_env, autopep8 --in-place --aggressive --aggressive */*.py)
 
 
 ## Run the security test (bandit + safety)
@@ -76,7 +76,7 @@ run-flake:
 
 ## Run the unit tests
 unit-test:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest -v)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest -vrP test)
 
 ## Run the coverage check
 check-coverage:

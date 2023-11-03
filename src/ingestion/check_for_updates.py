@@ -11,7 +11,8 @@ def check_for_updates(conn, table, previous_instance):
     try:
         cursor = conn.cursor()
         cursor.execute(
-            f"SELECT * FROM {table} WHERE last_updated > '{previous_instance}';"
+            f"SELECT * FROM {table} WHERE"
+            " last_updated > '{previous_instance}';"
         )
         rows = cursor.fetchall()
 

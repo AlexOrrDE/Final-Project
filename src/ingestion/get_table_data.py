@@ -17,18 +17,19 @@ def fetch_data_from_tables(conn, table):
       table_data = fetch_data_from_tables(conn, table_name)
     """
     try:
-      cursor = conn.cursor()
-      query = f"SELECT * FROM {table};"
-      cursor.execute(query)
-      rows = cursor.fetchall()
-      keys = [k[0] for k in cursor.description]
-      table_data = {
-          "table_name": table,
-          "data": pd.DataFrame(rows, columns=keys).to_dict(orient="records"),
-      }
+        cursor = conn.cursor()
+        query = f"SELECT * FROM {table};"
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        keys = [k[0] for k in cursor.description]
+        table_data = {
+            "table_name": table,
+            "data": pd.DataFrame(rows, columns=keys).to_dict(orient="records"),
+        }
 
-      return table_data
-    
+        return table_data
+
     except DatabaseError as dbe:
-       logging.error(f"Error occured in fetch_data_from_tables, calling table {table}")
-       raise dbe
+        logging.error(
+            f"Error occured in fetch_data_from_tables, calling table {table}")
+        raise dbe
