@@ -1,4 +1,5 @@
 import pg8000
+import logging
 
 
 def fetch_tables(conn):
@@ -24,11 +25,10 @@ def fetch_tables(conn):
         cursor.execute(query)
         data = cursor.fetchall()
 
-        table_names = [row[0] for row in data]
-        table_names.remove("_prisma_migrations")
-
+        table_names = [row[0] for row in data if row[0] != "_prisma_migrations"]
+    
         return table_names
 
     except pg8000.Error as e:
-        print("Error: Unable to fetch table names")
+        logging.error("Error occured in fetch_tables")
         raise e
