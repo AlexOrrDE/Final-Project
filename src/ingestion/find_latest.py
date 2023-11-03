@@ -26,7 +26,8 @@ def get_previous_update_dt(
                 previous_updates.append(date.group())
 
         if len(previous_updates) == 0:
-            raise NoPreviousInstanceError(table_name)
+            logging.warning("No previous data for this found")
+            return False
         if len(previous_updates) > 0:
             previous_updates.sort(reverse=True)
             return previous_updates[0]

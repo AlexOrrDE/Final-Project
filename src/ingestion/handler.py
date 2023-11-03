@@ -50,14 +50,16 @@ def handler(event, context):
         if check_objects():
             for table in table_names:
                 latest_update = get_previous_update_dt(table)
-
-                table_data = fetch_data_from_tables(conn, table, latest_update)
-                if table_data:
+                if latest_update:
+                    table_data = fetch_data_from_tables(conn, table, latest_update)
                     logging.info(f"{table} has been updated. Pulling new data")
-                    table_name, csv_data = convert_to_csv(table_data)
-                    write_to_s3(table_name, csv_data)
-                    update = True
-                    # move_files_to_folder(latest_update)
+                else:
+                    table_data = fetch_data_from_tables(conn, table)
+                    logging.info(f"{table} has no initial data. Pulling data")
+                table_name, csv_data = convert_to_csv(table_data)
+                write_to_s3(table_name, csv_data)
+                update = True
+                # move_files_to_folder(latest_update)
 
         else:
             logging.info("Bucket is empty. Pulling initial dataset.")
