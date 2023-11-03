@@ -7,6 +7,10 @@ resource "aws_s3_bucket" "ingestion_data_bucket" {
   bucket = "ingestion-data-bucket-marble"
 }
 
+resource "aws_s3_bucket" "processed_data_bucket" {
+  bucket = "processed-data-bucket-marble"
+}
+
 # If we just want to zip one python file (with not local dependencies)
 # data "archive_file" "lambda_zip" {
 #   type        = "zip"
