@@ -1,5 +1,6 @@
 import boto3
 import re
+import logging
 from botocore.exceptions import ClientError
 
 
@@ -29,8 +30,10 @@ def get_previous_update_dt(table_name, bucket_name="ingestion-data-bucket-marble
             return previous_updates[0]
 
     except NoPreviousInstanceError as npi:
+        logging.error("Error occured in get_previous_update_dt")
         raise npi
     except ClientError as e:
+        logging.error("Error occured in get_previous_update_dt")
         raise e
 
 

@@ -1,5 +1,6 @@
-from conversion import convert_to_csv, write_to_s3
-from connection import connect_to_database
+from write_to_s3 import write_to_s3
+from convert_to_csv import convert_to_csv
+from connection import connect_to_database, InvalidStoredCredentials
 from get_table_names import fetch_tables
 from get_table_data import fetch_data_from_tables
 from check_objects import check_objects
@@ -8,7 +9,8 @@ from find_latest import get_previous_update_dt, NoPreviousInstanceError
 from move_to_folder import move_files_to_folder
 from botocore.exceptions import ClientError
 import logging
-from pg8000 import DatabaseError
+import json
+from pg8000 import DatabaseError, InterfaceError
 
 
 logging.getLogger().setLevel(logging.INFO)
@@ -79,3 +81,13 @@ def handler(event, context):
         logging.error(npi.message)
     except ClientError as ce:
         logging.error("Error:", ce.response["Error"]["Message"])
+    except InterfaceError:
+        logging.error("Invalid Credentials Error")
+    except TypeError as te:
+        logging.error("Error:", te)
+    except KeyError as ke:
+        logging.error("Error:", ke)
+    except json.JSONDecodeError as de:
+        logging.error("Error: %s", de)
+    except InvalidStoredCredentials as isc:
+        logging.error(isc.message)
