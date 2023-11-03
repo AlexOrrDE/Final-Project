@@ -4,15 +4,16 @@ import logging
 from botocore.exceptions import ClientError
 
 
-def get_previous_update_dt(table_name, bucket_name="ingestion-data-bucket-marble"):
+def get_previous_update_dt(
+        table_name,
+        bucket_name="ingestion-data-bucket-marble"):
     """Connects to s3 bucket using boto resource
     searches the bucket for keys with table name
     pushes the date from the key to a previous updates list
     sorts the previous updates list
     returns the most recent date
-
-    the sort functionality may need some work as at the moment it just sorts strings which is not reliable
     """
+
     try:
         s3 = boto3.resource("s3")
         # CHANGEBUCKETNAME
@@ -20,7 +21,8 @@ def get_previous_update_dt(table_name, bucket_name="ingestion-data-bucket-marble
         previous_updates = []
         for obj in bucket.objects.all():
             if f"{obj.key}".endswith(f"{table_name}.csv"):
-                date = re.search(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}", obj.key)
+                date = re.search(
+                    r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}", obj.key)
                 previous_updates.append(date.group())
 
         if len(previous_updates) == 0:
@@ -42,4 +44,5 @@ class NoPreviousInstanceError(Exception):
 
     def __init__(self, table):
         self.table = table
-        self.message = f"There are no previous instances of '{self.table}' table"
+        self.message = ("There are no previous"
+                        f" instances of '{self.table}' table")

@@ -4,3 +4,5 @@ venv
 test/__pycache__/*
 docs/credentials.md
 terraform/.terraform
+handler.zip
+layer.zip
