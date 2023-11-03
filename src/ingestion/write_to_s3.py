@@ -4,7 +4,7 @@ from botocore.exceptions import ClientError
 import datetime
 
 
-def write_to_s3(table_name, csv_data, bucket_name="marble-test-bucket"):
+def write_to_s3(table_name, csv_data, bucket_name="ingestion-data-bucket-marble"):
     """Uploads files to AWS s3 bucket.
 
     Puts objects in s3 bucket with a timestamp in the filename.

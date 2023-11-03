@@ -3,7 +3,7 @@ from botocore.exceptions import ClientError
 import logging
 
 
-def check_objects(bucket_name="marble-test-bucket"):
+def check_objects(bucket_name="ingestion-data-bucket-marble"):
     """Connects to the s3 client and checks if bucket is empty.
 
     If bucket is not empty, it will have a Contents key value pair
