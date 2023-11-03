@@ -1,7 +1,7 @@
 import boto3
 import logging
 from botocore.exceptions import ClientError
-import datetime
+from datetime import datetime
 
 
 def write_to_s3(table_name, csv_data, bucket_name="ingestion-data-bucket-marble"):
