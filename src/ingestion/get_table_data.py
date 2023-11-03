@@ -20,7 +20,7 @@ def fetch_data_from_tables(conn, table, date=None):
         cursor = conn.cursor()
         if date:
             query = f"SELECT * FROM {table} WHERE"
-            " last_updated > '{date}';"
+            f" last_updated > '{date}';"
         else:
             query = f"SELECT * FROM {table};"
         cursor.execute(query)
