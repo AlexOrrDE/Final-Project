@@ -1,10 +1,11 @@
-from conversion import convert_to_csv, write_to_s3
+from conversion import convert_to_csv
+from upload import write_to_s3
 from connection import connect_to_database
 from get_table_names import fetch_tables
 from get_table_data import fetch_data_from_tables
 from check_objects import check_objects
 from check_for_updates import check_for_updates
-from find_latest import get_previous_update_dt, NoPreviousInstanceError
+from find_latest import get_previous_update_dt
 from move_to_folder import move_files_to_folder
 from botocore.exceptions import ClientError
 import logging
@@ -75,7 +76,5 @@ def handler(event, context):
         logging.error("Error:", db)
     except AttributeError as ae:
         logging.error("Error:", ae)
-    except NoPreviousInstanceError as npi:
-        logging.error(npi.message)
     except ClientError as ce:
         logging.error("Error:", ce.response["Error"]["Message"])

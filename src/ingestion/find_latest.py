@@ -1,6 +1,7 @@
 import boto3
 import re
 from botocore.exceptions import ClientError
+import logging
 
 
 def get_previous_update_dt(table_name, bucket_name="ingestion-data-bucket-marble"):
@@ -23,18 +24,18 @@ def get_previous_update_dt(table_name, bucket_name="ingestion-data-bucket-marble
                 previous_updates.append(date.group())
 
         if len(previous_updates) == 0:
-            raise NoPreviousInstanceError(table_name)
+            raise NoPreviousInstanceWarning(table_name)
         if len(previous_updates) > 0:
             previous_updates.sort(reverse=True)
             return previous_updates[0]
 
-    except NoPreviousInstanceError as npi:
-        raise npi
+    except NoPreviousInstanceWarning as npi:
+        logging.warning(npi)
     except ClientError as e:
         raise e
 
 
-class NoPreviousInstanceError(Exception):
+class NoPreviousInstanceWarning(Exception):
     """catches if no matches are found in the bucket"""
 
     def __init__(self, table):
