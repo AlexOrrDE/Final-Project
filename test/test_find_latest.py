@@ -25,64 +25,64 @@ def test_should_extract_datetime_from_keys_when_given_a_tablename_to_search_the_
     s3_client,
 ):
     s3_client.create_bucket(
-        Bucket="marble-test-bucket",
+        Bucket="ingestion-data-bucket-marble",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
     s3_client.put_object(
-        Bucket="marble-test-bucket", Key="2023-01-01 00:00:00.000000-test-table.csv"
+        Bucket="ingestion-data-bucket-marble", Key="2023-01-01 00:00:00-test-table.csv"
     )
 
-    assert get_previous_update_dt("test-table") == "2023-01-01 00:00:00.000000"
+    assert get_previous_update_dt("test-table") == "2023-01-01 00:00:00"
 
 
 def test_should_extract_most_recent_datetime_from_keys(s3_client):
     s3_client.create_bucket(
-        Bucket="marble-test-bucket",
+        Bucket="ingestion-data-bucket-marble",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
     s3_client.put_object(
-        Bucket="marble-test-bucket", Key="2021-01-01 00:00:00.000000-test-table.csv"
+        Bucket="ingestion-data-bucket-marble", Key="2021-01-01 00:00:00-test-table.csv"
     )
     s3_client.put_object(
-        Bucket="marble-test-bucket", Key="2023-01-01 00:00:00.000000-test-table.csv"
+        Bucket="ingestion-data-bucket-marble", Key="2023-01-01 00:00:00-test-table.csv"
     )
     s3_client.put_object(
-        Bucket="marble-test-bucket", Key="2022-01-01 00:00:00.000000-test-table.csv"
+        Bucket="ingestion-data-bucket-marble", Key="2022-01-01 00:00:00-test-table.csv"
     )
 
-    assert get_previous_update_dt("test-table") == "2023-01-01 00:00:00.000000"
+    assert get_previous_update_dt("test-table") == "2023-01-01 00:00:00"
 
 
 def test_should_extract_datetime_from_correct_table(s3_client):
     s3_client.create_bucket(
-            Bucket='marble-test-bucket',
+            Bucket='ingestion-data-bucket-marble',
             CreateBucketConfiguration={
             'LocationConstraint': 'eu-west-2'
         }
     )
     s3_client.put_object(
-        Bucket="marble-test-bucket",
-        Key="2021-01-01 00:00:00.000000-test-not-this-table.csv",
+        Bucket="ingestion-data-bucket-marble",
+        Key="2021-01-01 00:00:00-test-not-this-table.csv",
     )
     s3_client.put_object(
-        Bucket="marble-test-bucket",
-        Key="2023-01-01 00:00:00.000000-test-not-this-table-either.csv",
+        Bucket="ingestion-data-bucket-marble",
+        Key="2023-01-01 00:00:00-test-not-this-table-either.csv",
     )
     s3_client.put_object(
-        Bucket="marble-test-bucket", Key="2022-01-01 00:00:00.000000-test-table.csv"
+        Bucket="ingestion-data-bucket-marble", Key="2022-01-01 00:00:00-test-table.csv"
     )
     s3_client.put_object(
-        Bucket="marble-test-bucket",
-        Key="2023-01-01 00:00:00.000000-test-table-with-same-date.csv",
+        Bucket="ingestion-data-bucket-marble",
+        Key="2023-01-01 00:00:00-test-table-with-same-date.csv",
     )
 
-    assert get_previous_update_dt("test-table") == "2022-01-01 00:00:00.000000"
+    assert get_previous_update_dt("test-table") == "2022-01-01 00:00:00"
 
 
 def test_should_raise_error_if_no_matches_are_found_in_the_bucket(s3_client):
     with raises(NoPreviousInstanceError):
         s3_client.create_bucket(
-            Bucket='marble-test-bucket',
+            Bucket='ingestion-data-bucket-marble',
             CreateBucketConfiguration={
             'LocationConstraint': 'eu-west-2'
             }
@@ -95,14 +95,14 @@ def test_should_raise_client_errors_to_be_handled_in_the_handler_if_target_bucke
 ):
     with raises(ClientError):
         s3_client.create_bucket(
-            Bucket='marble-test-bucket',
+            Bucket='ingestion-data-bucket-marble',
             CreateBucketConfiguration={
             'LocationConstraint': 'eu-west-2'
             }
         )
         s3_client.put_object(
             Bucket="no-bucket",
-            Key="2023-01-01 00:00:00.000000-test-table-with-same-date.csv",
+            Key="2023-01-01 00:00:00-test-table-with-same-date.csv",
         )
 
 

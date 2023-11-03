@@ -23,7 +23,7 @@ def s3_client(aws_credentials):
 
 def test_should_return_False_if_no_objects_in_the_bucket(s3_client):
     s3_client.create_bucket(
-            Bucket='marble-test-bucket',
+            Bucket='ingestion-data-bucket-marble',
             CreateBucketConfiguration={
             'LocationConstraint': 'eu-west-2'
         }
@@ -34,14 +34,14 @@ def test_should_return_False_if_no_objects_in_the_bucket(s3_client):
 
 def test_should_return_True_if_one_object_in_the_bucket(s3_client):
     s3_client.create_bucket(
-            Bucket='marble-test-bucket',
+            Bucket='ingestion-data-bucket-marble',
             CreateBucketConfiguration={
             'LocationConstraint': 'eu-west-2'
         }
     )
 
     s3_client.put_object(
-        Bucket="not-marble-test-bucket", Key="2023-01-01 00:00:00.000000-test-table.csv"
+        Bucket="ingestion-data-bucket-marble", Key="2023-01-01 00:00:00-test-table.csv"
     )
 
     assert check_objects()
@@ -49,17 +49,17 @@ def test_should_return_True_if_one_object_in_the_bucket(s3_client):
 
 def test_should_return_True_if_more_than_one_object_is_in_the_bucket(s3_client):
     s3_client.create_bucket(
-            Bucket='marble-test-bucket',
+            Bucket='ingestion-data-bucket-marble',
             CreateBucketConfiguration={
             'LocationConstraint': 'eu-west-2'
         }
     )
 
     s3_client.put_object(
-        Bucket="marble-test-bucket", Key="2023-01-01 00:00:00.000000-test-table.csv"
+        Bucket="ingestion-data-bucket-marble", Key="2023-01-01 00:00:00-test-table.csv"
     )
     s3_client.put_object(
-        Bucket="marble-test-bucket", Key="2023-01-01 01:00:00.000000-test-table.csv"
+        Bucket="ingestion-data-bucket-marble", Key="2023-01-01 01:00:00-test-table.csv"
     )
 
     assert check_objects()
@@ -70,5 +70,5 @@ def test_should_raise_client_error_to_be_handled_in_handler_if_target_bucket_doe
 ):
     with raises(ClientError):
         s3_client.put_object(
-            Bucket="no-bucket", Key="2023-01-01 00:00:00.000000-test-table.csv"
+            Bucket="no-bucket", Key="2023-01-01 00:00:00-test-table.csv"
         )
