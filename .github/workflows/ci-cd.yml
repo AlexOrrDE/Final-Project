@@ -50,9 +50,6 @@ jobs:
       - name: Initialised Terraform
         working-directory: terraform
         run: terraform init
-      - name: Destroy previous terraformed aws instances
-        working-directory: terraform
-        run: terraform destroy -auto-approve
       - name: Plan Terraform
         working-directory: terraform
         run: terraform plan
