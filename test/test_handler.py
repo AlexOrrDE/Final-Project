@@ -1,3 +1,4 @@
+from src.ingestion.handler import handler
 import boto3
 import os
 from moto import mock_s3
@@ -22,7 +23,6 @@ def s3(aws_credentials):
 
 
 def test_handler_calls_connect_to_database():
-    with patch("src.ingestion.handler"):
         pass
 
 

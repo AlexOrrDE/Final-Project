@@ -5,7 +5,8 @@ from pg8000.dbapi import Connection, InterfaceError
 
 
 class InvalidStoredCredentials(Exception):
-    pass
+    def __init__(self):
+        self.message = f"Incorrect credentials"
 
 
 def connect_to_database():
@@ -29,7 +30,7 @@ def connect_to_database():
         return conn
 
     except InterfaceError as db_connection_error:
-        logging.info("Error: %s", db_connection_error)
+        logging.error("Error occured in connect_to_database")
         raise db_connection_error
 
 
@@ -63,9 +64,10 @@ def retrieve_totesys_credentials(secret_name):
     try:
         credentials = json.loads(response["SecretString"])
 
-    except json.JSONDecodeError as decode_error:
-        logging.info("Error: %s", decode_error)
-        raise decode_error
+    except json.JSONDecodeError as de:
+        logging.info("Error occured in retrieve_totesys_credentials")
+        raise de
+    
     valid_keys = ["host", "port", "database", "user", "password"]
     credentials_keys = list(credentials.keys())
 

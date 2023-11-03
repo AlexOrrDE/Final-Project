@@ -1,4 +1,5 @@
 import pg8000
+import logging
 
 
 def fetch_tables(conn):
@@ -30,5 +31,5 @@ def fetch_tables(conn):
         return table_names
 
     except pg8000.Error as e:
-        print("Error: Unable to fetch table names")
+        logging.error("Error occured in fetch_tables")
         raise e

@@ -41,7 +41,7 @@ def test_should_return_True_if_one_object_in_the_bucket(s3_client):
     )
 
     s3_client.put_object(
-        Bucket="marble-test-bucket", Key="2023-01-01 00:00:00.000000-test-table.csv"
+        Bucket="not-marble-test-bucket", Key="2023-01-01 00:00:00.000000-test-table.csv"
     )
 
     assert check_objects()

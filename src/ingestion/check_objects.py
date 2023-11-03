@@ -15,5 +15,5 @@ def check_objects(bucket_name="marble-test-bucket"):
         response = s3client.list_objects(Bucket=bucket_name)
         return "Contents" in response
     except ClientError as ce:
-        logging.error("error occured in check_objects")
+        logging.error("Error occured in check_objects")
         raise ce

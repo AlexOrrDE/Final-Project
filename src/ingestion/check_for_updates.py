@@ -18,12 +18,11 @@ def check_for_updates(conn, table, previous_instance):
         return len(rows) > 0
 
     except DatabaseError as de:
-        logging.info("error raised in check_for_updates")
-        print("raised from check for updates")
+        logging.info("Error occured in check_for_updates")
         raise de
     except RuntimeError as re:
-        logging.info("error raised in check_for_updates")
+        logging.info("Error occured in check_for_updates")
         raise re
     except AttributeError as ae:
-        logging.info("error raised in check_for_updates")
+        logging.info("Error occured in check_for_updates")
         raise ae
