@@ -120,8 +120,14 @@ resource "aws_iam_role_policy_attachment" "test_joe_attach" {
 # Define the log group
 # https://stackoverflow.com/questions/59949808/write-aws-lambda-logs-to-cloudwatch-log-group-with-terraform#:~:text=If%20you%20want%20Terraform%20to,change%20the%20name%20at%20all.
 
+# Log group for first lambda
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
     name              = "/aws/lambda/handler"
+}
+
+# Log group for second lambda
+resource "aws_cloudwatch_log_group" "processing_lambda_log_group" {
+    name              = "/aws/lambda/processing_handler"
 }
 
 # Policies for accessing secrets

@@ -34,6 +34,7 @@ def move_files_to_folder(
                 )
 
                 s3.delete_object(Bucket=bucket_name, Key=file_name)
-    except KeyError as ke:
+
+    except TypeError as te:
         logging.error("Error occured in move_files_to_folder")
-        raise ke
+        raise te
