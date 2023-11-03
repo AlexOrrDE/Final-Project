@@ -51,25 +51,23 @@ def handler(event, context):
             for table in table_names:
                 latest_update = get_previous_update_dt(table)
 
-                if check_for_updates(conn, table, latest_update):
+                table_data = fetch_data_from_tables(conn, table, latest_update)
+                if table_data:
+                    logging.info(f"{table} has been updated. Pulling new data")
+                    table_name, csv_data = convert_to_csv(table_data)
+                    write_to_s3(table_name, csv_data)
                     update = True
-                    logging.info(f"{table} has been updated.")
+                    # move_files_to_folder(latest_update)
 
         else:
-            update = True
-            logging.info("Bucket is empty.")
-
-        if update:
-            logging.info("Pulling dataset.")
-            move_files_to_folder(latest_update)
-
+            logging.info("Bucket is empty. Pulling initial dataset.")
             for table in table_names:
                 table_data = fetch_data_from_tables(conn, table)
                 table_name, csv_data = convert_to_csv(table_data)
                 write_to_s3(table_name, csv_data)
 
-        else:
-            logging.info("No need to update.")
+        if not update:
+            logging.info("No need to update")
 
     except RuntimeError as e:
         logging.error("Error:", e)
