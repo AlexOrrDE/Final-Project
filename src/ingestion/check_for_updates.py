@@ -12,7 +12,7 @@ def check_for_updates(conn, table, previous_instance):
         cursor = conn.cursor()
         cursor.execute(
             f"SELECT * FROM {table} WHERE"
-            " last_updated > '{previous_instance}';"
+            f" last_updated > '{previous_instance}';"
         )
         rows = cursor.fetchall()
 
