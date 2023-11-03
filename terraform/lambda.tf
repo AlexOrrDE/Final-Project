@@ -29,3 +29,5 @@ resource "aws_lambda_function" "processing_handler" {
   timeout = 300
   depends_on = [aws_cloudwatch_log_group.processing_lambda_log_group]
 }
+
+# Terraform should redeploy lambda if changes are made to the code source-code hash
