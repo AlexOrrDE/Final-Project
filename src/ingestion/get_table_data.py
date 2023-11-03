@@ -19,8 +19,7 @@ def fetch_data_from_tables(conn, table, date=None):
     try:
         cursor = conn.cursor()
         if date:
-            query = f"SELECT * FROM {table} WHERE"
-            f" last_updated > '{date}';"
+            query = f"SELECT * FROM {table} WHERE last_updated > '{date}';"
         else:
             query = f"SELECT * FROM {table};"
         cursor.execute(query)
@@ -32,7 +31,6 @@ def fetch_data_from_tables(conn, table, date=None):
             "table_name": table,
             "data": pd.DataFrame(rows, columns=keys).to_dict(orient="records"),
         }
-
         return table_data
 
     except DatabaseError as dbe:
