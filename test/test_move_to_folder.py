@@ -1,6 +1,5 @@
 from src.ingestion.move_to_folder import move_files_to_folder
 import boto3
-from botocore.exceptions import ClientError
 from moto import mock_s3
 import os
 import pytest
@@ -25,44 +24,41 @@ def test_should_return_take_2_parameters(s3_client):
     """raises type error when invoked with incorrect parameters"""
     with raises(TypeError):
         s3_client.create_bucket(
-                Bucket='ingestion-data-bucket-marble',
-                CreateBucketConfiguration={
-                'LocationConstraint': 'eu-west-2'
-            }
+            Bucket="ingestion-data-bucket-marble",
+            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
         move_files_to_folder()
 
+
 def test_should_create_new_folder_named_with_timestamp_argument(s3_client):
     s3_client.create_bucket(
-            Bucket='ingestion-data-bucket-marble',
-            CreateBucketConfiguration={
-            'LocationConstraint': 'eu-west-2'
-        }
+        Bucket="ingestion-data-bucket-marble",
+        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
     s3_client.put_object(
-        Bucket="ingestion-data-bucket-marble", Key="2023-01-01 00:00:00-test-table.csv"
-    )
+        Bucket="ingestion-data-bucket-marble",
+        Key="2023-01-01 00:00:00-test-table.csv")
 
     timestamp = "2023-01-01 00:00:00"
 
     move_files_to_folder(timestamp)
 
-    assert f"{timestamp}/" in s3_client.list_objects(Bucket="ingestion-data-bucket-marble")["Contents"][0]['Key']
+    assert (f"{timestamp}/" in s3_client.list_objects(
+        Bucket="ingestion-data-bucket-marble")["Contents"][0]["Key"])
 
 
-def test_should_group_files_with_same_prefix_timestamp_in_same_folder(s3_client):
+def test_should_group_files_with_same_prefix_timestamp_in_same_folder(
+        s3_client):
     s3_client.create_bucket(
-            Bucket='ingestion-data-bucket-marble',
-            CreateBucketConfiguration={
-            'LocationConstraint': 'eu-west-2'
-        }
+        Bucket="ingestion-data-bucket-marble",
+        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
     s3_client.put_object(
-        Bucket="ingestion-data-bucket-marble", Key="2023-01-01 00:00:00-test-table.csv"
-    )
+        Bucket="ingestion-data-bucket-marble",
+        Key="2023-01-01 00:00:00-test-table.csv")
     s3_client.put_object(
-        Bucket="ingestion-data-bucket-marble", Key="2023-01-01 00:00:00-staff-table.csv"
-    )
+        Bucket="ingestion-data-bucket-marble",
+        Key="2023-01-01 00:00:00-staff-table.csv")
 
     timestamp = "2023-01-01 00:00:00.000000"
     key1 = "2023-01-01 00:00:00-test-table.csv"
@@ -70,22 +66,23 @@ def test_should_group_files_with_same_prefix_timestamp_in_same_folder(s3_client)
 
     move_files_to_folder(timestamp)
 
-    assert f"{timestamp}/{key1}" in s3_client.list_objects(Bucket="ingestion-data-bucket-marble")["Contents"][1]['Key']
-    assert f"{timestamp}/{key2}" in s3_client.list_objects(Bucket="ingestion-data-bucket-marble")["Contents"][0]['Key']
+    assert (f"{timestamp}/{key1}" in s3_client.list_objects(
+        Bucket="ingestion-data-bucket-marble")["Contents"][1]["Key"])
+    assert (f"{timestamp}/{key2}" in s3_client.list_objects(
+        Bucket="ingestion-data-bucket-marble")["Contents"][0]["Key"])
+
 
 def test_should_delete_previous_files_in_root_of_bucket(s3_client):
     s3_client.create_bucket(
-            Bucket='ingestion-data-bucket-marble',
-            CreateBucketConfiguration={
-            'LocationConstraint': 'eu-west-2'
-        }
+        Bucket="ingestion-data-bucket-marble",
+        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
     s3_client.put_object(
-        Bucket="ingestion-data-bucket-marble", Key="2023-01-01 00:00:00-test-table.csv"
-    )
+        Bucket="ingestion-data-bucket-marble",
+        Key="2023-01-01 00:00:00-test-table.csv")
     s3_client.put_object(
-        Bucket="ingestion-data-bucket-marble", Key="2023-01-01 00:00:00-staff-table.csv"
-    )
+        Bucket="ingestion-data-bucket-marble",
+        Key="2023-01-01 00:00:00-staff-table.csv")
 
     timestamp = "2023-01-01 00:00:00.000000"
     key1 = "2023-01-01 00:00:00-test-table.csv"
@@ -93,9 +90,12 @@ def test_should_delete_previous_files_in_root_of_bucket(s3_client):
 
     move_files_to_folder(timestamp)
 
-    result = s3_client.list_objects(Bucket="ingestion-data-bucket-marble")["Contents"]
+    result = s3_client.list_objects(
+        Bucket="ingestion-data-bucket-marble")["Contents"]
 
-    assert s3_client.list_objects(Bucket="ingestion-data-bucket-marble")["Contents"][1]['Key'] is not key1
-    assert s3_client.list_objects(Bucket="ingestion-data-bucket-marble")["Contents"][1]['Key'] is not key2
+    assert (s3_client.list_objects(Bucket="ingestion-data-bucket-marble")
+            ["Contents"][1]["Key"] is not key1)
+    assert (s3_client.list_objects(Bucket="ingestion-data-bucket-marble")
+            ["Contents"][1]["Key"] is not key2)
     for object in result:
-        assert "/" in object['Key'] 
+        assert "/" in object["Key"]
