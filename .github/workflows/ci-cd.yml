@@ -1,6 +1,7 @@
 name: Test and Deploy
 on:
   - push
+  
 jobs:
   run-checks:
     name: Run Checks
@@ -8,24 +9,27 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
+
       - name: Set-up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
+
       - name: Install Requirements
         run: make requirements
+
       - name: Setup Dev Environment
         run: make dev-setup
+
       - name: Run Security Test
         run: make security-test
       - name: Run Flake8 Code Check
         run: make flake
-      - name: Run Unit Test
-        run: make unit-test
       - name: Run Coverage Check
         run: make check-coverage
+
   run-unit-test:
-    name: unit-tests
+    name: Unit Tests
     runs-on: ubuntu-latest
     needs: run-checks 
     steps:
