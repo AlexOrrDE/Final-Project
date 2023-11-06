@@ -80,15 +80,14 @@ def test_should_extract_datetime_from_correct_table(s3_client):
     assert get_previous_update_dt("test-table") == "2022-01-01 00:00:00"
 
 
-def xtest_should_raise_error_if_no_matches_are_found_in_the_bucket(s3_client):
-    with raises(NoPreviousInstanceError):
-        s3_client.create_bucket(
-            Bucket='ingestion-data-bucket-marble',
-            CreateBucketConfiguration={
-                'LocationConstraint': 'eu-west-2'
-            }
-        )
-        get_previous_update_dt("test-table")
+def test_should_return_false_if_no_matches_are_found_in_the_bucket(s3_client):
+    s3_client.create_bucket(
+        Bucket='ingestion-data-bucket-marble',
+        CreateBucketConfiguration={
+            'LocationConstraint': 'eu-west-2'
+        }
+    )
+    assert get_previous_update_dt("test-table") == False
 
 
 def test_raises_client_errors_to_be_handled_if_target_bucket_does_not_exist(
