@@ -1,41 +1,64 @@
 name: Test and Deploy
 on:
   - push
+  
 jobs:
   run-checks:
+    name: Run Checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
+
       - name: Set-up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
+
       - name: Install Requirements
         run: make requirements
+
       - name: Setup Dev Environment
         run: make dev-setup
+
       - name: Run Security Test
         run: make security-test
       - name: Run Flake8 Code Check
         run: make flake
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
       - name: Run Coverage Check
         run: make check-coverage
+
   run-unit-test:
+    name: Unit Tests
     runs-on: ubuntu-latest
+    needs: run-checks 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       - name: Set-up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
       - name: Install Requirements
         run: make requirements
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
       - name: Run Unit Test
         run: make unit-test
   deploy:
+    name: deploy
     runs-on: ubuntu-latest
+    needs: run-unit-test
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -44,7 +67,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-2
+          aws-region: ${{ secrets.AWS_REGION }}
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
       - name: Initialised Terraform

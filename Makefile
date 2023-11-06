@@ -80,7 +80,7 @@ unit-test:
 
 ## Run the coverage check
 check-coverage:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} coverage run -m pytest --ignore=layer && coverage report -m)
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} coverage run -m --omit 'venv/*' -m pytest --ignore=layer && coverage report -m)
 
 
 ## Run all checks

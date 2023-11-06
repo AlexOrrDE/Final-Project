@@ -3,10 +3,10 @@ from convert_to_csv import convert_to_csv
 from connection import connect_to_database, InvalidStoredCredentials
 from get_table_names import fetch_tables
 from get_table_data import fetch_data_from_tables
-from check_objects import check_objects
-from check_for_updates import check_for_updates
+# from check_objects import check_objects
+# from check_for_updates import check_for_updates
+# from move_to_folder import move_files_to_folder
 from find_latest import get_previous_update_dt, NoPreviousInstanceError
-from move_to_folder import move_files_to_folder
 from botocore.exceptions import ClientError
 import logging
 import json
@@ -46,30 +46,27 @@ def handler(event, context):
 
         update = False
         latest_update = ""
-
-        if check_objects():
-            for table in table_names:
-                latest_update = get_previous_update_dt(table)
-
-                if check_for_updates(conn, table, latest_update):
+        table_data = None
+        for table in table_names:
+            latest_update = get_previous_update_dt(table)
+            if latest_update:
+                table_data = fetch_data_from_tables(conn, table, latest_update)
+                if table_data:
+                    table_name, csv_data = convert_to_csv(table_data)
+                    write_to_s3(table_name, csv_data)
+                    logging.info(f"{table} has been updated. Pulling new data")
                     update = True
-                    logging.info(f"{table} has been updated.")
-
-        else:
-            update = True
-            logging.info("Bucket is empty.")
-
-        if update:
-            logging.info("Pulling dataset.")
-            move_files_to_folder(latest_update)
-
-            for table in table_names:
+            else:
                 table_data = fetch_data_from_tables(conn, table)
                 table_name, csv_data = convert_to_csv(table_data)
                 write_to_s3(table_name, csv_data)
+                update = True
+                logging.info(f"{table} has no initial data. Pulling data")
 
-        else:
-            logging.info("No need to update.")
+            # move_files_to_folder(latest_update)
+
+        if not update:
+            logging.info("No need to update")
 
     except RuntimeError as e:
         logging.error("Error:", e)
