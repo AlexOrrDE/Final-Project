@@ -46,14 +46,6 @@ def handler(event, context):
 
         update = False
         latest_update = ""
-
-    try:
-        conn = connect_to_database()
-        logging.info("Connected to database")
-        table_names = fetch_tables(conn)
-
-        update = False
-
         table_data = None
         for table in table_names:
             latest_update = get_previous_update_dt(table)
