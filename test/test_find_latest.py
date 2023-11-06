@@ -1,5 +1,4 @@
-from src.ingestion.find_latest import (get_previous_update_dt,
-                                       NoPreviousInstanceError)
+from src.ingestion.find_latest import (get_previous_update_dt)
 import boto3
 from botocore.exceptions import ClientError
 from moto import mock_s3
@@ -87,7 +86,7 @@ def test_should_return_false_if_no_matches_are_found_in_the_bucket(s3_client):
             'LocationConstraint': 'eu-west-2'
         }
     )
-    assert get_previous_update_dt("test-table") == False
+    assert get_previous_update_dt("test-table") is False
 
 
 def test_raises_client_errors_to_be_handled_if_target_bucket_does_not_exist(
