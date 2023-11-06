@@ -20,6 +20,8 @@ jobs:
         run: make security-test
       - name: Run Flake8 Code Check
         run: make flake
+      - name: Run Unit Test
+        run: make unit-test
       - name: Run Coverage Check
         run: make check-coverage
   run-unit-test:

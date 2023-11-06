@@ -34,6 +34,7 @@ def secrets_client(aws_credentials):
 def xtest_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
     s3_client, secrets_client, caplog
 ):
+
     """Tests the handler produces logs for pulling data when a bucket is empty.
     Tests for incorrect logs being sent."""
     secrets_client.create_secret(
@@ -64,6 +65,11 @@ def xtest_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
 def test_handler_logs_no_need_to_update_if_bucket_has_file(
     s3_client, secrets_client, caplog
 ):
+    print(os.environ["AWS_ACCESS_KEY_ID"])
+    print(os.environ["AWS_SECRET_ACCESS_KEY"])
+    print(os.environ["AWS_SECURITY_TOKEN"])
+    print(os.environ["AWS_SESSION_TOKEN"])
+    print(os.environ["AWS_DEFAULT_REGION"])
     """Tests the handler produces logs for not pulling data
     when most recent file is up to date. Tests for incorrect
     logs being sent."""
