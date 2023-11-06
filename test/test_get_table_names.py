@@ -26,5 +26,4 @@ def test_fetch_tables_with_tables(mock_db):
             'CREATE TABLE table3 (id serial PRIMARY KEY, value REAL)')
 
     expected_table_names = ["table1", "table2", "table3"]
-    print(sorted(fetch_tables(mock_db)))
     assert sorted(fetch_tables(mock_db)) == expected_table_names
