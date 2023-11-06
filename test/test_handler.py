@@ -44,7 +44,7 @@ def s3_client(aws_credentials):
 def secrets_client(aws_credentials):
     """Mocks the call to the AWS SecretsManager client."""
     with mock_secretsmanager():
-        yield boto3.client("secretsmanager")
+        yield boto3.client("secretsmanager", region_name="eu-west-1")
 
 
 def xtest_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
