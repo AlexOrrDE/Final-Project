@@ -10,6 +10,7 @@ from find_latest import get_previous_update_dt, NoPreviousInstanceError
 from botocore.exceptions import ClientError
 import logging
 import json
+import os
 from pg8000 import DatabaseError, InterfaceError
 
 
@@ -40,6 +41,11 @@ def handler(event, context):
     """
 
     try:
+        print(os.environ["AWS_ACCESS_KEY_ID"])
+        print(os.environ["AWS_SECRET_ACCESS_KEY"])
+        print(os.environ["AWS_SECURITY_TOKEN"])
+        print(os.environ["AWS_SESSION_TOKEN"])
+        print(os.environ["AWS_DEFAULT_REGION"])
         conn = connect_to_database()
         logging.info("Connected to database")
         table_names = fetch_tables(conn)
