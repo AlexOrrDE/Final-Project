@@ -2,6 +2,7 @@ import boto3
 import re
 import logging
 from botocore.exceptions import ClientError
+from datetime import datetime
 
 
 def get_previous_update_dt(
@@ -16,34 +17,28 @@ def get_previous_update_dt(
 
     try:
         s3 = boto3.resource("s3")
-        # CHANGEBUCKETNAME
-        bucket = s3.Bucket(bucket_name)
+        bucket = s3.Bucket("totesys-test")
+        s3 = boto3.resource('s3')
+        objects = list(bucket.objects.all())
         previous_updates = []
-        for obj in bucket.objects.all():
-            if f"{obj.key}".endswith(f"{table_name}.csv"):
-                date = re.search(
-                    r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}", obj.key)
-                previous_updates.append(date.group())
+        for object in objects:
+            if f'{table_name}/' in object.key:
+                remove_table_name = object.key.split(f"{table_name}/")
+                find_date = re.search(r'\d{4}\/\d{2}\/\d{2}', remove_table_name[0]).group()
+                find_time = re.search(r'\d{2}:\d{2}', remove_table_name[1]).group()
+                find_date = find_date.replace('/', '-')
+                date_str = find_date + " " + find_time
+                date_format = '%Y-%m-%d %H:%M'
+
+                date_obj = datetime.strptime(date_str, date_format)
+                previous_updates.append(date_obj)
 
         if len(previous_updates) == 0:
             logging.warning("No previous data for this found")
             return False
-        if len(previous_updates) > 0:
-            previous_updates.sort(reverse=True)
-            return previous_updates[0]
+        
+        return max(previous_updates)
 
-    except NoPreviousInstanceError as npi:
-        logging.error("Error occured in get_previous_update_dt")
-        raise npi
     except ClientError as e:
         logging.error("Error occured in get_previous_update_dt")
         raise e
-
-
-class NoPreviousInstanceError(Exception):
-    """catches if no matches are found in the bucket"""
-
-    def __init__(self, table):
-        self.table = table
-        self.message = ("There are no previous"
-                        f" instances of '{self.table}' table")
