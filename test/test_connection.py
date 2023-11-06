@@ -4,7 +4,7 @@ from src.ingestion.connection import (
     InvalidStoredCredentials,
     connect_to_database,
 )
-from moto import mock_secretsmanager
+from moto import mock_secretsmanager, mock_rds
 import boto3
 import os
 from pg8000.native import InterfaceError
@@ -25,6 +25,12 @@ def aws_credentials():
 def secrets_client(aws_credentials):
     with mock_secretsmanager():
         yield boto3.client("secretsmanager")
+        
+        
+@pytest.fixture(scope="function")
+def db_connection():
+    with mock_rds():
+        yield
 
 
 def test_retrieve_totesys_credentials_returns_dictionary(secrets_client):
@@ -109,4 +115,6 @@ def test_connection_throws_InterfaceError_when_cannot_connect_to_database(
     )
 
     with pytest.raises(InterfaceError):
-        connect_to_database()
+        connection = connect_to_database()
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM your_table")
