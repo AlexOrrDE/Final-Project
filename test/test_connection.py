@@ -24,7 +24,7 @@ def aws_credentials():
 @pytest.fixture(scope="function")
 def secrets_client(aws_credentials):
     with mock_secretsmanager():
-        yield boto3.client("secretsmanager", region_name="eu-west-2")
+        yield boto3.client("secretsmanager")
 
 
 def test_retrieve_totesys_credentials_returns_dictionary(secrets_client):
