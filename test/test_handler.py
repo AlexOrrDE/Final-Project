@@ -42,7 +42,7 @@ def test_handler_uses_mock_aws_credentials():
     assert os.environ['AWS_DEFAULT_REGION'] == "eu-west-2"
 
 
-def xtest_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
+def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
     s3_client, secrets_client, caplog
 ):
     """Tests the handler produces logs for pulling data when a bucket is empty.
@@ -63,13 +63,14 @@ def xtest_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
     with patch('src.ingestion.handler.connect_to_database') as mock:
-        mock.cursor = True
-        mock.execute = True
-        handler("event", "context")
-        mock.assert_called()
-
-        assert "has no initial data. Pulling data" in caplog.text
-        assert "No need to update." not in caplog.text
+        with patch('src.ingestion.handler.fetch_tables', return_value=['table1','table2','table3']):
+            with patch('src.ingestion.handler.get_previous_update_dt', return_value=True):
+                with patch('src.ingestion.handler.fetch_data_from_tables', return_value={'table_name':'table1', 'data':['data1']}):
+                    mock.cursor = True
+                    mock.execute = True
+                    handler("event", "context")
+                    assert "has been updated. Pulling new data" in caplog.text
+                    assert "No need to update." not in caplog.text
 
 
 def test_handler_logs_no_need_to_update_if_bucket_has_file(
