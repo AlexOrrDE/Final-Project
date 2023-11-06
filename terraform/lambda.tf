@@ -16,6 +16,7 @@ resource "aws_lambda_function" "handler" {
   runtime = "python3.11"
   timeout = 300
   depends_on    = [aws_cloudwatch_log_group.lambda_log_group]
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 }
 
 resource "aws_lambda_function" "processing_handler" {
@@ -28,4 +29,5 @@ resource "aws_lambda_function" "processing_handler" {
   runtime = "python3.11"
   timeout = 300
   depends_on = [aws_cloudwatch_log_group.processing_lambda_log_group]
+  source_code_hash = data.archive_file.processing_lambda_zip.output_base64sha256
 }
