@@ -25,6 +25,10 @@ jobs:
         run: make security-test
       - name: Run Flake8 Code Check
         run: make flake
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
       - name: Run Coverage Check
         run: make check-coverage
 
