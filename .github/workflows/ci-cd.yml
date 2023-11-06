@@ -16,7 +16,7 @@ jobs:
       - name: Setup Dev Environment
         run: make dev-setup
       - name: Create AWS Creds
-        run: mkdir ~/.aws && touch ~/.aws/credentials && echo -e "[default]\naws_access_key_id = test\naws_secret_access_key = test\naws_region = eu-west-2 > ~/.aws/credentials
+        run: mkdir ~/.aws && touch ~/.aws/credentials && echo -e "[default]\naws_access_key_id = test\naws_secret_access_key = test\naws_default-region = eu-west-2" > ~/.aws/credentials
       - name: Run Security Test
         run: make security-test
       - name: Run Flake8 Code Check
