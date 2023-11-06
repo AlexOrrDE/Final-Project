@@ -6,7 +6,7 @@ from moto import mock_s3, mock_secretsmanager
 from src.ingestion.handler import handler
 from unittest.mock import patch
 
-secretsmanager = boto3.client('secretsmanager', region_name='eu-west-2')
+
 @pytest.fixture(scope="function")
 def aws_credentials():
     """Mocked AWS Credentials for moto."""
@@ -27,7 +27,7 @@ def s3_client(aws_credentials):
 def secrets_client(aws_credentials):
     """Mocks the call to the AWS SecretsManager client."""
     with mock_secretsmanager():
-        yield secretsmanager
+        yield boto3.client("secretsmanager")
 
 
 def xtest_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
