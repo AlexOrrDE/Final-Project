@@ -41,7 +41,11 @@ def handler(event, context):
     """
 
     try:
-        raise RuntimeError
+        return logging.error(os.environ["AWS_ACCESS_KEY_ID"],
+        os.environ["AWS_SECRET_ACCESS_KEY"],
+        os.environ["AWS_SECURITY_TOKEN"],
+        os.environ["AWS_SESSION_TOKEN"],
+        os.environ["AWS_DEFAULT_REGION"])
         conn = connect_to_database()
         logging.info("Connected to database")
         table_names = fetch_tables(conn)
@@ -71,26 +75,22 @@ def handler(event, context):
             logging.info("No need to update")
 
     except RuntimeError as e:
-        logging.error("Error:", e, print(os.environ["AWS_ACCESS_KEY_ID"]),
-        print(os.environ["AWS_SECRET_ACCESS_KEY"]),
-        print(os.environ["AWS_SECURITY_TOKEN"]),
-        print(os.environ["AWS_SESSION_TOKEN"]),
-        print(os.environ["AWS_DEFAULT_REGION"]))
-    except DatabaseError as db:
-        logging.error("Error:", db)
-    except AttributeError as ae:
-        logging.error("Error:", ae)
-    except NoPreviousInstanceError as npi:
-        logging.error(npi.message)
-    except ClientError as ce:
-        logging.error("Error:", ce.response["Error"]["Message"])
-    except InterfaceError:
-        logging.error("Invalid Credentials Error")
-    except TypeError as te:
-        logging.error("Error:", te)
-    except KeyError as ke:
-        logging.error("Error:", ke)
-    except json.JSONDecodeError as de:
-        logging.error("Error: %s", de)
-    except InvalidStoredCredentials as isc:
-        logging.error(isc.message)
+        logging.error("Error:", e)
+    # except DatabaseError as db:
+    #     logging.error("Error:", db)
+    # except AttributeError as ae:
+    #     logging.error("Error:", ae)
+    # except NoPreviousInstanceError as npi:
+    #     logging.error(npi.message)
+    # except ClientError as ce:
+    #     logging.error("Error:", ce.response["Error"]["Message"])
+    # except InterfaceError:
+    #     logging.error("Invalid Credentials Error")
+    # except TypeError as te:
+    #     logging.error("Error:", te)
+    # except KeyError as ke:
+    #     logging.error("Error:", ke)
+    # except json.JSONDecodeError as de:
+    #     logging.error("Error: %s", de)
+    # except InvalidStoredCredentials as isc:
+    #     logging.error(isc.message)
