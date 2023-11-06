@@ -41,11 +41,7 @@ def handler(event, context):
     """
 
     try:
-        print(os.environ["AWS_ACCESS_KEY_ID"])
-        print(os.environ["AWS_SECRET_ACCESS_KEY"])
-        print(os.environ["AWS_SECURITY_TOKEN"])
-        print(os.environ["AWS_SESSION_TOKEN"])
-        print(os.environ["AWS_DEFAULT_REGION"])
+        raise RuntimeError
         conn = connect_to_database()
         logging.info("Connected to database")
         table_names = fetch_tables(conn)
@@ -75,7 +71,11 @@ def handler(event, context):
             logging.info("No need to update")
 
     except RuntimeError as e:
-        logging.error("Error:", e)
+        logging.error("Error:", e, print(os.environ["AWS_ACCESS_KEY_ID"]),
+        print(os.environ["AWS_SECRET_ACCESS_KEY"]),
+        print(os.environ["AWS_SECURITY_TOKEN"]),
+        print(os.environ["AWS_SESSION_TOKEN"]),
+        print(os.environ["AWS_DEFAULT_REGION"]))
     except DatabaseError as db:
         logging.error("Error:", db)
     except AttributeError as ae:
