@@ -1,6 +1,6 @@
 venv
 .env
-/__pycache__/*
+src/ingestion/__pycache__/*
 test/__pycache__/*
 docs/credentials.md
 terraform/.terraform
