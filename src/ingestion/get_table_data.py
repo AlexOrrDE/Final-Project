@@ -22,18 +22,23 @@ def fetch_data_from_tables(conn, table, date=None):
             query = f"SELECT * FROM {table} WHERE last_updated > '{date}';"
         else:
             query = f"SELECT * FROM {table};"
+        print(query)
         cursor.execute(query)
         rows = cursor.fetchall()
         if len(rows) == 0:
             return False
         keys = [k[0] for k in cursor.description]
+        print(keys)
+        print(rows, "ROW")
         table_data = {
             "table_name": table,
             "data": pd.DataFrame(rows, columns=keys).to_dict(orient="records"),
         }
+        print(table_data)
         return table_data
 
     except DatabaseError as dbe:
         logging.error(
             f"Error occured in fetch_data_from_tables, calling table {table}")
         raise dbe
+    
