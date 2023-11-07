@@ -71,10 +71,23 @@ def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
     """Tests the handler produces logs for pulling data when a bucket is empty.
     Tests for incorrect logs being sent."""
 
-    with patch('src.ingestion.handler.connect_to_database') as mock:
-        with patch('src.ingestion.handler.fetch_tables', return_value=['table1', 'table2', 'table3']):
-            with patch('src.ingestion.handler.get_previous_update_dt', return_value=True):
-                with patch('src.ingestion.handler.fetch_data_from_tables', return_value={'table_name': 'table1', 'data': ['data1']}):
+    with patch(
+            'src.ingestion.handler.connect_to_database'
+            ) as mock:
+        with patch(
+                'src.ingestion.handler.fetch_tables',
+                return_value=['table1', 'table2', 'table3']
+                ):
+            with patch(
+                    'src.ingestion.handler.get_previous_update_dt',
+                    return_value=True
+                    ):
+                with patch(
+                        'src.ingestion.handler.fetch_data_from_tables',
+                        return_value={
+                            'table_name': 'table1', 'data': ['data1']
+                            }
+                        ):
                     mock.cursor = True
                     mock.execute = True
                     handler("event", "context")
