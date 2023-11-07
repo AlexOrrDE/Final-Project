@@ -6,12 +6,17 @@ handler(event, context)
 
     extract table name from key -----
 
-    get the update data -- old_data = s3.get_object(Bucket=bucket_name, Key=old_data_filename)
-    read the updated data -- read_old_data = old_data['Body'].read().decode('utf-8')
+    get the update data --
+        old_data = s3.get_object(
+        Bucket=bucket_name, Key=old_data_filename)
+    read the updated data --
+        read_old_data = old_data['Body'].read().decode('utf-8')
 
-    convert data to file-like-object -- old_file = io.StringIO(read_old_data)
+    convert data to file-like-object --
+        old_file = io.StringIO(read_old_data)
 
-    convert file-like object to panda dataframe -- df = pd.read_csv(old_file, index_col=f"{table_name}_id")
+    convert file-like object to panda dataframe --
+        df = pd.read_csv(old_file, index_col=f"{table_name}_id")
 
     if table name design:
         return convert_to_parquet(design_transform_data function)

@@ -28,7 +28,7 @@ def s3_client(aws_credentials):
 def create_bucket(s3_client):
     s3_client.create_bucket(
         Bucket="ingestion-data-bucket-marble",
-        reateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
 
 
