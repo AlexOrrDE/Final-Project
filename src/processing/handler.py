@@ -45,7 +45,30 @@ handler(event, context)
 
     write to s3(parquet_data):
         writes to s3 process bucket
-        
-
 
 """
+
+import pandas as pd
+# import boto3
+# import io
+
+def design_transformer(df):
+    return df[["design_id", "design_name", "file_name", "file_location"]]
+
+
+
+# s3 = boto3.client('s3')
+
+# old_data = s3.get_object(Bucket='totesys-test', Key='2023/11/06/design/14:55.csv')
+# read_old_data = old_data['Body'].read().decode('utf-8')
+
+# old_file = io.StringIO(read_old_data)
+
+# df = pd.read_csv(old_file, index_col=False)
+
+# # df.set_index("design_id")
+
+# # s3://totesys-test/2023/11/06/design/14:55.csv
+
+# # df = pd.read_csv("design.txt")
+# print(design_transformer(df))
