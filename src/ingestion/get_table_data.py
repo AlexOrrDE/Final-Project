@@ -38,3 +38,4 @@ def fetch_data_from_tables(conn, table, date=None):
             f"Error occured in fetch_data_from_tables, calling table {table}")
         raise dbe
     
+

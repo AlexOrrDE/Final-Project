@@ -72,7 +72,7 @@ def test_should_extract_datetime_from_correct_table(s3_client):
     )
     s3_client.put_object(
         Bucket="ingestion-data-bucket-marble",
-        Key="2022-01-01 00:00:00-test-table.csv")
+        Key="2022/01/01 00:00:00-test-table.csv")
     s3_client.put_object(
         Bucket="ingestion-data-bucket-marble",
         Key="2023-01-01 00:00:00-test-table-with-same-date.csv",
