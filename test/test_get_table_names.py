@@ -1,6 +1,6 @@
 import pytest
-from src.ingestion.get_table_names import fetch_tables
 import pg8000
+from src.ingestion.get_table_names import fetch_tables
 
 
 @pytest.fixture(scope="function")

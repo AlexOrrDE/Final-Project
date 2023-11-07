@@ -4,7 +4,7 @@ handler(event, context)
 
     retrieve key and bucket names from event
 
-    extract table name from key ----- 
+    extract table name from key -----
 
     get the update data -- old_data = s3.get_object(Bucket=bucket_name, Key=old_data_filename)
     read the updated data -- read_old_data = old_data['Body'].read().decode('utf-8')
@@ -19,7 +19,7 @@ handler(event, context)
         return convert_to_paruquet(counterparty_transform_data function)
 
 
-    
+
     )
     # example flow of a table which relies on 1 source table
     design_transform_data(dataframe):
@@ -29,7 +29,7 @@ handler(event, context)
         transform dataframe to fit dim_design schema ---
         return transformed dataframe
 
-        
+
     # example flow of a table which relies on 2 source tables
     counterparty_transform_data(dataframe):
         relevant tables = [ source counterparty table, source address table ]
@@ -45,7 +45,7 @@ handler(event, context)
 
     write to s3(parquet_data):
         writes to s3 process bucket
-        
+
 
 
 """

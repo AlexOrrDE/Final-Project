@@ -1,7 +1,7 @@
+import pg8000
+from pytest import raises
 from src.ingestion.check_for_updates import check_for_updates
 from src.ingestion.connection import connect_to_database
-from pytest import raises
-import pg8000
 
 
 def test_should_return_None_when_no_updates_are_found():
@@ -26,7 +26,6 @@ def test_should_return_True_when_updates_are_found():
 
             def fetchall(self):
                 return [1, 2]
-
     assert check_for_updates(MockConn, "staff", "2023-11-01 11:18:34.305980")
 
 

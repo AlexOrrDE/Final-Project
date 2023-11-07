@@ -32,6 +32,29 @@ def secrets_client(aws_credentials):
         yield boto3.client("secretsmanager", region_name="eu-west-2")
 
 
+@pytest.fixture(scope="function")
+def create_bucket(s3_client):
+    s3_client.create_bucket(
+        Bucket="ingestion-data-bucket-marble",
+        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+    )
+
+
+@pytest.fixture(scope="function")
+def create_secret(secrets_client):
+    secrets_client.create_secret(
+        Name="Totesys-Credentials", SecretString="""
+                    {
+                        "host": "x",
+                        "port": "x",
+                        "database": "x",
+                        "user": "x",
+                        "password" : "x"
+                    }
+                    """
+    )
+
+
 def test_handler_uses_mock_aws_credentials():
     """Checks the tests aren't using the actual AWS keys at any point"""
     logging.info(os.environ['AWS_ACCESS_KEY_ID'])
@@ -43,29 +66,15 @@ def test_handler_uses_mock_aws_credentials():
 
 
 def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
-    s3_client, secrets_client, caplog
+    create_bucket, create_secret, caplog
 ):
     """Tests the handler produces logs for pulling data when a bucket is empty.
     Tests for incorrect logs being sent."""
-    secrets_client.create_secret(
-        Name="Totesys-Credentials", SecretString="""
-                        {
-                            "host": "x",
-                            "port": "x",
-                            "database": "x",
-                            "user": "x",
-                            "password" : "x"
-                        }
-                        """
-    )
-    s3_client.create_bucket(
-        Bucket="ingestion-data-bucket-marble",
-        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
-    )
+
     with patch('src.ingestion.handler.connect_to_database') as mock:
-        with patch('src.ingestion.handler.fetch_tables', return_value=['table1','table2','table3']):
+        with patch('src.ingestion.handler.fetch_tables', return_value=['table1', 'table2', 'table3']):
             with patch('src.ingestion.handler.get_previous_update_dt', return_value=True):
-                with patch('src.ingestion.handler.fetch_data_from_tables', return_value={'table_name':'table1', 'data':['data1']}):
+                with patch('src.ingestion.handler.fetch_data_from_tables', return_value={'table_name': 'table1', 'data': ['data1']}):
                     mock.cursor = True
                     mock.execute = True
                     handler("event", "context")
@@ -74,26 +83,11 @@ def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
 
 
 def test_handler_logs_no_need_to_update_if_bucket_has_file(
-    s3_client, secrets_client, caplog
+    s3_client, create_bucket, create_secret, caplog
 ):
     """Tests the handler produces logs for not pulling data
     when most recent file is up to date. Tests for incorrect
     logs being sent."""
-    secrets_client.create_secret(
-        Name="Totesys-Credentials", SecretString="""
-                        {
-                            "host": "x",
-                            "port": "x",
-                            "database": "x",
-                            "user": "x",
-                            "password" : "x"
-                        }
-                        """
-    )
-    s3_client.create_bucket(
-        Bucket="ingestion-data-bucket-marble",
-        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
-    )
     with patch('src.ingestion.handler.connect_to_database') as mock:
         mock.cursor = True
         mock.execute = True

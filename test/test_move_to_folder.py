@@ -18,25 +18,27 @@ def aws_credentials():
 
 @pytest.fixture(scope="function")
 def s3_client(aws_credentials):
+    """Mocks the call to the AWS S3 client."""
     with mock_s3():
-        yield boto3.client("s3")
+        yield boto3.client("s3", region_name="eu-west-2")
 
 
-def test_should_return_take_2_parameters(s3_client):
-    """raises type error when invoked with incorrect parameters"""
-    with raises(TypeError):
-        s3_client.create_bucket(
-            Bucket="ingestion-data-bucket-marble",
-            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
-        )
-        move_files_to_folder()
-
-
-def test_should_create_new_folder_named_with_timestamp_argument(s3_client):
+@pytest.fixture(scope="function")
+def create_bucket(s3_client):
     s3_client.create_bucket(
         Bucket="ingestion-data-bucket-marble",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
+
+
+def test_should_return_take_2_parameters(create_bucket):
+    """raises type error when invoked with incorrect parameters"""
+    with raises(TypeError):
+        move_files_to_folder()
+
+
+def test_should_create_new_folder_named_with_timestamp_argument(
+        create_bucket, s3_client):
     s3_client.put_object(
         Bucket="ingestion-data-bucket-marble",
         Key="2023-01-01 00:00:00-test-table.csv")
@@ -50,11 +52,7 @@ def test_should_create_new_folder_named_with_timestamp_argument(s3_client):
 
 
 def test_should_group_files_with_same_prefix_timestamp_in_same_folder(
-        s3_client):
-    s3_client.create_bucket(
-        Bucket="ingestion-data-bucket-marble",
-        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
-    )
+        create_bucket, s3_client):
     s3_client.put_object(
         Bucket="ingestion-data-bucket-marble",
         Key="2023-01-01 00:00:00-test-table.csv")
@@ -74,11 +72,8 @@ def test_should_group_files_with_same_prefix_timestamp_in_same_folder(
         Bucket="ingestion-data-bucket-marble")["Contents"][0]["Key"])
 
 
-def test_should_delete_previous_files_in_root_of_bucket(s3_client):
-    s3_client.create_bucket(
-        Bucket="ingestion-data-bucket-marble",
-        CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
-    )
+def test_should_delete_previous_files_in_root_of_bucket(
+        create_bucket, s3_client):
     s3_client.put_object(
         Bucket="ingestion-data-bucket-marble",
         Key="2023-01-01 00:00:00-test-table.csv")

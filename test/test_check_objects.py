@@ -1,10 +1,10 @@
-from src.ingestion.check_objects import check_objects
-import boto3
-from botocore.exceptions import ClientError
-from moto import mock_s3
 import os
+import boto3
+from moto import mock_s3
 import pytest
 from pytest import raises
+from botocore.exceptions import ClientError
+from src.ingestion.check_objects import check_objects
 
 
 @pytest.fixture(scope="function")
@@ -19,29 +19,25 @@ def aws_credentials():
 
 @pytest.fixture(scope="function")
 def s3_client(aws_credentials):
+    """Mocks the call to the AWS S3 client."""
     with mock_s3():
-        yield boto3.client("s3")
+        yield boto3.client("s3", region_name="eu-west-2")
 
 
-def test_should_return_False_if_no_objects_in_the_bucket(s3_client):
+@pytest.fixture(scope="function")
+def create_bucket(s3_client):
     s3_client.create_bucket(
-        Bucket='ingestion-data-bucket-marble',
-        CreateBucketConfiguration={
-            'LocationConstraint': 'eu-west-2'
-        }
+        Bucket="ingestion-data-bucket-marble",
+        reateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
 
+
+def test_should_return_False_if_no_objects_in_the_bucket(create_bucket):
     assert not check_objects()
 
 
-def test_should_return_True_if_one_object_in_the_bucket(s3_client):
-    s3_client.create_bucket(
-        Bucket='ingestion-data-bucket-marble',
-        CreateBucketConfiguration={
-            'LocationConstraint': 'eu-west-2'
-        }
-    )
-
+def test_should_return_True_if_one_object_in_the_bucket(
+        create_bucket, s3_client):
     s3_client.put_object(
         Bucket="ingestion-data-bucket-marble",
         Key="2023-01-01 00:00:00-test-table.csv")
@@ -50,14 +46,7 @@ def test_should_return_True_if_one_object_in_the_bucket(s3_client):
 
 
 def test_should_return_True_if_more_than_one_object_is_in_the_bucket(
-        s3_client):
-    s3_client.create_bucket(
-        Bucket='ingestion-data-bucket-marble',
-        CreateBucketConfiguration={
-            'LocationConstraint': 'eu-west-2'
-        }
-    )
-
+        create_bucket, s3_client):
     s3_client.put_object(
         Bucket="ingestion-data-bucket-marble",
         Key="2023-01-01 00:00:00-test-table.csv")

@@ -1,3 +1,5 @@
+import json
+import logging
 from write_to_s3 import write_to_s3
 from convert_to_csv import convert_to_csv
 from connection import connect_to_database, InvalidStoredCredentials
@@ -5,8 +7,6 @@ from get_table_names import fetch_tables
 from get_table_data import fetch_data_from_tables
 from find_latest import get_previous_update_dt
 from botocore.exceptions import ClientError
-import logging
-import json
 from pg8000 import DatabaseError, InterfaceError
 
 
