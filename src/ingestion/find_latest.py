@@ -17,15 +17,18 @@ def get_previous_update_dt(
 
     try:
         s3 = boto3.resource("s3")
-        bucket = s3.Bucket("totesys-test")
+        bucket = s3.Bucket("ingestion-data-bucket-marble")
         s3 = boto3.resource('s3')
         objects = list(bucket.objects.all())
         previous_updates = []
         for object in objects:
             if f'{table_name}/' in object.key:
                 remove_table_name = object.key.split(f"{table_name}/")
-                find_date = re.search(r'\d{4}\/\d{2}\/\d{2}', remove_table_name[0]).group()
-                find_time = re.search(r'\d{2}:\d{2}', remove_table_name[1]).group()
+                find_date = re.search(
+                    r'\d{4}\/\d{2}\/\d{2}',
+                    remove_table_name[0]).group()
+                find_time = re.search(
+                    r'\d{2}:\d{2}', remove_table_name[1]).group()
                 find_date = find_date.replace('/', '-')
                 date_str = find_date + " " + find_time
                 date_format = '%Y-%m-%d %H:%M'
@@ -36,7 +39,7 @@ def get_previous_update_dt(
         if len(previous_updates) == 0:
             logging.warning("No previous data for this found")
             return False
-        
+
         return max(previous_updates)
 
     except ClientError as e:

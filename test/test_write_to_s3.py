@@ -51,7 +51,7 @@ def test_write_to_s3_adds_correct_prefix_and_suffix_to_filename_on_upload(
     )
     write_to_s3("test-table", "test-data")
     assert (s3_client.list_objects(Bucket="ingestion-data-bucket-marble")
-            ["Contents"][0]["Key"] == "2023-01-01 00:00:00-test-table.csv")
+            ["Contents"][0]["Key"] == "2023/01/01/test-table/00:00.csv")
 
 
 def test_should_raise_client_error_if_bucket_does_not_exist(s3_client):

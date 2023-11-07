@@ -25,3 +25,4 @@ coverage==7.3.2
 moto==4.2.7
 freezegun==1.2.2
 python-dotenv==1.0.0
+pytest-postgresql==5.0.0
