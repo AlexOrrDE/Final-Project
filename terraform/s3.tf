@@ -31,6 +31,7 @@ resource "aws_s3_object" "lambda_code" {
   bucket = aws_s3_bucket.code_bucket.id
   key = "ingestion/handler.zip"
   source = "${path.module}/../handler.zip"
+  source_hash =  data.archive_file.lambda_zip.output_base64sha256
 }
 
 # Zip directory with each of our processing python files
@@ -45,6 +46,7 @@ resource "aws_s3_object" "processing_lambda_code"{
   bucket = aws_s3_bucket.code_bucket.id
   key = "processing/processing_handler.zip"
   source = "${path.module}/../processing_handler.zip"
+  source_hash = data.archive_file.processing_lambda_zip.output_base64sha256
 }
 
 #  Zip up modules
