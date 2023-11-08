@@ -4,26 +4,17 @@ import io
 
 def find_table_pair(table_name):
     table_dict = {
-        'counterparty': 'address',
-        'staff': 'a',
-        'date': 'a',
-        'location': 'a',
-        'design': 'a', 
-        'currency': 'a'
+        'counterparty': ['address', 'legal_address_id'],
+        'staff': ['department', 'department_id'],
     }
-    for table in table_dict:
-        if table_name == table:
-            table_1 = table
-            table_2 = table_dict[table_name]
-            break
-        else:
-            print(table, 'not found')
-
-    return table_1, table_2
+    return table_dict[table_name]
 
 
-def transformer(df, table_1, table_2):
+def table_merge(df, table_dict):
     # call to s3 client, lists objects in data bucket
+    table_1_key = table_dict[1]
+    table_2 = table_dict[0]
+    print(table_1_key, table_2)
     s3 = boto3.client('s3')
     response = s3.list_objects(Bucket='ingestion-data-bucket-marble')
     second_tables = [obj['Key'] for obj in response['Contents'] if table_2 in obj['Key']]
@@ -36,6 +27,7 @@ def transformer(df, table_1, table_2):
     # converts the secondary table to a dataframe
     second_df = pd.read_csv(secondary_file, index_col=False)
 
-    return_table = pd.merge(df, second_df, left_on='legal_address_id', right_on='address_id')
+    # merges the tables by the keys needed
+    return_table = pd.merge(df, second_df, left_on=f'{table_1_key}', right_on=f'{table_2}_id')
     pd.set_option('display.max_columns', None)
     return return_table

@@ -1,12 +1,11 @@
 import os
 import io
-import moto
 import pandas as pd
 from pandas import Timestamp
 import pytest
 import boto3
 from moto import mock_s3
-from src.processing.transformer import transformer
+from src.processing.table_merge import find_table_pair, table_merge
 from src.ingestion.convert_to_csv import convert_to_csv
 
 
@@ -104,7 +103,11 @@ def create_address_data():
         'last_updated': Timestamp('2023-01-01 00:00:00.000000')}]
         }
 
-def test_transformer_is_able_to_find_correct_file(create_bucket, s3_client, create_counterparty_data,create_address_data):
+def test_table_merge_combines_two_tables(create_bucket, s3_client, create_counterparty_data,create_address_data):
+    table_dict = {
+        'counterparty': ['address', 'legal_address_id'],
+        'staff': ['department', 'department_id'],
+    }
     cp_name, cp_csv = convert_to_csv(create_counterparty_data)
     ad_name, ad_csv = convert_to_csv(create_address_data)
 
@@ -122,7 +125,7 @@ def test_transformer_is_able_to_find_correct_file(create_bucket, s3_client, crea
         Body=ad_csv)
     buffer = io.StringIO(cp_csv)
     df = pd.read_csv(buffer)
-    result = transformer(df, 'counter_party', 'address')
-    print(result)
-    assert False
-
+    result = table_merge(df, table_dict['counterparty'])
+    print(result, '<---- result 1')
+    assert 'address_id' in result
+    assert 'counterparty_id' in result
