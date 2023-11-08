@@ -1,4 +1,4 @@
-def create_dim_counterparty(cp_address_merge_df):
+def create_dim_counterparty(cp_merge_df):
     column_name_mapping = {
         "address_line_1": "counterparty_legal_address_line_1",
         "address_line_2": "counterparty_legal_address_line_2",
@@ -9,7 +9,7 @@ def create_dim_counterparty(cp_address_merge_df):
         "phone": "counterparty_legal_phone-number",
     }
 
-    cp_address_merge_df.rename(columns=column_name_mapping, inplace=True)
+    cp_merge_df.rename(columns=column_name_mapping, inplace=True)
 
     columns_to_keep = [
         "counterparty_id",
@@ -23,6 +23,6 @@ def create_dim_counterparty(cp_address_merge_df):
         "counterparty_legal_phone-number",
     ]
 
-    dim_counterparty_df = cp_address_merge_df[columns_to_keep]
+    dim_counterparty_df = cp_merge_df[columns_to_keep]
 
     return dim_counterparty_df
