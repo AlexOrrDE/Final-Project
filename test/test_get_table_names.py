@@ -40,7 +40,6 @@ def test_fetch_tables_removes_prisma_table(mock_db):
             'CREATE TABLE table1 (id serial PRIMARY KEY, name TEXT)')
         cursor.execute(
             'CREATE TABLE _prisma_migrations(id serial PRIMARY KEY, value REAL)')  # noqa
-
     expected_table_names = ["table1"]
     assert sorted(fetch_tables(mock_db)) == expected_table_names
 
@@ -74,5 +73,4 @@ def test_totesys_fetch_tables_returns_a_list_of_table_names_from_schema():
                     ['table2'],
                     ["_prisma_migrations"],
                     ['table3']]
-    # assert
     assert fetch_tables(MockConn) == ['table1', 'table2', 'table3']
