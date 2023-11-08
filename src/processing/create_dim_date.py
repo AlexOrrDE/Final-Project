@@ -32,5 +32,3 @@ def create_dim_date(start, end):
         }
     return df_date
 
-
-create_dim_date("2022/11/08", "2023/11/08")
