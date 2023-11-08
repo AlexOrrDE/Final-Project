@@ -25,17 +25,10 @@ s3 = boto3.client('s3')
 def processing_handler(event, context):
     # Event has a dictionary of all the updated keys (table name with timestamp)
     logging.info(event)
-    # try:
-    #     response = s3.get_object(Bucket=bucket, Key=key)
-    #     table = response['Body']
-    #     logging.info(table)
-        
-    #     logging.info(table.read().decode("utf-8"))
-    #     return response['ContentType']
-    # except Exception as e:
-    #     print(e)
-    #     print('Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.'.format(key, bucket))
-    #     raise e
+
+
+
+    
     
 # The test event JSON:
 
