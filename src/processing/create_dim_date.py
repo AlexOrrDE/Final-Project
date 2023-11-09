@@ -5,8 +5,8 @@ def create_dim_date(start, end):
     given_date = datetime.datetime.strptime(start, "%Y/%m/%d") 
     
     df_date = pd.DataFrame({
-        "date_id": [given_date.strftime("%Y%m%d")],
-        "date": [given_date.strftime("%Y/%m/%d")],
+        "date_id": [given_date.strftime("%Y-%m-%d")],
+        "date": [given_date.strftime("%Y-%m-%d")],
         "year": [given_date.year],
         "month": [given_date.month],
         "day": [given_date.day],
@@ -20,8 +20,8 @@ def create_dim_date(start, end):
     for i in range(num_days):
         given_date = given_date + datetime.timedelta(days=1)
         df_date.loc[len(df_date)] = {
-            "date_id": given_date.strftime("%Y%m%d"),
-            "date": given_date.strftime("%Y/%m/%d"),
+            "date_id": given_date.strftime("%Y-%m-%d"),
+            "date": given_date.strftime("%Y-%m-%d"),
             "year": given_date.year,
             "month": given_date.month,
             "day": given_date.day,
