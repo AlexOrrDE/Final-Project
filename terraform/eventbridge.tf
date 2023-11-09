@@ -1,5 +1,5 @@
 resource "aws_scheduler_schedule" "lambdascheduler" {
-  name       = "my-schedule"
+  # name       = "my-schedule"
   group_name = "default"
 
   flexible_time_window {
