@@ -39,28 +39,31 @@ def table_merge(source_df):
             second_tables = [
                 obj['Key'] for obj in response['Contents']
                 if table_2 in obj['Key']]
-
-            # get latest version of file
-            latest_table = max(second_tables)
-
-            # reads the data from a given address table in s3
-            second_table_data = s3.get_object(
-                Bucket='ingestion-data-bucket-marble', Key=latest_table)
-            read_secondary_data = (
-                second_table_data['Body'].read().decode('utf-8'))
-            secondary_file = io.StringIO(read_secondary_data)
-
-            # converts the secondary table to a dataframe
-            second_source_df = pd.read_csv(secondary_file, index_col=False)
-
-            # merges the tables by the keys needed
-            merged_table = pd.merge(
-                source_df, second_source_df,
-                left_on=f'{table_1_key}', right_on=f'{table_2_key}')
-            pd.set_option('display.max_columns', None)
+            # list files in date order
+            sorted_tables = sorted(second_tables, reverse=True)
+            merged_table = []
+            # reads the data from each address table in s3
+            for index, row in source_df.iterrows():
+                source_key = row[table_1_key]
+                for table in sorted_tables:
+                    table_data = s3.get_object(
+                        Bucket='ingestion-data-bucket-marble', Key=table)
+                    read_table_data = table_data['Body'].read().decode('utf-8')
+                    table_file = io.StringIO(read_table_data)
+                    second_df = pd.read_csv(table_file, index_col=False)
+                    match = second_df.loc[second_df[table_2_key] == source_key]
+                    pd.set_option('display.max_columns', None)
+                    if len(match) > 0:
+                        result = pd.merge(
+                            row.to_frame().T, match,
+                            left_on=f'{table_1_key}',
+                            right_on=f'{table_2_key}')
+                        merged_table.append(result.values.tolist()[0])
+                        break
             logging.info(
                 'Tables %s and %s have been merged.', table_1, table_2)
-            return merged_table
+            pd.set_option('display.max_columns', None)
+            return pd.DataFrame(merged_table)
         else:
             logging.info('No need to merge')
             return source_df

@@ -172,29 +172,25 @@ def create_updated_address_data():
             'country': 'test_country',
             'phone': 'test_phone',
             'created_at': Timestamp('2023-01-02 00:00:00.000000'),
-            'last_updated': Timestamp('2023-01-02 00:00:00.000000')},
-            {
-            'address_id': 2,
-            'address_line_1': 'add_2',
-            'address_line_2': 'add_2_2',
+            'last_updated': Timestamp('2023-01-02 00:00:00.000000')}]
+            }
+
+
+@pytest.fixture(scope="function")
+def create_newest_address_data():
+    yield {
+        'table_name': 'address',
+        'data': [{
+            'address_id': 4,
+            'address_line_1': 'updated_add_4',
+            'address_line_2': 'add_4_2',
             'district': 'test_district',
             'city': 'test_city',
             'postal_code': 'test_post',
             'country': 'test_country',
             'phone': 'test_phone',
-            'created_at': Timestamp('2023-01-01 00:00:00.000000'),
-            'last_updated': Timestamp('2023-01-01 00:00:00.000000')},
-            {
-            'address_id': 3,
-            'address_line_1': 'add_3',
-            'address_line_2': 'add_3_3',
-            'district': 'test_district',
-            'city': 'test_city',
-            'postal_code': 'test_post',
-            'country': 'test_country',
-            'phone': 'test_phone',
-            'created_at': Timestamp('2023-01-01 00:00:00.000000'),
-            'last_updated': Timestamp('2023-01-01 00:00:00.000000')}]
+            'created_at': Timestamp('2023-01-05 00:00:00.000000'),
+            'last_updated': Timestamp('2023-01-05 00:00:00.000000')}]
             }
 
 
@@ -215,8 +211,9 @@ def test_table_merge_combines_counterparty_and_address(
     buffer = io.StringIO(cp_csv)
     source_df = pd.read_csv(buffer)
     result = table_merge(source_df)
-    assert 'address_id' in result
-    assert 'counterparty_id' in result
+    assert 'cp_1' in result[1].values.tolist()
+    assert 'cp_2' in result[1].values.tolist()
+    assert 'cp_3' in result[1].values.tolist()
     assert result is not source_df
 
 
@@ -237,8 +234,9 @@ def test_table_merge_combines_staff_and_department(
     buffer = io.StringIO(staff_csv)
     source_df = pd.read_csv(buffer)
     result = table_merge(source_df)
-    assert 'staff_id' in result
-    assert 'department_id' in result
+    assert 'staff_name_1' in result[1].values.tolist()
+    assert 'staff_name_2' in result[1].values.tolist()
+    assert 'staff_name_3' in result[1].values.tolist()
     assert result is not source_df
 
 
@@ -282,7 +280,40 @@ def test_table_merge_gets_latest_version_of_file(
     source_df = pd.read_csv(buffer)
     result = table_merge(source_df)
     print(result)
-    assert result.at[0, 'address_line_1'] == 'updated_add_1'
+    assert 'updated_add_1' in result[8].values.tolist()
+    assert 'add_2' in result[8].values.tolist()
+    assert 'add_3' in result[8].values.tolist()
+
+
+def test_table_merge_gets_latest_file_when_last_update_doesnt_match(
+        create_bucket, s3_client, create_counterparty_data,
+        create_address_data, create_newest_address_data):
+    cp_name, cp_csv = convert_to_csv(create_counterparty_data)
+    ad_name, ad_csv = convert_to_csv(create_address_data)
+    newest_ad_name, newest_ad_csv = convert_to_csv(
+        create_newest_address_data)
+
+    s3_client.put_object(
+        Bucket="ingestion-data-bucket-marble",
+        Key="2023/01/01/counterparty/00:00.csv",
+        Body=cp_csv)
+
+    s3_client.put_object(
+        Bucket="ingestion-data-bucket-marble",
+        Key="2023/01/01/address/00:00.csv",
+        Body=ad_csv)
+    s3_client.put_object(
+        Bucket="ingestion-data-bucket-marble",
+        Key="2023/01/05/address/00:00.csv",
+        Body=newest_ad_csv)
+
+    buffer = io.StringIO(cp_csv)
+    source_df = pd.read_csv(buffer)
+    result = table_merge(source_df)
+    print(result)
+    assert 'add_1' in result[8].values.tolist()
+    assert 'add_2' in result[8].values.tolist()
+    assert 'add_3' in result[8].values.tolist()
 
 
 def test_table_merge_raises_key_error_if_table_is_not_in_bucket(
