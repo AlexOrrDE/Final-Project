@@ -9,6 +9,7 @@ from dimensions_fact.dim_design import create_dim_design
 from dimensions_fact.dim_location import create_dim_location
 from dimensions_fact.dim_staff import create_dim_staff
 from dimensions_fact.fact_sales_order import create_fact_sales_order
+from table_merge import table_merge
 
 function_dict = {"counterparty" : create_dim_counterparty, "currency" : create_dim_currency, "date" : create_dim_date, "design" : create_dim_design, "location" : create_dim_location, "staff" : create_dim_staff, "sales_order" : create_fact_sales_order}
 
@@ -22,7 +23,7 @@ def handler(event, context):
         update_file = io.StringIO(read_update_data)
         df = pd.read_csv(update_file, index_col=False)
         # Josh has this
-        merged = merge_tables(df)
+        merged = table_merge(df)
         # Alex, Ryman, Shabbir
         try:
             our_func = function_dict[table_name]
