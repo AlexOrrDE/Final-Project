@@ -41,5 +41,4 @@ def handler(event, context):
             result = our_func(merged)
         except BaseException:
             pass
-        returned_parquet = convert_to_parquet(result)
-        write_to_s3(key, returned_parquet)
+        write_to_s3(key, result)
