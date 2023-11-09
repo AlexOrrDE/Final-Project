@@ -25,14 +25,14 @@ def connect_to_database(db='Totesys'):
     """
 
     try:
-        totesys_credentials = retrieve_credentials(
+        credentials = retrieve_credentials(
             f"{db.capitalize()}-Credentials")
         conn = Connection(
-            host=totesys_credentials["host"],
-            port=totesys_credentials["port"],
-            database=totesys_credentials["database"],
-            user=totesys_credentials["user"],
-            password=totesys_credentials["password"],
+            host = credentials["host"],
+            port = credentials["port"],
+            database = credentials["database"],
+            user = credentials["user"],
+            password = credentials["password"],
         )
         return conn
 
