@@ -18,7 +18,7 @@ def connect_to_database(db='Totesys'):
             the data warehouse.
 
     Returns:
-        pg8000.dbapi.Connection: A connection object for the specified database.
+        pg8000.dbapi.Connection: A connection object for specified database.
 
     Raises:
         InterfaceError: If there is an error in connecting to the database.
@@ -28,11 +28,11 @@ def connect_to_database(db='Totesys'):
         credentials = retrieve_credentials(
             f"{db.capitalize()}-Credentials")
         conn = Connection(
-            host = credentials["host"],
-            port = credentials["port"],
-            database = credentials["database"],
-            user = credentials["user"],
-            password = credentials["password"],
+            host=credentials["host"],
+            port=credentials["port"],
+            database=credentials["database"],
+            user=credentials["user"],
+            password=credentials["password"],
         )
         return conn
 
@@ -84,5 +84,3 @@ def retrieve_credentials(secret_name):
         raise InvalidStoredCredentials()
 
     return credentials
-
-
