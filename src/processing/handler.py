@@ -2,13 +2,13 @@ import boto3
 import io
 import pandas as pd
 from write_to_s3 import write_to_s3
-# from dimensions-fact.dim_counterparty import create_dim_counterparty
-# from dimensions-fact.dim_currency import create_dim_currency
-# from dimensions-fact.dim_date import create_dim_date
-# from dimensions-fact.dim_design import create_dim_design
-# from dimensions-fact.dim_location import create_dim_location
-# from dimensions-fact.dim_staff import create_dim_staff
-# from dimensions-fact.fact-sales-order import create_fact_sales_order
+from dimensions-fact.dim_counterparty import create_dim_counterparty
+from dimensions-fact.dim_currency import create_dim_currency
+from dimensions-fact.dim_date import create_dim_date
+from dimensions-fact.dim_design import create_dim_design
+from dimensions-fact.dim_location import create_dim_location
+from dimensions-fact.dim_staff import create_dim_staff
+from dimensions-fact.fact-sales-order import create_fact_sales_order
 
 function_dict = {"counterparty" : create_dim_counterparty, "currency" : create_dim_currency, "date" : create_dim_date, "design" : create_dim_design, "location" : create_dim_location, "staff" : create_dim_staff, "sales_order" : create_fact_sales_order}
 
