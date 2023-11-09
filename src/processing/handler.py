@@ -22,14 +22,11 @@ def handler(event, context):
         read_update_data = update_data['Body'].read().decode('utf-8')
         update_file = io.StringIO(read_update_data)
         df = pd.read_csv(update_file, index_col=False)
-        # Josh has this
         merged = table_merge(df)
-        # Alex, Ryman, Shabbir
         try:
             our_func = function_dict[table_name]
             result = our_func(merged)
         except:
             pass
-        # Alex has this
         returned_parquet = convert_to_parquet(result)
         write_to_s3(key, returned_parquet)
