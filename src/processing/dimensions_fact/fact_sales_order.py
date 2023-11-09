@@ -6,19 +6,19 @@ def create_fact_sales_order(sales_order_df):
 
     sales_order_df["created_date"] = pd.to_datetime(
         sales_order_df["created_at"]
-    ).dt.date
+    ).astype(str).apply(pd.to_datetime, errors='coerce')
 
     sales_order_df["created_time"] = pd.to_datetime(
         sales_order_df["created_at"]
-    ).dt.time
+    ).astype(str).apply(pd.to_datetime, errors='coerce')
 
     sales_order_df["last_updated_date"] = pd.to_datetime(
         sales_order_df["last_updated"]
-    ).dt.date
+    ).astype(str).apply(pd.to_datetime, errors='coerce')
 
     sales_order_df["last_updated_time"] = pd.to_datetime(
         sales_order_df["last_updated"]
-    ).dt.time
+    ).astype(str).apply(pd.to_datetime, errors='coerce')
 
     sales_order_df["unit_price"] = sales_order_df["unit_price"].round(2)
 

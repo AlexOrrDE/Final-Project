@@ -1,4 +1,5 @@
 import io
+import fsspec
 
 
 def convert_to_parquet(dataframe):
@@ -8,14 +9,7 @@ def convert_to_parquet(dataframe):
     ready to be given a key and uploaded to s3
     """
 
-    try:
-        with io.BytesIO() as output:
-            dataframe.to_parquet(output, engine="fastparquet")
-            output.seek(0)
-            return output.read()
-
-    except AttributeError as e:
-        print(
-            f"Error converting to parquet: {e}."
-            "Ensure convert_to_parquet() is being passed a pandas dataframe."
-        )
+    dataframe.to_parquet("memory://temp.parquet")
+    with fsspec.open("memory://temp.parquet", "rb") as f:
+        response = f.read()
+    return response
