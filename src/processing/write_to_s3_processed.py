@@ -1,6 +1,6 @@
-import pandas as df
-import pyarrow
-import pyarrow.parquet as pq
+import pandas as pd
+import pyarrow as pa
+# import pyarrow.parquet as pq
 import boto3
 
 # import pyarrow.Table as Table
@@ -11,7 +11,7 @@ from datetime import datetime
 def write_to_s3_processed(df, s3_bucket, s3_key):
 
     # convert pandas dataframe to pyarrow table
-    df.to_parquet("table.parquet")
+    table = pa.Table.from_pandas(df)
 
     # make a new time stamped key before writing to s3 bucket
     timestamped_key = datetime.now().strftime(f"%Y/%m/%d/{s3_key}/%H:%M")
