@@ -20,7 +20,7 @@ def write_to_s3(
 
     s3_key = f"{name_prefix}.csv"
     boto3.client("s3").put_object(
-      Bucket=bucket_name, Key=s3_key, Body=csv_data
+        Bucket=bucket_name, Key=s3_key, Body=csv_data
     )
 
     return s3_key

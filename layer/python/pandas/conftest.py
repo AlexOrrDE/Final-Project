@@ -133,7 +133,8 @@ def pytest_collection_modifyitems(items, config) -> None:
     )
 
     # Warnings from doctests that can be ignored; place reason in comment above.
-    # Each entry specifies (path, message) - see the ignore_doctest_warning function
+    # Each entry specifies (path, message) - see the ignore_doctest_warning
+    # function
     ignored_doctest_warnings = [
         ("is_int64_dtype", "is_int64_dtype is deprecated"),
         ("is_interval_dtype", "is_interval_dtype is deprecated"),
@@ -186,7 +187,8 @@ def pytest_collection_modifyitems(items, config) -> None:
             for path, message in ignored_doctest_warnings:
                 ignore_doctest_warning(item, path, message)
 
-        # mark all tests in the pandas/tests/frame directory with "arraymanager"
+        # mark all tests in the pandas/tests/frame directory with
+        # "arraymanager"
         if "/frame/" in item.nodeid:
             item.add_marker(pytest.mark.arraymanager)
 
@@ -266,7 +268,8 @@ def configure_tests() -> None:
 # ----------------------------------------------------------------
 # Common arguments
 # ----------------------------------------------------------------
-@pytest.fixture(params=[0, 1, "index", "columns"], ids=lambda x: f"axis={repr(x)}")
+@pytest.fixture(params=[0, 1, "index", "columns"],
+                ids=lambda x: f"axis={repr(x)}")
 def axis(request):
     """
     Fixture for returning the axis numbers of a DataFrame.
@@ -475,7 +478,8 @@ def index_or_series(request):
 index_or_series2 = index_or_series
 
 
-@pytest.fixture(params=[Index, Series, pd.array], ids=["index", "series", "array"])
+@pytest.fixture(params=[Index, Series, pd.array],
+                ids=["index", "series", "array"])
 def index_or_series_or_array(request):
     """
     Fixture to parametrize over Index, Series, and ExtensionArray
@@ -483,7 +487,8 @@ def index_or_series_or_array(request):
     return request.param
 
 
-@pytest.fixture(params=[Index, Series, DataFrame, pd.array], ids=lambda x: x.__name__)
+@pytest.fixture(params=[Index, Series, DataFrame,
+                pd.array], ids=lambda x: x.__name__)
 def box_with_array(request):
     """
     Fixture to test behavior for Index, Series, DataFrame, and pandas Array
@@ -540,9 +545,11 @@ def multiindex_year_month_day_dataframe_random_data():
     first 100 business days from 2000-01-01 with random data
     """
     tdf = tm.makeTimeDataFrame(100)
-    ymd = tdf.groupby([lambda x: x.year, lambda x: x.month, lambda x: x.day]).sum()
+    ymd = tdf.groupby(
+        [lambda x: x.year, lambda x: x.month, lambda x: x.day]).sum()
     # use int64 Index, to make sure things work
-    ymd.index = ymd.index.set_levels([lev.astype("i8") for lev in ymd.index.levels])
+    ymd.index = ymd.index.set_levels(
+        [lev.astype("i8") for lev in ymd.index.levels])
     ymd.index.set_names(["year", "month", "day"], inplace=True)
     return ymd
 
@@ -597,10 +604,8 @@ def _create_mi_with_dt64tz_level():
     MultiIndex with a level that is a tzaware DatetimeIndex.
     """
     # GH#8367 round trip with pickle
-    return MultiIndex.from_product(
-        [[1, 2], ["a", "b"], pd.date_range("20130101", periods=3, tz="US/Eastern")],
-        names=["one", "two", "three"],
-    )
+    return MultiIndex.from_product([[1, 2], ["a", "b"], pd.date_range(
+        "20130101", periods=3, tz="US/Eastern")], names=["one", "two", "three"], )
 
 
 indices_dict = {
@@ -661,11 +666,9 @@ def index(request):
 index_fixture2 = index
 
 
-@pytest.fixture(
-    params=[
-        key for key, value in indices_dict.items() if not isinstance(value, MultiIndex)
-    ]
-)
+@pytest.fixture(params=[key for key,
+                        value in indices_dict.items() if not isinstance(value,
+                                                                        MultiIndex)])
 def index_flat(request):
     """
     index fixture, but excluding MultiIndex cases.
@@ -953,7 +956,9 @@ def rand_series_with_duplicate_datetimeindex() -> Series:
         datetime(2000, 1, 5),
     ]
 
-    return Series(np.random.default_rng(2).standard_normal(len(dates)), index=dates)
+    return Series(
+        np.random.default_rng(2).standard_normal(
+            len(dates)), index=dates)
 
 
 # ----------------------------------------------------------------
@@ -1758,7 +1763,8 @@ def any_numeric_dtype(request):
 _any_skipna_inferred_dtype = [
     ("string", ["a", np.nan, "c"]),
     ("string", ["a", pd.NA, "c"]),
-    ("mixed", ["a", pd.NaT, "c"]),  # pd.NaT not considered valid by is_string_array
+    # pd.NaT not considered valid by is_string_array
+    ("mixed", ["a", pd.NaT, "c"]),
     ("bytes", [b"a", np.nan, b"c"]),
     ("empty", [np.nan, np.nan, np.nan]),
     ("empty", []),
@@ -1770,7 +1776,8 @@ _any_skipna_inferred_dtype = [
     ("decimal", [Decimal(1), np.nan, Decimal(2)]),
     ("boolean", [True, np.nan, False]),
     ("boolean", [True, pd.NA, False]),
-    ("datetime64", [np.datetime64("2013-01-01"), np.nan, np.datetime64("2018-01-01")]),
+    ("datetime64", [np.datetime64("2013-01-01"),
+     np.nan, np.datetime64("2018-01-01")]),
     ("datetime", [Timestamp("20130101"), np.nan, Timestamp("20180101")]),
     ("date", [date(2013, 1, 1), np.nan, date(2018, 1, 1)]),
     ("complex", [1 + 1j, np.nan, 2 + 2j]),
@@ -1995,7 +2002,8 @@ def using_copy_on_write() -> bool:
 
 warsaws = ["Europe/Warsaw", "dateutil/Europe/Warsaw"]
 if zoneinfo is not None:
-    warsaws.append(zoneinfo.ZoneInfo("Europe/Warsaw"))  # type: ignore[arg-type]
+    # type: ignore[arg-type]
+    warsaws.append(zoneinfo.ZoneInfo("Europe/Warsaw"))
 
 
 @pytest.fixture(params=warsaws)

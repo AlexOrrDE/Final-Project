@@ -48,7 +48,7 @@ class relativedelta(object):
             the corresponding arithmetic operation on the original datetime value
             with the information in the relativedelta.
 
-        weekday: 
+        weekday:
             One of the weekday instances (MO, TU, etc) available in the
             relativedelta module. These instances may receive a parameter N,
             specifying the Nth weekday, which could be positive or negative
@@ -217,11 +217,11 @@ class relativedelta(object):
                            243, 273, 304, 334, 366]
                 for idx, ydays in enumerate(ydayidx):
                     if yday <= ydays:
-                        self.month = idx+1
+                        self.month = idx + 1
                         if idx == 0:
                             self.day = yday
                         else:
-                            self.day = yday-ydayidx[idx-1]
+                            self.day = yday - ydayidx[idx - 1]
                         break
                 else:
                     raise ValueError("invalid year day (%d)" % yday)
@@ -290,7 +290,8 @@ class relativedelta(object):
         :return:
             Returns a :class:`dateutil.relativedelta.relativedelta` object.
         """
-        # Cascade remainders down (rounding each to roughly nearest microsecond)
+        # Cascade remainders down (rounding each to roughly nearest
+        # microsecond)
         days = int(self.days)
 
         hours_f = round(self.hours + 24 * (self.days - days), 11)
@@ -317,53 +318,57 @@ class relativedelta(object):
     def __add__(self, other):
         if isinstance(other, relativedelta):
             return self.__class__(years=other.years + self.years,
-                                 months=other.months + self.months,
-                                 days=other.days + self.days,
-                                 hours=other.hours + self.hours,
-                                 minutes=other.minutes + self.minutes,
-                                 seconds=other.seconds + self.seconds,
-                                 microseconds=(other.microseconds +
-                                               self.microseconds),
-                                 leapdays=other.leapdays or self.leapdays,
-                                 year=(other.year if other.year is not None
-                                       else self.year),
-                                 month=(other.month if other.month is not None
-                                        else self.month),
-                                 day=(other.day if other.day is not None
-                                      else self.day),
-                                 weekday=(other.weekday if other.weekday is not None
-                                          else self.weekday),
-                                 hour=(other.hour if other.hour is not None
-                                       else self.hour),
-                                 minute=(other.minute if other.minute is not None
-                                         else self.minute),
-                                 second=(other.second if other.second is not None
-                                         else self.second),
-                                 microsecond=(other.microsecond if other.microsecond
-                                              is not None else
-                                              self.microsecond))
+                                  months=other.months + self.months,
+                                  days=other.days + self.days,
+                                  hours=other.hours + self.hours,
+                                  minutes=other.minutes + self.minutes,
+                                  seconds=other.seconds + self.seconds,
+                                  microseconds=(other.microseconds +
+                                                self.microseconds),
+                                  leapdays=other.leapdays or self.leapdays,
+                                  year=(other.year if other.year is not None
+                                        else self.year),
+                                  month=(other.month if other.month is not None
+                                         else self.month),
+                                  day=(other.day if other.day is not None
+                                       else self.day),
+                                  weekday=(other.weekday if other.weekday is not None
+                                           else self.weekday),
+                                  hour=(other.hour if other.hour is not None
+                                        else self.hour),
+                                  minute=(other.minute if other.minute is not None
+                                          else self.minute),
+                                  second=(other.second if other.second is not None
+                                          else self.second),
+                                  microsecond=(other.microsecond if other.microsecond
+                                               is not None else
+                                               self.microsecond))
         if isinstance(other, datetime.timedelta):
-            return self.__class__(years=self.years,
-                                  months=self.months,
-                                  days=self.days + other.days,
-                                  hours=self.hours,
-                                  minutes=self.minutes,
-                                  seconds=self.seconds + other.seconds,
-                                  microseconds=self.microseconds + other.microseconds,
-                                  leapdays=self.leapdays,
-                                  year=self.year,
-                                  month=self.month,
-                                  day=self.day,
-                                  weekday=self.weekday,
-                                  hour=self.hour,
-                                  minute=self.minute,
-                                  second=self.second,
-                                  microsecond=self.microsecond)
+            return self.__class__(
+                years=self.years,
+                months=self.months,
+                days=self.days +
+                other.days,
+                hours=self.hours,
+                minutes=self.minutes,
+                seconds=self.seconds +
+                other.seconds,
+                microseconds=self.microseconds +
+                other.microseconds,
+                leapdays=self.leapdays,
+                year=self.year,
+                month=self.month,
+                day=self.day,
+                weekday=self.weekday,
+                hour=self.hour,
+                minute=self.minute,
+                second=self.second,
+                microsecond=self.microsecond)
         if not isinstance(other, datetime.date):
             return NotImplemented
         elif self._has_time and not isinstance(other, datetime.datetime):
             other = datetime.datetime.fromordinal(other.toordinal())
-        year = (self.year or other.year)+self.years
+        year = (self.year or other.year) + self.years
         month = self.month or other.month
         if self.months:
             assert 1 <= abs(self.months) <= 12
@@ -411,30 +416,30 @@ class relativedelta(object):
         if not isinstance(other, relativedelta):
             return NotImplemented   # In case the other object defines __rsub__
         return self.__class__(years=self.years - other.years,
-                             months=self.months - other.months,
-                             days=self.days - other.days,
-                             hours=self.hours - other.hours,
-                             minutes=self.minutes - other.minutes,
-                             seconds=self.seconds - other.seconds,
-                             microseconds=self.microseconds - other.microseconds,
-                             leapdays=self.leapdays or other.leapdays,
-                             year=(self.year if self.year is not None
-                                   else other.year),
-                             month=(self.month if self.month is not None else
-                                    other.month),
-                             day=(self.day if self.day is not None else
-                                  other.day),
-                             weekday=(self.weekday if self.weekday is not None else
-                                      other.weekday),
-                             hour=(self.hour if self.hour is not None else
-                                   other.hour),
-                             minute=(self.minute if self.minute is not None else
-                                     other.minute),
-                             second=(self.second if self.second is not None else
-                                     other.second),
-                             microsecond=(self.microsecond if self.microsecond
-                                          is not None else
-                                          other.microsecond))
+                              months=self.months - other.months,
+                              days=self.days - other.days,
+                              hours=self.hours - other.hours,
+                              minutes=self.minutes - other.minutes,
+                              seconds=self.seconds - other.seconds,
+                              microseconds=self.microseconds - other.microseconds,
+                              leapdays=self.leapdays or other.leapdays,
+                              year=(self.year if self.year is not None
+                                    else other.year),
+                              month=(self.month if self.month is not None else
+                                     other.month),
+                              day=(self.day if self.day is not None else
+                                   other.day),
+                              weekday=(self.weekday if self.weekday is not None else
+                                       other.weekday),
+                              hour=(self.hour if self.hour is not None else
+                                    other.hour),
+                              minute=(self.minute if self.minute is not None else
+                                      other.minute),
+                              second=(self.second if self.second is not None else
+                                      other.second),
+                              microsecond=(self.microsecond if self.microsecond
+                                           is not None else
+                                           other.microsecond))
 
     def __abs__(self):
         return self.__class__(years=abs(self.years),
@@ -456,21 +461,21 @@ class relativedelta(object):
 
     def __neg__(self):
         return self.__class__(years=-self.years,
-                             months=-self.months,
-                             days=-self.days,
-                             hours=-self.hours,
-                             minutes=-self.minutes,
-                             seconds=-self.seconds,
-                             microseconds=-self.microseconds,
-                             leapdays=self.leapdays,
-                             year=self.year,
-                             month=self.month,
-                             day=self.day,
-                             weekday=self.weekday,
-                             hour=self.hour,
-                             minute=self.minute,
-                             second=self.second,
-                             microsecond=self.microsecond)
+                              months=-self.months,
+                              days=-self.days,
+                              hours=-self.hours,
+                              minutes=-self.minutes,
+                              seconds=-self.seconds,
+                              microseconds=-self.microseconds,
+                              leapdays=self.leapdays,
+                              year=self.year,
+                              month=self.month,
+                              day=self.day,
+                              weekday=self.weekday,
+                              hour=self.hour,
+                              minute=self.minute,
+                              second=self.second,
+                              microsecond=self.microsecond)
 
     def __bool__(self):
         return not (not self.years and
@@ -499,21 +504,21 @@ class relativedelta(object):
             return NotImplemented
 
         return self.__class__(years=int(self.years * f),
-                             months=int(self.months * f),
-                             days=int(self.days * f),
-                             hours=int(self.hours * f),
-                             minutes=int(self.minutes * f),
-                             seconds=int(self.seconds * f),
-                             microseconds=int(self.microseconds * f),
-                             leapdays=self.leapdays,
-                             year=self.year,
-                             month=self.month,
-                             day=self.day,
-                             weekday=self.weekday,
-                             hour=self.hour,
-                             minute=self.minute,
-                             second=self.second,
-                             microsecond=self.microsecond)
+                              months=int(self.months * f),
+                              days=int(self.days * f),
+                              hours=int(self.hours * f),
+                              minutes=int(self.minutes * f),
+                              seconds=int(self.seconds * f),
+                              microseconds=int(self.microseconds * f),
+                              leapdays=self.leapdays,
+                              year=self.year,
+                              month=self.month,
+                              day=self.day,
+                              weekday=self.weekday,
+                              hour=self.hour,
+                              minute=self.minute,
+                              second=self.second,
+                              microsecond=self.microsecond)
 
     __rmul__ = __mul__
 

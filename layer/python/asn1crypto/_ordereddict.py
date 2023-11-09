@@ -34,7 +34,9 @@ else:
 
         def __init__(self, *args, **kwds):
             if len(args) > 1:
-                raise TypeError('expected at most 1 arguments, got %d' % len(args))
+                raise TypeError(
+                    'expected at most 1 arguments, got %d' %
+                    len(args))
             try:
                 self.__end
             except AttributeError:

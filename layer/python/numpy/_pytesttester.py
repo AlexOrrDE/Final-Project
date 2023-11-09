@@ -73,6 +73,7 @@ class PytestTester:
     suppression.
 
     """
+
     def __init__(self, module_name):
         self.module_name = module_name
 
@@ -157,13 +158,13 @@ class PytestTester:
             "-W ignore:numpy.dtype size changed",
             "-W ignore:numpy.ufunc size changed",
             "-W ignore::UserWarning:cpuinfo",
-            ]
+        ]
 
         # When testing matrices, ignore their PendingDeprecationWarnings
         pytest_args += [
             "-W ignore:the matrix subclass is not",
             "-W ignore:Importing from numpy.matlib is",
-            ]
+        ]
 
         if doctests:
             pytest_args += ["--doctest-modules"]
@@ -172,7 +173,7 @@ class PytestTester:
             pytest_args += list(extra_argv)
 
         if verbose > 1:
-            pytest_args += ["-" + "v"*(verbose - 1)]
+            pytest_args += ["-" + "v" * (verbose - 1)]
 
         if coverage:
             pytest_args += ["--cov=" + module_path]

@@ -44,7 +44,8 @@ def detect(byte_string):
             _type_name(byte_string)
         ))
 
-    return byte_string.find(b'-----BEGIN') != -1 or byte_string.find(b'---- BEGIN') != -1
+    return byte_string.find(b'-----BEGIN') != - \
+        1 or byte_string.find(b'---- BEGIN') != -1
 
 
 def armor(type_name, der_bytes, headers=None):
@@ -151,7 +152,8 @@ def _unarmor(pem_bytes):
         if state == "trash":
             # Look for a starting line since some CA cert bundle show the cert
             # into in a parsed format above each PEM block
-            type_name_match = re.match(b'^(?:---- |-----)BEGIN ([A-Z0-9 ]+)(?: ----|-----)', line)
+            type_name_match = re.match(
+                b'^(?:---- |-----)BEGIN ([A-Z0-9 ]+)(?: ----|-----)', line)
             if not type_name_match:
                 continue
             object_type = type_name_match.group(1).decode('ascii')

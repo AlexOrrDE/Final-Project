@@ -170,8 +170,14 @@ def _write(sock, d):
 
 
 def _make_socket(
-    unix_sock, sock, host, port, timeout, source_address, tcp_keepalive, ssl_context
-):
+        unix_sock,
+        sock,
+        host,
+        port,
+        timeout,
+        source_address,
+        tcp_keepalive,
+        ssl_context):
     if unix_sock is not None:
         if sock is not None:
             raise InterfaceError("If unix_sock is provided, sock must be None")
@@ -196,12 +202,12 @@ def _make_socket(
 
     elif host is not None:
         try:
-            sock = socket.create_connection((host, port), timeout, source_address)
+            sock = socket.create_connection(
+                (host, port), timeout, source_address)
         except socket.error as e:
             raise InterfaceError(
                 f"Can't create a connection to host {host} and port {port} "
-                f"(timeout is {timeout} and source_address is {source_address})."
-            ) from e
+                f"(timeout is {timeout} and source_address is {source_address}).") from e
 
         if tcp_keepalive:
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
@@ -280,7 +286,8 @@ class CoreConnection:
         self.parameter_statuses = deque(maxlen=100)
 
         if user is None:
-            raise InterfaceError("The 'user' connection parameter cannot be None")
+            raise InterfaceError(
+                "The 'user' connection parameter cannot be None")
 
         init_params = {
             "user": user,
@@ -295,7 +302,8 @@ class CoreConnection:
             elif v is None:
                 del init_params[k]
             elif not isinstance(v, (bytes, bytearray)):
-                raise InterfaceError(f"The parameter {k} can't be of type {type(v)}.")
+                raise InterfaceError(
+                    f"The parameter {k} can't be of type {type(v)}.")
 
         self.user = init_params["user"]
 
@@ -372,7 +380,8 @@ class CoreConnection:
             while code not in (READY_FOR_QUERY, ERROR_RESPONSE):
                 code, data_len = ci_unpack(_read(self._sock, 5))
 
-                self.message_types[code](_read(self._sock, data_len - 4), context)
+                self.message_types[code](
+                    _read(self._sock, data_len - 4), context)
 
             if context.error is not None:
                 raise context.error
@@ -462,24 +471,22 @@ class CoreConnection:
         if context.stream is None:
             raise InterfaceError(
                 "The 'stream' parameter is required for the COPY IN response. The "
-                "'stream' parameter can be an I/O stream or an iterable."
-            )
+                "'stream' parameter can be an I/O stream or an iterable.")
 
         if isinstance(context.stream, IOBase):
             if isinstance(context.stream, TextIOBase):
                 if is_binary:
                     raise InterfaceError(
                         "The COPY IN stream is binary, but the stream parameter is a "
-                        "text stream."
-                    )
+                        "text stream.")
 
                 else:
 
                     def ri(bffr):
                         bffr.clear()
                         bffr.extend(
-                            context.stream.read(4096).encode(self._client_encoding)
-                        )
+                            context.stream.read(4096).encode(
+                                self._client_encoding))
                         return len(bffr)
 
                     readinto = ri
@@ -502,8 +509,7 @@ class CoreConnection:
                     if is_binary:
                         raise InterfaceError(
                             "The COPY IN stream is binary, but the stream parameter "
-                            "is an iterable with str type items."
-                        )
+                            "is an iterable with str type items.")
                     b = k.encode(self._client_encoding)
                 else:
                     b = k
@@ -522,7 +528,7 @@ class CoreConnection:
         idx = 4
         null_idx = data.find(NULL_BYTE, idx)
         channel = data[idx:null_idx].decode("ascii")
-        payload = data[null_idx + 1 : -1].decode("ascii")
+        payload = data[null_idx + 1: -1].decode("ascii")
 
         self.notifications.append((backend_pid, channel, payload))
 
@@ -558,8 +564,7 @@ class CoreConnection:
             if self.password is None:
                 raise InterfaceError(
                     "server requesting password authentication, but no password was "
-                    "provided"
-                )
+                    "provided")
             self._send_message(PASSWORD, self.password + NULL_BYTE)
             _flush(self._sock)
 
@@ -568,8 +573,7 @@ class CoreConnection:
             if self.password is None:
                 raise InterfaceError(
                     "server requesting MD5 password authentication, but no password "
-                    "was provided"
-                )
+                    "was provided")
             pwd = b"md5" + md5(
                 md5(self.password + self.user).hexdigest().encode("ascii") + salt
             ).hexdigest().encode("ascii")
@@ -578,7 +582,8 @@ class CoreConnection:
 
         elif auth_code == 10:
             # AuthenticationSASL
-            mechanisms = [m.decode("ascii") for m in data[4:-2].split(NULL_BYTE)]
+            mechanisms = [m.decode("ascii")
+                          for m in data[4:-2].split(NULL_BYTE)]
 
             self.auth = scramp.ScramClient(
                 mechanisms,
@@ -628,7 +633,7 @@ class CoreConnection:
         columns = []
         input_funcs = []
         for i in range(count):
-            name = data[idx : data.find(NULL_BYTE, idx)]
+            name = data[idx: data.find(NULL_BYTE, idx)]
             idx += len(name) + 1
             field = dict(
                 zip(
@@ -668,7 +673,9 @@ class CoreConnection:
         _write(self._sock, FLUSH_MSG)
 
     def send_QUERY(self, sql):
-        self._send_message(QUERY, sql.encode(self._client_encoding) + NULL_BYTE)
+        self._send_message(
+            QUERY, sql.encode(
+                self._client_encoding) + NULL_BYTE)
 
     def execute_simple(self, statement):
         context = Context(statement)
@@ -736,7 +743,10 @@ class CoreConnection:
     def execute_named(
         self, statement_name_bin, params, columns, input_funcs, statement
     ):
-        context = Context(columns=columns, input_funcs=input_funcs, statement=statement)
+        context = Context(
+            columns=columns,
+            input_funcs=input_funcs,
+            statement=statement)
 
         self.send_BIND(statement_name_bin, params)
         self.send_EXECUTE()
@@ -810,7 +820,8 @@ class CoreConnection:
             if vlen == -1:
                 v = None
             else:
-                v = func(str(data[idx : idx + vlen], encoding=self._client_encoding))
+                v = func(str(data[idx: idx + vlen],
+                         encoding=self._client_encoding))
                 idx += vlen
             row.append(v)
         context.rows.append(row)
@@ -842,7 +853,7 @@ class CoreConnection:
 
     def handle_PARAMETER_STATUS(self, data, context):
         pos = data.find(NULL_BYTE)
-        key, value = data[:pos], data[pos + 1 : -1]
+        key, value = data[:pos], data[pos + 1: -1]
         self.parameter_statuses.append((key, value))
         if key == b"client_encoding":
             encoding = value.decode("ascii").lower()

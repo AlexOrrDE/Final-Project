@@ -32,23 +32,57 @@ __all__ = ["rrule", "rruleset", "rrulestr",
            "MO", "TU", "WE", "TH", "FR", "SA", "SU"]
 
 # Every mask is 7 days longer to handle cross-year weekly periods.
-M366MASK = tuple([1]*31+[2]*29+[3]*31+[4]*30+[5]*31+[6]*30 +
-                 [7]*31+[8]*31+[9]*30+[10]*31+[11]*30+[12]*31+[1]*7)
+M366MASK = tuple(
+    [1] *
+    31 +
+    [2] *
+    29 +
+    [3] *
+    31 +
+    [4] *
+    30 +
+    [5] *
+    31 +
+    [6] *
+    30 +
+    [7] *
+    31 +
+    [8] *
+    31 +
+    [9] *
+    30 +
+    [10] *
+    31 +
+    [11] *
+    30 +
+    [12] *
+    31 +
+    [1] *
+    7)
 M365MASK = list(M366MASK)
 M29, M30, M31 = list(range(1, 30)), list(range(1, 31)), list(range(1, 32))
-MDAY366MASK = tuple(M31+M29+M31+M30+M31+M30+M31+M31+M30+M31+M30+M31+M31[:7])
+MDAY366MASK = tuple(M31 + M29 + M31 + M30 + M31 + M30 +
+                    M31 + M31 + M30 + M31 + M30 + M31 + M31[:7])
 MDAY365MASK = list(MDAY366MASK)
 M29, M30, M31 = list(range(-29, 0)), list(range(-30, 0)), list(range(-31, 0))
-NMDAY366MASK = tuple(M31+M29+M31+M30+M31+M30+M31+M31+M30+M31+M30+M31+M31[:7])
+NMDAY366MASK = tuple(M31 + M29 + M31 + M30 + M31 + M30 +
+                     M31 + M31 + M30 + M31 + M30 + M31 + M31[:7])
 NMDAY365MASK = list(NMDAY366MASK)
 M366RANGE = (0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366)
 M365RANGE = (0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365)
-WDAYMASK = [0, 1, 2, 3, 4, 5, 6]*55
+WDAYMASK = [0, 1, 2, 3, 4, 5, 6] * 55
 del M29, M30, M31, M365MASK[59], MDAY365MASK[59], NMDAY365MASK[31]
 MDAY365MASK = tuple(MDAY365MASK)
 M365MASK = tuple(M365MASK)
 
-FREQNAMES = ['YEARLY', 'MONTHLY', 'WEEKLY', 'DAILY', 'HOURLY', 'MINUTELY', 'SECONDLY']
+FREQNAMES = [
+    'YEARLY',
+    'MONTHLY',
+    'WEEKLY',
+    'DAILY',
+    'HOURLY',
+    'MINUTELY',
+    'SECONDLY']
 
 (YEARLY,
  MONTHLY,
@@ -67,6 +101,7 @@ class weekday(weekdaybase):
     """
     This version of weekday does not allow n = 0.
     """
+
     def __init__(self, wkday, n=None):
         if n == 0:
             raise ValueError("Can't create weekday with n==0")
@@ -160,7 +195,7 @@ class rrulebase(object):
         elif item >= 0:
             gen = iter(self)
             try:
-                for i in range(item+1):
+                for i in range(item + 1):
                     res = advance_iterator(gen)
             except StopIteration:
                 raise IndexError
@@ -253,9 +288,9 @@ class rrulebase(object):
 
         # Select the comparison function
         if inc:
-            comp = lambda dc, dtc: dc >= dtc
+            def comp(dc, dtc): return dc >= dtc
         else:
-            comp = lambda dc, dtc: dc > dtc
+            def comp(dc, dtc): return dc > dtc
 
         # Generate dates
         n = 0
@@ -425,6 +460,7 @@ class rrule(rrulebase):
         caching of results. If you will use the same rrule instance multiple
         times, enabling caching will improve the performance considerably.
      """
+
     def __init__(self, freq, dtstart=None,
                  interval=1, wkst=None, count=None, until=None, bysetpos=None,
                  bymonth=None, bymonthday=None, byyearday=None, byeaster=None,
@@ -435,7 +471,9 @@ class rrule(rrulebase):
         global easter
         if not dtstart:
             if until and until.tzinfo:
-                dtstart = datetime.datetime.now(tz=until.tzinfo).replace(microsecond=0)
+                dtstart = datetime.datetime.now(
+                    tz=until.tzinfo).replace(
+                    microsecond=0)
             else:
                 dtstart = datetime.datetime.now().replace(microsecond=0)
         elif not isinstance(dtstart, datetime.datetime):
@@ -459,7 +497,8 @@ class rrule(rrulebase):
         self._until = until
 
         if self._dtstart and self._until:
-            if (self._dtstart.tzinfo is not None) != (self._until.tzinfo is not None):
+            if (self._dtstart.tzinfo is not None) != (
+                    self._until.tzinfo is not None):
                 # According to RFC5545 Section 3.3.10:
                 # https://tools.ietf.org/html/rfc5545#section-3.3.10
                 #
@@ -768,7 +807,7 @@ class rrule(rrulebase):
                       "freq": self._freq,
                       "until": self._until,
                       "wkst": self._wkst,
-                      "cache": False if self._cache is None else True }
+                      "cache": False if self._cache is None else True}
         new_kwargs.update(self._original_rule)
         new_kwargs.update(kwargs)
         return rrule(**new_kwargs)
@@ -839,10 +878,10 @@ class rrule(rrulebase):
                      ii.mdaymask[i] not in bymonthday and
                      ii.nmdaymask[i] not in bynmonthday) or
                     (byyearday and
-                     ((i < ii.yearlen and i+1 not in byyearday and
-                       -ii.yearlen+i not in byyearday) or
-                      (i >= ii.yearlen and i+1-ii.yearlen not in byyearday and
-                       -ii.nextyearlen+i-ii.yearlen not in byyearday)))):
+                     ((i < ii.yearlen and i + 1 not in byyearday and
+                       -ii.yearlen + i not in byyearday) or
+                      (i >= ii.yearlen and i + 1 - ii.yearlen not in byyearday and
+                       -ii.nextyearlen + i - ii.yearlen not in byyearday)))):
                     dayset[i] = None
                     filtered = True
 
@@ -853,7 +892,7 @@ class rrule(rrulebase):
                     if pos < 0:
                         daypos, timepos = divmod(pos, len(timeset))
                     else:
-                        daypos, timepos = divmod(pos-1, len(timeset))
+                        daypos, timepos = divmod(pos - 1, len(timeset))
                     try:
                         i = [x for x in dayset[start:end]
                              if x is not None][daypos]
@@ -861,7 +900,7 @@ class rrule(rrulebase):
                     except IndexError:
                         pass
                     else:
-                        date = datetime.date.fromordinal(ii.yearordinal+i)
+                        date = datetime.date.fromordinal(ii.yearordinal + i)
                         res = datetime.datetime.combine(date, time)
                         if res not in poslist:
                             poslist.append(res)
@@ -920,9 +959,9 @@ class rrule(rrulebase):
                 ii.rebuild(year, month)
             elif freq == WEEKLY:
                 if wkst > weekday:
-                    day += -(weekday+1+(6-wkst))+self._interval*7
+                    day += -(weekday + 1 + (6 - wkst)) + self._interval * 7
                 else:
-                    day += -(weekday-wkst)+self._interval*7
+                    day += -(weekday - wkst) + self._interval * 7
                 weekday = wkst
                 fixday = True
             elif freq == DAILY:
@@ -931,14 +970,14 @@ class rrule(rrulebase):
             elif freq == HOURLY:
                 if filtered:
                     # Jump to one iteration before next day
-                    hour += ((23-hour)//interval)*interval
+                    hour += ((23 - hour) // interval) * interval
 
                 if byhour:
                     ndays, hour = self.__mod_distance(value=hour,
                                                       byxxx=self._byhour,
                                                       base=24)
                 else:
-                    ndays, hour = divmod(hour+interval, 24)
+                    ndays, hour = divmod(hour + interval, 24)
 
                 if ndays:
                     day += ndays
@@ -948,10 +987,11 @@ class rrule(rrulebase):
             elif freq == MINUTELY:
                 if filtered:
                     # Jump to one iteration before next day
-                    minute += ((1439-(hour*60+minute))//interval)*interval
+                    minute += ((1439 - (hour * 60 + minute)) //
+                               interval) * interval
 
                 valid = False
-                rep_rate = (24*60)
+                rep_rate = (24 * 60)
                 for j in range(rep_rate // gcd(interval, rep_rate)):
                     if byminute:
                         nhours, minute = \
@@ -959,9 +999,9 @@ class rrule(rrulebase):
                                                 byxxx=self._byminute,
                                                 base=60)
                     else:
-                        nhours, minute = divmod(minute+interval, 60)
+                        nhours, minute = divmod(minute + interval, 60)
 
-                    div, hour = divmod(hour+nhours, 24)
+                    div, hour = divmod(hour + nhours, 24)
                     if div:
                         day += div
                         fixday = True
@@ -991,9 +1031,9 @@ class rrule(rrulebase):
                                                 byxxx=self._bysecond,
                                                 base=60)
                     else:
-                        nminutes, second = divmod(second+interval, 60)
+                        nminutes, second = divmod(second + interval, 60)
 
-                    div, minute = divmod(minute+nminutes, 60)
+                    div, minute = divmod(minute + nminutes, 60)
                     if div:
                         hour += div
                         div, hour = divmod(hour, 24)
@@ -1147,29 +1187,29 @@ class _iterinfo(object):
             if not rr._byweekno:
                 self.wnomask = None
             else:
-                self.wnomask = [0]*(self.yearlen+7)
+                self.wnomask = [0] * (self.yearlen + 7)
                 # no1wkst = firstwkst = self.wdaymask.index(rr._wkst)
-                no1wkst = firstwkst = (7-self.yearweekday+rr._wkst) % 7
+                no1wkst = firstwkst = (7 - self.yearweekday + rr._wkst) % 7
                 if no1wkst >= 4:
                     no1wkst = 0
                     # Number of days in the year, plus the days we got
                     # from last year.
-                    wyearlen = self.yearlen+(self.yearweekday-rr._wkst) % 7
+                    wyearlen = self.yearlen + (self.yearweekday - rr._wkst) % 7
                 else:
                     # Number of days in the year, minus the days we
                     # left in last year.
-                    wyearlen = self.yearlen-no1wkst
+                    wyearlen = self.yearlen - no1wkst
                 div, mod = divmod(wyearlen, 7)
-                numweeks = div+mod//4
+                numweeks = div + mod // 4
                 for n in rr._byweekno:
                     if n < 0:
-                        n += numweeks+1
+                        n += numweeks + 1
                     if not (0 < n <= numweeks):
                         continue
                     if n > 1:
-                        i = no1wkst+(n-1)*7
+                        i = no1wkst + (n - 1) * 7
                         if no1wkst != firstwkst:
-                            i -= 7-firstwkst
+                            i -= 7 - firstwkst
                     else:
                         i = no1wkst
                     for j in range(7):
@@ -1180,9 +1220,9 @@ class _iterinfo(object):
                 if 1 in rr._byweekno:
                     # Check week number 1 of next year as well
                     # TODO: Check -numweeks for next year.
-                    i = no1wkst+numweeks*7
+                    i = no1wkst + numweeks * 7
                     if no1wkst != firstwkst:
-                        i -= 7-firstwkst
+                        i -= 7 - firstwkst
                     if i < self.yearlen:
                         # If week starts in next year, we
                         # don't care about it.
@@ -1199,15 +1239,15 @@ class _iterinfo(object):
                     # days from last year's last week number in
                     # this year.
                     if -1 not in rr._byweekno:
-                        lyearweekday = datetime.date(year-1, 1, 1).weekday()
-                        lno1wkst = (7-lyearweekday+rr._wkst) % 7
-                        lyearlen = 365+calendar.isleap(year-1)
+                        lyearweekday = datetime.date(year - 1, 1, 1).weekday()
+                        lno1wkst = (7 - lyearweekday + rr._wkst) % 7
+                        lyearlen = 365 + calendar.isleap(year - 1)
                         if lno1wkst >= 4:
                             lno1wkst = 0
-                            lnumweeks = 52+(lyearlen +
-                                            (lyearweekday-rr._wkst) % 7) % 7//4
+                            lnumweeks = 52 + \
+                                (lyearlen + (lyearweekday - rr._wkst) % 7) % 7 // 4
                         else:
-                            lnumweeks = 52+(self.yearlen-no1wkst) % 7//4
+                            lnumweeks = 52 + (self.yearlen - no1wkst) % 7 // 4
                     else:
                         lnumweeks = -1
                     if lnumweeks in rr._byweekno:
@@ -1220,32 +1260,32 @@ class _iterinfo(object):
             if rr._freq == YEARLY:
                 if rr._bymonth:
                     for month in rr._bymonth:
-                        ranges.append(self.mrange[month-1:month+1])
+                        ranges.append(self.mrange[month - 1:month + 1])
                 else:
                     ranges = [(0, self.yearlen)]
             elif rr._freq == MONTHLY:
-                ranges = [self.mrange[month-1:month+1]]
+                ranges = [self.mrange[month - 1:month + 1]]
             if ranges:
                 # Weekly frequency won't get here, so we may not
                 # care about cross-year weekly periods.
-                self.nwdaymask = [0]*self.yearlen
+                self.nwdaymask = [0] * self.yearlen
                 for first, last in ranges:
                     last -= 1
                     for wday, n in rr._bynweekday:
                         if n < 0:
-                            i = last+(n+1)*7
-                            i -= (self.wdaymask[i]-wday) % 7
+                            i = last + (n + 1) * 7
+                            i -= (self.wdaymask[i] - wday) % 7
                         else:
-                            i = first+(n-1)*7
-                            i += (7-self.wdaymask[i]+wday) % 7
+                            i = first + (n - 1) * 7
+                            i += (7 - self.wdaymask[i] + wday) % 7
                         if first <= i <= last:
                             self.nwdaymask[i] = 1
 
         if rr._byeaster:
-            self.eastermask = [0]*(self.yearlen+7)
-            eyday = easter.easter(year).toordinal()-self.yearordinal
+            self.eastermask = [0] * (self.yearlen + 7)
+            eyday = easter.easter(year).toordinal() - self.yearordinal
             for offset in rr._byeaster:
-                self.eastermask[eyday+offset] = 1
+                self.eastermask[eyday + offset] = 1
 
         self.lastyear = year
         self.lastmonth = month
@@ -1254,16 +1294,16 @@ class _iterinfo(object):
         return list(range(self.yearlen)), 0, self.yearlen
 
     def mdayset(self, year, month, day):
-        dset = [None]*self.yearlen
-        start, end = self.mrange[month-1:month+1]
+        dset = [None] * self.yearlen
+        start, end = self.mrange[month - 1:month + 1]
         for i in range(start, end):
             dset[i] = i
         return dset, start, end
 
     def wdayset(self, year, month, day):
         # We need to handle cross-year weeks here.
-        dset = [None]*(self.yearlen+7)
-        i = datetime.date(year, month, day).toordinal()-self.yearordinal
+        dset = [None] * (self.yearlen + 7)
+        i = datetime.date(year, month, day).toordinal() - self.yearordinal
         start = i
         for j in range(7):
             dset[i] = i
@@ -1413,8 +1453,6 @@ class rruleset(rrulebase):
         self._len = total
 
 
-
-
 class _rrulestr(object):
     """ Parses a string representation of a recurrence rule or set of
     recurrence rules.
@@ -1551,9 +1589,9 @@ class _rrulestr(object):
             name = name.upper()
             value = value.upper()
             try:
-                getattr(self, "_handle_"+name)(rrkwargs, name, value,
-                                               ignoretz=ignoretz,
-                                               tzinfos=tzinfos)
+                getattr(self, "_handle_" + name)(rrkwargs, name, value,
+                                                 ignoretz=ignoretz,
+                                                 tzinfos=tzinfos)
             except AttributeError:
                 raise ValueError("unknown parameter '%s'" % name)
             except (KeyError, ValueError):
@@ -1607,7 +1645,8 @@ class _rrulestr(object):
                 if date.tzinfo is None:
                     date = date.replace(tzinfo=TZID)
                 else:
-                    raise ValueError('DTSTART/EXDATE specifies multiple timezone')
+                    raise ValueError(
+                        'DTSTART/EXDATE specifies multiple timezone')
             datevals.append(date)
 
         return datevals
@@ -1641,7 +1680,7 @@ class _rrulestr(object):
                 if not line:
                     del lines[i]
                 elif i > 0 and line[0] == " ":
-                    lines[i-1] += line[1:]
+                    lines[i - 1] += line[1:]
                     del lines[i]
                 else:
                     i += 1
@@ -1672,16 +1711,16 @@ class _rrulestr(object):
                 parms = parms[1:]
                 if name == "RRULE":
                     for parm in parms:
-                        raise ValueError("unsupported RRULE parm: "+parm)
+                        raise ValueError("unsupported RRULE parm: " + parm)
                     rrulevals.append(value)
                 elif name == "RDATE":
                     for parm in parms:
                         if parm != "VALUE=DATE-TIME":
-                            raise ValueError("unsupported RDATE parm: "+parm)
+                            raise ValueError("unsupported RDATE parm: " + parm)
                     rdatevals.append(value)
                 elif name == "EXRULE":
                     for parm in parms:
-                        raise ValueError("unsupported EXRULE parm: "+parm)
+                        raise ValueError("unsupported EXRULE parm: " + parm)
                     exrulevals.append(value)
                 elif name == "EXDATE":
                     exdatevals.extend(
@@ -1697,7 +1736,7 @@ class _rrulestr(object):
                                          value)
                     dtstart = dtvals[0]
                 else:
-                    raise ValueError("unsupported property: "+name)
+                    raise ValueError("unsupported property: " + name)
             if (forceset or len(rrulevals) > 1 or rdatevals
                     or exrulevals or exdatevals):
                 if not parser and (rdatevals or exdatevals):
