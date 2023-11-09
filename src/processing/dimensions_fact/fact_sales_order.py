@@ -10,8 +10,6 @@ def create_fact_sales_order(sales_order_df):
     
     sales_order_df["last_updated_time"] = pd.to_datetime(sales_order_df["last_updated_time"].split(" ")[1],format='%H-%M-%S.%f')
 
-    sales_order_df['sales_record_id'] = sales_order_df["sales_order_id"].apply(lambda order_id:order_id)
-
     sales_order_df["unit_price"]= sales_order_df["unit_price"].round(2)
 
 
@@ -48,6 +46,8 @@ def create_fact_sales_order(sales_order_df):
     fact_sales_order_df = sales_order_df[columns_to_keep]
 
     return fact_sales_order_df
+
+
 
 
     
