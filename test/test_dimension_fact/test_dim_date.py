@@ -18,7 +18,6 @@ def test_should_return_columns_with_correct_datatypes():
         result['quarter']
     ]
     output_str_columns = [result['month_name'], result['day_name']]
-    print(result.columns.tolist())
     for result in output_num_columns:
         assert pd.api.types.is_numeric_dtype(result)
     
