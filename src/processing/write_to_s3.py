@@ -1,7 +1,7 @@
 import boto3
 
 
-def write_to_s3(key, parquet, bucket_name="processing-data-bucket-marble"):
+def write_to_s3(key, parquet, bucket_name="processed-data-bucket-marble"):
     """Uploads files to AWS s3 bucket.
 
     Puts objects in s3 bucket with a timestamp in the filename.
