@@ -11,7 +11,13 @@ def write_to_s3(key, parquet, bucket_name="processing-data-bucket-marble"):
       write_to_s3(file_name, file_data)
     """
 
-    s3_key = f"{key}.parquet"
-    boto3.client("s3").put_object(Bucket=bucket_name, Key=s3_key, Body=parquet)
+    try:
+      s3_key = f"{key}.parquet"
+      boto3.client("s3").put_object(Bucket=bucket_name, Key=s3_key, Body=parquet)
 
-    return s3_key
+
+    except AttributeError as e:
+        print(
+            f"Error converting to parquet: {e}."
+            "Ensure convert_to_parquet() is being passed a pandas dataframe."
+        )

@@ -2,31 +2,28 @@ import pandas as pd
 
 
 def create_fact_sales_order(sales_order_df):
-    """Transforms sales_order table into fact_sales_order."""
-
     sales_order_df["created_date"] = pd.to_datetime(
         sales_order_df["created_at"]
-    ).dt.date
+    ).astype(str).apply(pd.to_datetime, errors='coerce')
 
     sales_order_df["created_time"] = pd.to_datetime(
         sales_order_df["created_at"]
-    ).dt.time
+    ).astype(str).apply(pd.to_datetime, errors='coerce')
 
     sales_order_df["last_updated_date"] = pd.to_datetime(
         sales_order_df["last_updated"]
-    ).dt.date
+    ).astype(str).apply(pd.to_datetime, errors='coerce')
 
     sales_order_df["last_updated_time"] = pd.to_datetime(
         sales_order_df["last_updated"]
-    ).dt.time
+    ).astype(str).apply(pd.to_datetime, errors='coerce')
 
     sales_order_df["unit_price"] = sales_order_df["unit_price"].round(2)
 
     varchar = ["agreed_delivery_date", "agreed_payment_date"]
 
     for column_name in varchar:
-        sales_order_df[column_name] = pd.to_datetime(
-            sales_order_df[column_name])
+        sales_order_df[column_name] = pd.to_datetime(sales_order_df[column_name])
 
     column_name_mapping = {
         "staff_id": "sales_staff_id",
@@ -51,5 +48,6 @@ def create_fact_sales_order(sales_order_df):
     ]
 
     fact_sales_order_df = sales_order_df[columns_to_keep]
+
 
     return fact_sales_order_df
