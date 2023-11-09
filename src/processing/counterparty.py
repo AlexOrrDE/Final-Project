@@ -5,10 +5,10 @@ import io
 def cp_transformer(df):
 
     s3 = boto3.client('s3')
-    response = s3.list_objects(Bucket='totesys-test')
+    response = s3.list_objects(Bucket='ingestion-data-bucket-marble')
     address_tables = [obj['Key'] for obj in response['Contents'] if "address/" in obj['Key']]
 
-    address_data = s3.get_object(Bucket='totesys-test', Key=f'{address_tables[0]}')
+    address_data = s3.get_object(Bucket='ingestion-data-bucket-marble', Key=f'{address_tables[0]}')
     read_address_data = address_data['Body'].read().decode('utf-8')
     address_file = io.StringIO(read_address_data)
     add_df = pd.read_csv(address_file, index_col=False)
@@ -39,7 +39,7 @@ def cp_transformer(df):
 
 
 s3 = boto3.client('s3')
-counterparty_data = s3.get_object(Bucket='totesys-test', Key='2023/11/06/counterparty/14:55.csv')
+counterparty_data = s3.get_object(Bucket='ingestion-data-bucket-marble', Key='2023/11/06/counterparty/14:55.csv')
 read_counterparty_data = counterparty_data['Body'].read().decode('utf-8')
 counterparty_file = io.StringIO(read_counterparty_data)
 
@@ -55,5 +55,5 @@ print(cp_transformer(cp_df))
 # postal_code as counterparty_legal_postal_code, 
 # country as counterparty_legal_country, 
 # phone as counterparty_legal_phone_number
-# s3://totesys-test/2023/11/06/address/14:56.csv
-# s3://totesys-test/2023/11/06/counterparty/14:55.csv
+# s3://ingestion-data-bucket-marble/2023/11/06/address/14:56.csv
+# s3://ingestion-data-bucket-marble/2023/11/06/counterparty/14:55.csv
