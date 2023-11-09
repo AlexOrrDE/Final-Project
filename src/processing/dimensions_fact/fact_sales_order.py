@@ -50,10 +50,3 @@ def create_fact_sales_order(sales_order_df):
     fact_sales_order_df = sales_order_df[columns_to_keep]
 
     return fact_sales_order_df
-
-
-sales_order_df = pd.read_csv(
-    "/Users/alex/Downloads/2023-10-31 16_25_02.790973-sales_order.csv"
-)
-dim_date_df = create_fact_sales_order(sales_order_df)
-print(dim_date_df)
