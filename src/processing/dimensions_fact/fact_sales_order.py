@@ -2,6 +2,8 @@ import pandas as pd
 
 
 def create_fact_sales_order(sales_order_df):
+    """Transforms sales_order table into fact_sales_order."""
+
     sales_order_df["created_date"] = pd.to_datetime(
         sales_order_df["created_at"]
     ).dt.date
