@@ -1,4 +1,6 @@
 def create_dim_design(design_df):
+    """Transforms design table to dim_design."""
+
     columns_to_keep = [
         "design_id",
         "design_name",

@@ -22,7 +22,7 @@ resource "aws_iam_role" "lambda_role" {
 # Lambda access to S3 policy
 # https://us-east-1.console.aws.amazon.com/iam/home#/policies/arn:aws:iam::aws:policy/AmazonS3FullAccess$jsonEditor
 resource "aws_iam_policy" "lambda_access_s3_policy" {
-  name   = "lambda_access_s3_policy"
+  # name   = "lambda_access_s3_policy"
   policy = jsonencode({
     "Version": "2012-10-17",
     "Statement": [
@@ -49,7 +49,7 @@ resource "aws_iam_role_policy_attachment" "lambda_access_s3_attach" {
 
 # Make a policy of the json file below
 resource "aws_iam_policy" "test_policy" {
-    name = "testnametestesttest"
+    # name = "testnametestesttest"
     policy = data.aws_iam_policy_document.example.json
 }
 
@@ -72,7 +72,7 @@ resource "aws_iam_role_policy_attachment" "test_attach" {
 
 # Policy for invoking the second lambda
 resource "aws_iam_policy" "invoke_second_lambda_policy" {
-  name   = "invoke_second_lambda_policy"
+  # name   = "invoke_second_lambda_policy"
   policy = jsonencode({
     "Version": "2012-10-17",
     "Statement": [
@@ -116,7 +116,7 @@ resource "aws_iam_role" "eventbride_role" {
 # Cloudwatch policies
 
 resource "aws_iam_policy" "cloudwatch_log_policy" {
-  name   = "function-logging-policy"
+  # name   = "function-logging-policy"
   policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -155,7 +155,7 @@ resource "aws_cloudwatch_log_group" "processing_lambda_log_group" {
 # https://docs.aws.amazon.com/secretsmanager/latest/userguide/auth-and-access_examples.html
 
 resource "aws_iam_policy" "secrets_policy" {
-  name   = "secrets-policy"
+  # name   = "secrets-policy"
   policy = jsonencode({
   "Version": "2012-10-17",
   "Statement": [

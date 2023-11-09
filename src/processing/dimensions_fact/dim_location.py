@@ -1,4 +1,6 @@
 def create_dim_location(address_df):
+    """Transforms address table into dim_location."""
+
     column_name_mapping = {
         "address_id": "location_id",
     }

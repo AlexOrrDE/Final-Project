@@ -2,6 +2,12 @@ import pandas as pd
 
 
 def create_dim_date(sales_order_df):
+    """Transforms date data in sales_order table to dim_date.
+
+    This version of dim_date only shows dates which
+    have associated sales data
+    """
+
     distinct_dates = (
         pd.concat(
             [
