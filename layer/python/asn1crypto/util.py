@@ -157,7 +157,7 @@ if sys.version_info <= (3,):
                 A boolean
             """
 
-            if type(other) != timezone:
+            if not isinstance(other, timezone):
                 return False
             return self._offset == other._offset
 
@@ -377,10 +377,15 @@ class extended_date(object):
         """
 
         # Format the date twice, once with year 2000, once with year 4000.
-        # The only differences in the result will be in the millennium. Find them and replace by zeros.
+        # The only differences in the result will be in the millennium. Find
+        # them and replace by zeros.
         y2k = self._y2k.strftime(format)
         y4k = self._y2k.replace(year=4000).strftime(format)
-        return ''.join('0' if (c2, c4) == ('2', '4') else c2 for c2, c4 in zip(y2k, y4k))
+        return ''.join(
+            '0' if (
+                c2, c4) == (
+                '2', '4') else c2 for c2, c4 in zip(
+                y2k, y4k))
 
     def isoformat(self):
         """
@@ -439,7 +444,8 @@ class extended_date(object):
             A boolean
         """
 
-        # datetime.date object wouldn't compare equal because it can't be year 0
+        # datetime.date object wouldn't compare equal because it can't be year
+        # 0
         if not isinstance(other, self.__class__):
             return False
         return self.__cmp__(other) == 0
@@ -642,10 +648,15 @@ class extended_datetime(object):
         """
 
         # Format the datetime twice, once with year 2000, once with year 4000.
-        # The only differences in the result will be in the millennium. Find them and replace by zeros.
+        # The only differences in the result will be in the millennium. Find
+        # them and replace by zeros.
         y2k = self._y2k.strftime(format)
         y4k = self._y2k.replace(year=4000).strftime(format)
-        return ''.join('0' if (c2, c4) == ('2', '4') else c2 for c2, c4 in zip(y2k, y4k))
+        return ''.join(
+            '0' if (
+                c2, c4) == (
+                '2', '4') else c2 for c2, c4 in zip(
+                y2k, y4k))
 
     def isoformat(self, sep='T'):
         """
@@ -661,7 +672,8 @@ class extended_datetime(object):
             string in Python 2
         """
 
-        s = '0000-%02d-%02d%c%02d:%02d:%02d' % (self.month, self.day, sep, self.hour, self.minute, self.second)
+        s = '0000-%02d-%02d%c%02d:%02d:%02d' % (
+            self.month, self.day, sep, self.hour, self.minute, self.second)
         if self.microsecond:
             s += '.%06d' % self.microsecond
         return s + _format_offset(self.utcoffset())
@@ -687,7 +699,8 @@ class extended_datetime(object):
         if year:
             return self._y2k.replace(year, *args, **kwargs)
 
-        return extended_datetime.from_y2k(self._y2k.replace(2000, *args, **kwargs))
+        return extended_datetime.from_y2k(
+            self._y2k.replace(2000, *args, **kwargs))
 
     def astimezone(self, tz):
         """
@@ -787,7 +800,8 @@ class extended_datetime(object):
             self._comparison_error(other)
 
         if (self.tzinfo is None) != (other.tzinfo is None):
-            raise TypeError("can't compare offset-naive and offset-aware datetimes")
+            raise TypeError(
+                "can't compare offset-naive and offset-aware datetimes")
 
         diff = self - other
         zero = timedelta(0)

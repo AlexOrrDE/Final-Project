@@ -1,48 +1,61 @@
 from __future__ import annotations
-
-__docformat__ = "restructuredtext"
-
-# Let users know if they're missing any of our hard dependencies
-_hard_dependencies = ("numpy", "pytz", "dateutil")
-_missing_dependencies = []
-
-for _dependency in _hard_dependencies:
-    try:
-        __import__(_dependency)
-    except ImportError as _e:  # pragma: no cover
-        _missing_dependencies.append(f"{_dependency}: {_e}")
-
-if _missing_dependencies:  # pragma: no cover
-    raise ImportError(
-        "Unable to import required dependencies:\n" + "\n".join(_missing_dependencies)
-    )
-del _hard_dependencies, _dependency, _missing_dependencies
-
-try:
-    # numpy compat
-    from pandas.compat import (
-        is_numpy_dev as _is_numpy_dev,  # pyright: ignore[reportUnusedImport] # noqa: F401,E501
-    )
-except ImportError as _err:  # pragma: no cover
-    _module = _err.name
-    raise ImportError(
-        f"C extension: {_module} not built. If you want to import "
-        "pandas from the source directory, you may need to run "
-        "'python setup.py build_ext' to build the C extensions first."
-    ) from _err
-
-from pandas._config import (
-    get_option,
-    set_option,
-    reset_option,
-    describe_option,
-    option_context,
-    options,
+from pandas.util._tester import test
+from pandas.io.json._normalize import json_normalize
+from pandas.io.api import (
+    # excel
+    ExcelFile,
+    ExcelWriter,
+    read_excel,
+    # parsers
+    read_csv,
+    read_fwf,
+    read_table,
+    # pickle
+    read_pickle,
+    to_pickle,
+    # pytables
+    HDFStore,
+    read_hdf,
+    # sql
+    read_sql,
+    read_sql_query,
+    read_sql_table,
+    # misc
+    read_clipboard,
+    read_parquet,
+    read_orc,
+    read_feather,
+    read_gbq,
+    read_html,
+    read_xml,
+    read_json,
+    read_stata,
+    read_sas,
+    read_spss,
 )
-
-# let init-time option registration happen
-import pandas.core.config_init  # pyright: ignore[reportUnusedImport] # noqa: F401
-
+from pandas.util._print_versions import show_versions
+from pandas import testing
+from pandas import api, arrays, errors, io, plotting, tseries
+from pandas.core.reshape.api import (
+    concat,
+    lreshape,
+    melt,
+    wide_to_long,
+    merge,
+    merge_asof,
+    merge_ordered,
+    crosstab,
+    pivot,
+    pivot_table,
+    get_dummies,
+    from_dummies,
+    cut,
+    qcut,
+)
+from pandas.core.computation.api import eval
+from pandas.tseries import offsets
+from pandas.tseries.api import infer_freq
+from pandas.core.dtypes.dtypes import SparseDtype
 from pandas.core.api import (
     # dtype
     ArrowDtype,
@@ -107,71 +120,50 @@ from pandas.core.api import (
     Series,
     DataFrame,
 )
-
-from pandas.core.dtypes.dtypes import SparseDtype
-
-from pandas.tseries.api import infer_freq
-from pandas.tseries import offsets
-
-from pandas.core.computation.api import eval
-
-from pandas.core.reshape.api import (
-    concat,
-    lreshape,
-    melt,
-    wide_to_long,
-    merge,
-    merge_asof,
-    merge_ordered,
-    crosstab,
-    pivot,
-    pivot_table,
-    get_dummies,
-    from_dummies,
-    cut,
-    qcut,
+from pandas._config import (
+    get_option,
+    set_option,
+    reset_option,
+    describe_option,
+    option_context,
+    options,
 )
 
-from pandas import api, arrays, errors, io, plotting, tseries
-from pandas import testing
-from pandas.util._print_versions import show_versions
+__docformat__ = "restructuredtext"
 
-from pandas.io.api import (
-    # excel
-    ExcelFile,
-    ExcelWriter,
-    read_excel,
-    # parsers
-    read_csv,
-    read_fwf,
-    read_table,
-    # pickle
-    read_pickle,
-    to_pickle,
-    # pytables
-    HDFStore,
-    read_hdf,
-    # sql
-    read_sql,
-    read_sql_query,
-    read_sql_table,
-    # misc
-    read_clipboard,
-    read_parquet,
-    read_orc,
-    read_feather,
-    read_gbq,
-    read_html,
-    read_xml,
-    read_json,
-    read_stata,
-    read_sas,
-    read_spss,
-)
+# Let users know if they're missing any of our hard dependencies
+_hard_dependencies = ("numpy", "pytz", "dateutil")
+_missing_dependencies = []
 
-from pandas.io.json._normalize import json_normalize
+for _dependency in _hard_dependencies:
+    try:
+        __import__(_dependency)
+    except ImportError as _e:  # pragma: no cover
+        _missing_dependencies.append(f"{_dependency}: {_e}")
 
-from pandas.util._tester import test
+if _missing_dependencies:  # pragma: no cover
+    raise ImportError(
+        "Unable to import required dependencies:\n" +
+        "\n".join(_missing_dependencies))
+del _hard_dependencies, _dependency, _missing_dependencies
+
+try:
+    # numpy compat
+    from pandas.compat import (
+        is_numpy_dev as _is_numpy_dev,  # pyright: ignore[reportUnusedImport] # noqa: F401,E501
+    )
+except ImportError as _err:  # pragma: no cover
+    _module = _err.name
+    raise ImportError(
+        f"C extension: {_module} not built. If you want to import "
+        "pandas from the source directory, you may need to run "
+        "'python setup.py build_ext' to build the C extensions first."
+    ) from _err
+
+
+# let init-time option registration happen
+import pandas.core.config_init  # pyright: ignore[reportUnusedImport] # noqa: F401
+
 
 # use the closest tagged version if possible
 _built_with_meson = False

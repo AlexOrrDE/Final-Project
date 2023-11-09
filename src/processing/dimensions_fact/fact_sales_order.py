@@ -23,7 +23,8 @@ def create_fact_sales_order(sales_order_df):
     varchar = ["agreed_delivery_date", "agreed_payment_date"]
 
     for column_name in varchar:
-        sales_order_df[column_name] = pd.to_datetime(sales_order_df[column_name])
+        sales_order_df[column_name] = pd.to_datetime(
+            sales_order_df[column_name])
 
     column_name_mapping = {
         "staff_id": "sales_staff_id",
@@ -50,10 +51,3 @@ def create_fact_sales_order(sales_order_df):
     fact_sales_order_df = sales_order_df[columns_to_keep]
 
     return fact_sales_order_df
-
-
-sales_order_df = pd.read_csv(
-    "/Users/alex/Downloads/2023-10-31 16_25_02.790973-sales_order.csv"
-)
-dim_date_df = create_fact_sales_order(sales_order_df)
-print(dim_date_df)

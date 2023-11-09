@@ -26,8 +26,8 @@ class weekday(object):
 
     def __hash__(self):
         return hash((
-          self.weekday,
-          self.n,
+            self.weekday,
+            self.n,
         ))
 
     def __ne__(self, other):

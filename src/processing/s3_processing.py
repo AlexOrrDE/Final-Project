@@ -8,14 +8,11 @@
 # I'm not sure if we can call this just "handler". It might cause problems
 # with AWS
 
+import boto3
 import logging
 
 logging.getLogger().setLevel(logging.INFO)
 
-
-import json
-import urllib.parse
-import boto3
 
 print('Loading function')
 
@@ -23,13 +20,11 @@ s3 = boto3.client('s3')
 
 
 def processing_handler(event, context):
-    # Event has a dictionary of all the updated keys (table name with timestamp)
+    # Event has a dictionary of all the updated keys (table name with
+    # timestamp)
     logging.info(event)
 
 
-
-    
-    
 # The test event JSON:
 
 # {

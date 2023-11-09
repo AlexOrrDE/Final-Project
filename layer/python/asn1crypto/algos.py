@@ -607,7 +607,8 @@ class EncryptionAlgorithmId(ObjectIdentifier):
         '1.2.840.113549.3.2': 'rc2',
         '1.2.840.113549.3.4': 'rc4',
         '1.2.840.113549.3.9': 'rc5',
-        # From http://csrc.nist.gov/groups/ST/crypto_apps_infra/csor/algorithms.html#AES
+        # From
+        # http://csrc.nist.gov/groups/ST/crypto_apps_infra/csor/algorithms.html#AES
         '2.16.840.1.101.3.4.1.1': 'aes128_ecb',
         '2.16.840.1.101.3.4.1.2': 'aes128_cbc',
         '2.16.840.1.101.3.4.1.3': 'aes128_ofb',
@@ -1167,7 +1168,10 @@ class AnyAlgorithmId(ObjectIdentifier):
 
     def _setup(self):
         _map = self.__class__._map
-        for other_cls in (EncryptionAlgorithmId, SignedDigestAlgorithmId, DigestAlgorithmId):
+        for other_cls in (
+                EncryptionAlgorithmId,
+                SignedDigestAlgorithmId,
+                DigestAlgorithmId):
             for oid, name in other_cls._map.items():
                 _map[oid] = name
 
