@@ -14,4 +14,3 @@ def create_dim_date():
     dim_date_df['quarter'] = dim_date_df['date_id'].dt.quarter
 
     return dim_date_df
-print(create_dim_date())
