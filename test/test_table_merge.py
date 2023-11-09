@@ -60,7 +60,7 @@ def create_counterparty_data():
             'delivery_contact': 'test',
             'created_at': Timestamp('2023-01-01 00:00:00.000000'),
             'last_updated': Timestamp('2023-01-01 00:00:00.000000')}]
-            }
+    }
 
 
 @pytest.fixture(scope="function")
@@ -89,7 +89,7 @@ def create_staff_data():
             'email_address': 'test@test.com',
             'created_at': Timestamp('2023-01-01 00:00:00.000000'),
             'last_updated': Timestamp('2023-01-01 00:00:00.000000')}]
-            }
+    }
 
 
 @pytest.fixture(scope="function")
@@ -115,7 +115,7 @@ def create_department_data():
             'manager': 'test',
             'created_at': Timestamp('2023-01-01 00:00:00.000000'),
             'last_updated': Timestamp('2023-01-01 00:00:00.000000')}]
-            }
+    }
 
 
 @pytest.fixture(scope="function")
@@ -155,7 +155,7 @@ def create_address_data():
             'phone': 'test_phone',
             'created_at': Timestamp('2023-01-01 00:00:00.000000'),
             'last_updated': Timestamp('2023-01-01 00:00:00.000000')}]
-            }
+    }
 
 
 @pytest.fixture(scope="function")
@@ -173,7 +173,7 @@ def create_updated_address_data():
             'phone': 'test_phone',
             'created_at': Timestamp('2023-01-02 00:00:00.000000'),
             'last_updated': Timestamp('2023-01-02 00:00:00.000000')}]
-            }
+    }
 
 
 @pytest.fixture(scope="function")
@@ -191,7 +191,7 @@ def create_newest_address_data():
             'phone': 'test_phone',
             'created_at': Timestamp('2023-01-05 00:00:00.000000'),
             'last_updated': Timestamp('2023-01-05 00:00:00.000000')}]
-            }
+    }
 
 
 def test_table_merge_combines_counterparty_and_address(

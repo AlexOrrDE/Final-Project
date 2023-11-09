@@ -155,9 +155,9 @@ else:
                 try:
                     return ctypes.cdll[libpath]
                 except OSError:
-                    ## defective lib file
+                    # defective lib file
                     raise
-        ## if no successful return in the libname_ext loop:
+        # if no successful return in the libname_ext loop:
         raise OSError("no file with expected extension")
 
 
@@ -167,8 +167,11 @@ def _num_fromflags(flaglist):
         num += _flagdict[val]
     return num
 
+
 _flagnames = ['C_CONTIGUOUS', 'F_CONTIGUOUS', 'ALIGNED', 'WRITEABLE',
               'OWNDATA', 'WRITEBACKIFCOPY']
+
+
 def _flags_fromnum(num):
     res = []
     for key in _flagnames:
@@ -184,18 +187,18 @@ class _ndptr(_ndptr_base):
         if not isinstance(obj, ndarray):
             raise TypeError("argument must be an ndarray")
         if cls._dtype_ is not None \
-               and obj.dtype != cls._dtype_:
+                and obj.dtype != cls._dtype_:
             raise TypeError("array must have data type %s" % cls._dtype_)
         if cls._ndim_ is not None \
-               and obj.ndim != cls._ndim_:
+                and obj.ndim != cls._ndim_:
             raise TypeError("array must have %d dimension(s)" % cls._ndim_)
         if cls._shape_ is not None \
-               and obj.shape != cls._shape_:
+                and obj.shape != cls._shape_:
             raise TypeError("array must have shape %s" % str(cls._shape_))
         if cls._flags_ is not None \
-               and ((obj.flags.num & cls._flags_) != cls._flags_):
+                and ((obj.flags.num & cls._flags_) != cls._flags_):
             raise TypeError("array must have flags %s" %
-                    _flags_fromnum(cls._flags_))
+                            _flags_fromnum(cls._flags_))
         return obj.ctypes
 
 
@@ -206,6 +209,7 @@ class _concrete_ndptr(_ndptr):
     Notably, this means the pointer has enough information to reconstruct
     the array, which is not generally true.
     """
+
     def _check_retval_(self):
         """
         This method is called when this class is used as the .restype
@@ -230,6 +234,8 @@ class _concrete_ndptr(_ndptr):
 # Factory for an array-checking class with from_param defined for
 #  use with ctypes argtypes mechanism
 _pointer_type_cache = {}
+
+
 def ndpointer(dtype=None, ndim=None, shape=None, flags=None):
     """
     Array-checking restype/argtypes.
@@ -329,20 +335,20 @@ def ndpointer(dtype=None, ndim=None, shape=None, flags=None):
     if ndim is not None:
         name += "_%dd" % ndim
     if shape is not None:
-        name += "_"+"x".join(str(x) for x in shape)
+        name += "_" + "x".join(str(x) for x in shape)
     if flags is not None:
-        name += "_"+"_".join(flags)
+        name += "_" + "_".join(flags)
 
     if dtype is not None and shape is not None:
         base = _concrete_ndptr
     else:
         base = _ndptr
 
-    klass = type("ndpointer_%s"%name, (base,),
+    klass = type("ndpointer_%s" % name, (base,),
                  {"_dtype_": dtype,
-                  "_shape_" : shape,
-                  "_ndim_" : ndim,
-                  "_flags_" : num})
+                  "_shape_": shape,
+                  "_ndim_": ndim,
+                  "_flags_": num})
     _pointer_type_cache[cache_key] = klass
     return klass
 
@@ -355,7 +361,6 @@ if ctypes is not None:
             # prevent the type name include np.ctypeslib
             element_type.__module__ = None
         return element_type
-
 
     def _get_scalar_type_map():
         """
@@ -370,9 +375,7 @@ if ctypes is not None:
         ]
         return {_dtype(ctype): ctype for ctype in simple_types}
 
-
     _scalar_type_map = _get_scalar_type_map()
-
 
     def _ctype_from_dtype_scalar(dtype):
         # swapping twice ensure that `=` is promoted to <, >, or |
@@ -392,12 +395,10 @@ if ctypes is not None:
 
         return ctype
 
-
     def _ctype_from_dtype_subarray(dtype):
         element_dtype, shape = dtype.subdtype
         ctype = _ctype_from_dtype(element_dtype)
         return _ctype_ndarray(ctype, shape)
-
 
     def _ctype_from_dtype_structured(dtype):
         # extract offsets of each field
@@ -409,7 +410,10 @@ if ctypes is not None:
         # ctypes doesn't care about field order
         field_data = sorted(field_data, key=lambda f: f[0])
 
-        if len(field_data) > 1 and all(offset == 0 for offset, name, ctype in field_data):
+        if len(field_data) > 1 and all(
+                offset == 0 for offset,
+                name,
+                ctype in field_data):
             # union, if multiple fields all at address 0
             size = 0
             _fields_ = []
@@ -440,7 +444,6 @@ if ctypes is not None:
                 _fields_.append((name, ctype))
                 last_offset = offset + ctypes.sizeof(ctype)
 
-
             padding = dtype.itemsize - last_offset
             if padding > 0:
                 _fields_.append(('', ctypes.c_char * padding))
@@ -452,7 +455,6 @@ if ctypes is not None:
                 __module__=None,
             ))
 
-
     def _ctype_from_dtype(dtype):
         if dtype.fields is not None:
             return _ctype_from_dtype_structured(dtype)
@@ -460,7 +462,6 @@ if ctypes is not None:
             return _ctype_from_dtype_subarray(dtype)
         else:
             return _ctype_from_dtype_scalar(dtype)
-
 
     def as_ctypes_type(dtype):
         r"""
@@ -502,7 +503,6 @@ if ctypes is not None:
         """
         return _ctype_from_dtype(_dtype(dtype))
 
-
     def as_array(obj, shape=None):
         """
         Create a numpy array from a ctypes array or POINTER.
@@ -522,7 +522,6 @@ if ctypes is not None:
             obj = ctypes.cast(obj, p_arr_type).contents
 
         return asarray(obj)
-
 
     def as_ctypes(obj):
         """Create and return a ctypes object from a numpy array.  Actually

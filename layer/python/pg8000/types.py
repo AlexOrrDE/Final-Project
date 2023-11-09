@@ -132,7 +132,8 @@ class PGInterval:
                 sign = 1
                 p = month_part
 
-            kwargs["years"], kwargs["months"] = [int(v) * sign for v in p.split("-")]
+            kwargs["years"], kwargs["months"] = [
+                int(v) * sign for v in p.split("-")]
 
         if day_parts is not None:
             kwargs["days"] = int(day_parts[0])

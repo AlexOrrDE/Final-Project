@@ -57,8 +57,10 @@ def iri_to_uri(value, normalize=False):
         ))
 
     scheme = None
-    # Python 2.6 doesn't split properly is the URL doesn't start with http:// or https://
-    if sys.version_info < (2, 7) and not value.startswith('http://') and not value.startswith('https://'):
+    # Python 2.6 doesn't split properly is the URL doesn't start with http://
+    # or https://
+    if sys.version_info < (2, 7) and not value.startswith(
+            'http://') and not value.startswith('https://'):
         real_prefix = None
         prefix_match = re.match('^[^:]*://', value)
         if prefix_match:
@@ -99,9 +101,11 @@ def iri_to_uri(value, normalize=False):
 
     # RFC 3986 allows a path to contain sub-delims, plus "@" and ":"
     path = _urlquote(parsed.path, safe='/!$&\'()*+,;=@:')
-    # RFC 3986 allows the query to contain sub-delims, plus "@", ":" , "/" and "?"
+    # RFC 3986 allows the query to contain sub-delims, plus "@", ":" , "/" and
+    # "?"
     query = _urlquote(parsed.query, safe='/?!$&\'()*+,;=@:')
-    # RFC 3986 allows the fragment to contain sub-delims, plus "@", ":" , "/" and "?"
+    # RFC 3986 allows the fragment to contain sub-delims, plus "@", ":" , "/"
+    # and "?"
     fragment = _urlquote(parsed.fragment, safe='/?!$&\'()*+,;=@:')
 
     if normalize and query is None and fragment is None and path == b'/':
@@ -218,7 +222,8 @@ def _urlquote(string, safe=''):
             byte_string = unquote_to_bytes(match.group(0))
             unicode_string = byte_string.decode('utf-8', 'iriutf8')
             for safe_char in list(safe):
-                unicode_string = unicode_string.replace(safe_char, '%%%02x' % ord(safe_char))
+                unicode_string = unicode_string.replace(
+                    safe_char, '%%%02x' % ord(safe_char))
             return unicode_string
         string = re.sub('(?:%[0-9a-fA-F]{2})+', _try_unescape, string)
 
@@ -274,13 +279,16 @@ def _urlunquote(byte_string, remap=None, preserve=None):
         for char in remap:
             replacement = replacements.pop(0)
             preserve_unmap[replacement] = char
-            byte_string = byte_string.replace(char.encode('ascii'), replacement.encode('ascii'))
+            byte_string = byte_string.replace(
+                char.encode('ascii'), replacement.encode('ascii'))
 
     byte_string = unquote_to_bytes(byte_string)
 
     if remap:
         for char in remap:
-            byte_string = byte_string.replace(char.encode('ascii'), ('%%%02x' % ord(char)).encode('ascii'))
+            byte_string = byte_string.replace(
+                char.encode('ascii'), ('%%%02x' %
+                                       ord(char)).encode('ascii'))
 
     output = byte_string.decode('utf-8', 'iriutf8')
 

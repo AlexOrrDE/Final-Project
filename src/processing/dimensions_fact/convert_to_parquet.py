@@ -1,11 +1,11 @@
-import pandas as pd
 import logging
+
 
 def convert_to_parquet(df):
     """Converts a pandas dataframe to parquet format
-    
+
     Typical usage example:
-    
+
         convert_to_parquet(df)
     """
     try:

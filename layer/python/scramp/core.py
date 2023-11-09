@@ -48,9 +48,11 @@ class ServerStage(IntEnum):
 def _check_stage(Stages, current_stage, next_stage):
     if current_stage is None:
         if next_stage != 1:
-            raise ScramException(f"The method {Stages(1).name} must be called first.")
+            raise ScramException(
+                f"The method {Stages(1).name} must be called first.")
     elif current_stage == 4:
-        raise ScramException("The authentication sequence has already finished.")
+        raise ScramException(
+            "The authentication sequence has already finished.")
     elif next_stage != current_stage + 1:
         raise ScramException(
             f"The next method to be called is "
@@ -152,7 +154,8 @@ class ScramMechanism:
         return salt, stored_key, server_key, iteration_count
 
     def make_stored_server_keys(self, salted_password):
-        _, stored_key, server_key = _c_key_stored_key_s_key(self.hf, salted_password)
+        _, stored_key, server_key = _c_key_stored_key_s_key(
+            self.hf, salted_password)
         return stored_key, server_key
 
     def make_server(self, auth_fn, channel_binding=None, s_nonce=None):
@@ -182,27 +185,28 @@ def _validate_channel_binding(channel_binding):
     if len(channel_binding) != 2:
         raise ScramException(
             "The channel_binding parameter must either be None or a tuple of two "
-            "elements (type, data)."
-        )
+            "elements (type, data).")
 
     channel_type, channel_data = channel_binding
     if channel_type not in CHANNEL_TYPES:
         raise ScramException(
             "The channel_binding parameter must either be None or a tuple with the "
-            "first element a str specifying one of the channel types {CHANNEL_TYPES}."
-        )
+            "first element a str specifying one of the channel types {CHANNEL_TYPES}.")
 
     if not isinstance(channel_data, bytes):
         raise ScramException(
             "The channel_binding parameter must either be None or a tuple with the "
-            "second element a bytes object containing the bind data."
-        )
+            "second element a bytes object containing the bind data.")
 
 
 class ScramClient:
     def __init__(
-        self, mechanisms, username, password, channel_binding=None, c_nonce=None
-    ):
+            self,
+            mechanisms,
+            username,
+            password,
+            channel_binding=None,
+            c_nonce=None):
         if not isinstance(mechanisms, (list, tuple)):
             raise ScramException(
                 "The 'mechanisms' parameter must be a list or tuple of mechanism names."
@@ -211,7 +215,9 @@ class ScramClient:
         _validate_channel_binding(channel_binding)
 
         ms = (ScramMechanism(m) for m in mechanisms)
-        mechs = [m for m in ms if not (channel_binding is None and m.use_binding)]
+        mechs = [
+            m for m in ms if not (
+                channel_binding is None and m.use_binding)]
         if len(mechs) == 0:
             raise ScramException(
                 f"There are no suitable mechanisms in the list provided: {mechanisms}"
@@ -297,8 +303,7 @@ class ScramServer:
         if mechanism.use_binding and self.channel_binding is None:
             raise ScramException(
                 "The mechanism requires channel binding, and so channel_binding can't "
-                "be None."
-            )
+                "be None.")
         self.m = mechanism
 
     def _set_stage(self, next_stage):
@@ -308,20 +313,21 @@ class ScramServer:
     @set_error
     def set_client_first(self, client_first):
         self._set_stage(ServerStage.set_client_first)
-        (
-            self.nonce,
-            self.user,
-            self.client_first_bare,
-            upgrade_mechanism,
-        ) = _set_client_first(
-            client_first, self.s_nonce, self.channel_binding, self.m.use_binding
-        )
+        (self.nonce,
+         self.user,
+         self.client_first_bare,
+         upgrade_mechanism,
+         ) = _set_client_first(client_first,
+                               self.s_nonce,
+                               self.channel_binding,
+                               self.m.use_binding)
 
         if upgrade_mechanism:
             mech = ScramMechanism(f"{self.m.name}-PLUS")
             self._set_mechanism(mech)
 
-        salt, self.stored_key, self.server_key, self.i = self.auth_fn(self.user)
+        salt, self.stored_key, self.server_key, self.i = self.auth_fn(
+            self.user)
         self.salt = b64enc(salt)
 
     @set_error
@@ -359,7 +365,10 @@ def _make_nonce():
     return str(uuid4()).replace("-", "")
 
 
-def _make_auth_message(client_first_bare, server_first, client_final_without_proof):
+def _make_auth_message(
+        client_first_bare,
+        server_first,
+        client_final_without_proof):
     msg = client_first_bare, server_first, client_final_without_proof
     return uenc(",".join(msg))
 
@@ -382,7 +391,9 @@ def _check_client_key(hf, stored_key, auth_msg, proof):
     key = h(hf, client_key)
 
     if key != stored_key:
-        raise ScramException("The client keys don't match.", SERVER_ERROR_INVALID_PROOF)
+        raise ScramException(
+            "The client keys don't match.",
+            SERVER_ERROR_INVALID_PROOF)
 
 
 def _make_gs2_header(channel_binding, use_binding):
@@ -406,7 +417,8 @@ def _make_cbind_input(channel_binding, use_binding):
         _, cbind_data = channel_binding
         return gs2_header_bin + cbind_data
     else:
-        raise ScramException(f"The gs2_cbind_flag '{gs2_cbind_flag}' is not recognized")
+        raise ScramException(
+            f"The gs2_cbind_flag '{gs2_cbind_flag}' is not recognized")
 
 
 def _parse_message(msg, desc, *validations):
@@ -434,9 +446,7 @@ def _parse_message(msg, desc, *validations):
 
     raise ScramException(
         f"Malformed {desc} message. Expected the attribute list to be {val_str} but "
-        f"found '{keystr}'",
-        SERVER_ERROR_OTHER_ERROR,
-    )
+        f"found '{keystr}'", SERVER_ERROR_OTHER_ERROR, )
 
 
 def _get_client_first(username, c_nonce, channel_binding, use_binding):
@@ -511,7 +521,7 @@ def _set_client_first(client_first, s_nonce, channel_binding, use_binding):
             SERVER_ERROR_OTHER_ERROR,
         )
 
-    client_first_bare = client_first[second_comma + 1 :]
+    client_first_bare = client_first[second_comma + 1:]
     msg = _parse_message(client_first_bare, "client first bare", "nr")
 
     c_nonce = msg["r"]
@@ -535,7 +545,9 @@ def _set_server_first(server_first, c_nonce):
     iterations = int(msg["i"])
 
     if not nonce.startswith(c_nonce):
-        raise ScramException("Client nonce doesn't match.", SERVER_ERROR_OTHER_ERROR)
+        raise ScramException(
+            "Client nonce doesn't match.",
+            SERVER_ERROR_OTHER_ERROR)
 
     return nonce, salt, iterations
 
@@ -553,7 +565,8 @@ def _get_client_final(
 ):
     salt = b64dec(salt_str)
     salted_password = _make_salted_password(hf, password, salt, iterations)
-    client_key, stored_key, server_key = _c_key_stored_key_s_key(hf, salted_password)
+    client_key, stored_key, server_key = _c_key_stored_key_s_key(
+        hf, salted_password)
 
     cbind_input = _make_cbind_input(channel_binding, use_binding)
     client_final_without_proof = f"c={b64enc(cbind_input)},r={nonce}"
@@ -611,7 +624,9 @@ def _set_client_final(
         )
 
     if not nonce.endswith(s_nonce):
-        raise ScramException("Server nonce doesn't match.", SERVER_ERROR_OTHER_ERROR)
+        raise ScramException(
+            "Server nonce doesn't match.",
+            SERVER_ERROR_OTHER_ERROR)
 
     client_final_without_proof = f"c={chan_binding},r={nonce}"
     auth_msg = _make_auth_message(
@@ -642,7 +657,8 @@ def saslprep(source):
     # mapping stage
     #   - map non-ascii spaces to U+0020 (stringprep C.1.2)
     #   - strip 'commonly mapped to nothing' chars (stringprep B.1)
-    data = "".join(" " if in_table_c12(c) else c for c in source if not in_table_b1(c))
+    data = "".join(" " if in_table_c12(
+        c) else c for c in source if not in_table_b1(c))
 
     # normalize to KC form
     data = unicodedata.normalize("NFKC", data)

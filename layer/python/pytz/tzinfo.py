@@ -25,7 +25,7 @@ def memorized_timedelta(seconds):
         return delta
 
 
-_epoch = datetime(1970, 1, 1, 0, 0) # datetime.utcfromtimestamp(0)
+_epoch = datetime(1970, 1, 1, 0, 0)  # datetime.utcfromtimestamp(0)
 _datetime_cache = {0: _epoch}
 
 
@@ -82,6 +82,7 @@ class StaticTzInfo(BaseTzInfo):
     These timezones are rare, as most locations have changed their
     offset at some point in their history
     '''
+
     def fromutc(self, dt):
         '''See datetime.tzinfo.fromutc'''
         if dt.tzinfo is not None and dt.tzinfo is not self:

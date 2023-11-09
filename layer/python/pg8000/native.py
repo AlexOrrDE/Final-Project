@@ -170,8 +170,7 @@ def to_statement(query):
         if reserved in placeholders:
             raise InterfaceError(
                 f"The name '{reserved}' can't be used as a placeholder because it's "
-                f"used for another purpose."
-            )
+                f"used for another purpose.")
 
     def make_vals(args):
         vals = []
@@ -181,8 +180,7 @@ def to_statement(query):
             except KeyError:
                 raise InterfaceError(
                     f"There's a placeholder '{p}' in the query, but no matching "
-                    f"keyword argument."
-                )
+                    f"keyword argument.")
         return tuple(vals)
 
     return "".join(output_query), make_vals
