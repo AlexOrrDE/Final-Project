@@ -1,74 +1,34 @@
-"""
-
-handler(event, context)
-
-    retrieve key and bucket names from event
-
-    extract table name from key ----- 
-
-    get the update data -- old_data = s3.get_object(Bucket=bucket_name, Key=old_data_filename)
-    read the updated data -- read_old_data = old_data['Body'].read().decode('utf-8')
-
-    convert data to file-like-object -- old_file = io.StringIO(read_old_data)
-
-    convert file-like object to panda dataframe -- df = pd.read_csv(old_file, index_col=f"{table_name}_id")
-
-    if table name design:
-        return convert_to_parquet(design_transform_data function)
-    elif table name counterparty:
-        return convert_to_paruquet(counterparty_transform_data function)
-
-
-    
-    )
-    # example flow of a table which relies on 1 source table
-    design_transform_data(dataframe):
-        relevant tables = [ source design table ]
-        pull design table from s3 bucket
-        convert to dataframe in same way as above
-        transform dataframe to fit dim_design schema ---
-        return transformed dataframe
-
-        
-    # example flow of a table which relies on 2 source tables
-    counterparty_transform_data(dataframe):
-        relevant tables = [ source counterparty table, source address table ]
-        pull relevant tables from s3 bucket
-        convert to dataframe in same way as above
-        transform dataframe to fit dim_counterparty schema ---
-        return transformed dataframe
-
-    convert_to_parquet_function(transformed_dataframe):
-        takes transformed data from previous function
-        converts to parquet
-        return parquet data
-
-    write to s3(parquet_data):
-        writes to s3 process bucket
-
-"""
-
+import boto3
+import io
 import pandas as pd
-# import boto3
-# import io
+from write_to_s3 import write_to_s3
+# from dimensions-fact.dim_counterparty import create_dim_counterparty
+# from dimensions-fact.dim_currency import create_dim_currency
+# from dimensions-fact.dim_date import create_dim_date
+# from dimensions-fact.dim_design import create_dim_design
+# from dimensions-fact.dim_location import create_dim_location
+# from dimensions-fact.dim_staff import create_dim_staff
+# from dimensions-fact.fact-sales-order import create_fact_sales_order
 
-def design_transformer(df):
-    return df[["design_id", "design_name", "file_name", "file_location"]]
+function_dict = {"counterparty" : create_dim_counterparty, "currency" : create_dim_currency, "date" : create_dim_date, "design" : create_dim_design, "location" : create_dim_location, "staff" : create_dim_staff, "sales_order" : create_fact_sales_order}
 
-
-
-# s3 = boto3.client('s3')
-
-# old_data = s3.get_object(Bucket='totesys-test', Key='2023/11/06/design/14:55.csv')
-# read_old_data = old_data['Body'].read().decode('utf-8')
-
-# old_file = io.StringIO(read_old_data)
-
-# df = pd.read_csv(old_file, index_col=False)
-
-# # df.set_index("design_id")
-
-# # s3://totesys-test/2023/11/06/design/14:55.csv
-
-# # df = pd.read_csv("design.txt")
-# print(design_transformer(df))
+def handler(event, context):
+    s3 = boto3.client('s3')
+    for table_name in event:
+        
+        key = event[table_name]
+        update_data = s3.get_object(Bucket='ingestion-data-bucket-marble', Key=key)
+        read_update_data = update_data['Body'].read().decode('utf-8')
+        update_file = io.StringIO(read_update_data)
+        df = pd.read_csv(update_file, index_col=False)
+        # Josh has this
+        merged = merge_tables(df)
+        # Alex, Ryman, Shabbir
+        try:
+            our_func = function_dict[table_name]
+            result = our_func(merged)
+        except:
+            pass
+        # Alex has this
+        returned_parquet = convert_to_parquet(result)
+        write_to_s3(key, returned_parquet)

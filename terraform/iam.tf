@@ -70,6 +70,27 @@ resource "aws_iam_role_policy_attachment" "test_attach" {
   policy_arn = aws_iam_policy.test_policy.arn
 }
 
+# Policy for invoking the second lambda
+resource "aws_iam_policy" "invoke_second_lambda_policy" {
+  name   = "invoke_second_lambda_policy"
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "lambda:InvokeFunction",
+            "Resource": "*"
+        }
+    ]
+})
+}
+
+# Attach this policy to lambda role
+resource "aws_iam_role_policy_attachment" "charles_attach" {
+  role = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.invoke_second_lambda_policy.arn
+}
+
 
 # https://us-east-1.console.aws.amazon.com/iamv2/home?region=eu-west-2#/policies/details/arn%3Aaws%3Aiam%3A%3Aaws%3Apolicy%2FAmazonEventBridgeSchedulerFullAccess?section=permissions&view=json
 
