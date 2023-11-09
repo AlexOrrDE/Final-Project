@@ -1,4 +1,6 @@
 def create_dim_staff(staff_merge_df):
+    """Transforms staff table into dim_staff."""
+
     columns_to_keep = [
         "staff_id",
         "first_name",

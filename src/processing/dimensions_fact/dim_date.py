@@ -2,6 +2,11 @@ import pandas as pd
 
 
 def create_dim_date():
+    """Creates dim_date table.
+
+    This version of dim_date has a row for every date
+    in a given range
+    """
     date_range = pd.date_range("2020-01-01", "2025-01-01")
 
     dim_date_df = pd.DataFrame({"date_id": date_range})
