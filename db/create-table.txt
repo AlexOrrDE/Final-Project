@@ -1,0 +1,6 @@
+You are now connected to database "test_warehouse" as user "alex".
+CREATE TABLE
+ staff_id | first_name | last_name | department_name | location | email_address 
+----------+------------+-----------+-----------------+----------+---------------
+(0 rows)
+
