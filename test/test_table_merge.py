@@ -60,7 +60,7 @@ def create_counterparty_data():
             'delivery_contact': 'test',
             'created_at': Timestamp('2023-01-01 00:00:00.000000'),
             'last_updated': Timestamp('2023-01-01 00:00:00.000000')}]
-    }
+            }
 
 
 @pytest.fixture(scope="function")
@@ -89,7 +89,7 @@ def create_staff_data():
             'email_address': 'test@test.com',
             'created_at': Timestamp('2023-01-01 00:00:00.000000'),
             'last_updated': Timestamp('2023-01-01 00:00:00.000000')}]
-    }
+            }
 
 
 @pytest.fixture(scope="function")
@@ -115,7 +115,7 @@ def create_department_data():
             'manager': 'test',
             'created_at': Timestamp('2023-01-01 00:00:00.000000'),
             'last_updated': Timestamp('2023-01-01 00:00:00.000000')}]
-    }
+            }
 
 
 @pytest.fixture(scope="function")
@@ -155,7 +155,7 @@ def create_address_data():
             'phone': 'test_phone',
             'created_at': Timestamp('2023-01-01 00:00:00.000000'),
             'last_updated': Timestamp('2023-01-01 00:00:00.000000')}]
-    }
+            }
 
 
 @pytest.fixture(scope="function")
@@ -173,7 +173,7 @@ def create_updated_address_data():
             'phone': 'test_phone',
             'created_at': Timestamp('2023-01-02 00:00:00.000000'),
             'last_updated': Timestamp('2023-01-02 00:00:00.000000')}]
-    }
+            }
 
 
 @pytest.fixture(scope="function")
@@ -191,7 +191,7 @@ def create_newest_address_data():
             'phone': 'test_phone',
             'created_at': Timestamp('2023-01-05 00:00:00.000000'),
             'last_updated': Timestamp('2023-01-05 00:00:00.000000')}]
-    }
+            }
 
 
 def test_table_merge_combines_counterparty_and_address(
@@ -211,9 +211,9 @@ def test_table_merge_combines_counterparty_and_address(
     buffer = io.StringIO(cp_csv)
     source_df = pd.read_csv(buffer)
     result = table_merge(source_df)
-    assert 'cp_1' in result[1].values.tolist()
-    assert 'cp_2' in result[1].values.tolist()
-    assert 'cp_3' in result[1].values.tolist()
+    assert 'cp_1' in result['counterparty_legal_name'].values.tolist()
+    assert 'cp_2' in result['counterparty_legal_name'].values.tolist()
+    assert 'cp_3' in result['counterparty_legal_name'].values.tolist()
     assert result is not source_df
 
 
@@ -234,9 +234,9 @@ def test_table_merge_combines_staff_and_department(
     buffer = io.StringIO(staff_csv)
     source_df = pd.read_csv(buffer)
     result = table_merge(source_df)
-    assert 'staff_name_1' in result[1].values.tolist()
-    assert 'staff_name_2' in result[1].values.tolist()
-    assert 'staff_name_3' in result[1].values.tolist()
+    assert 'staff_name_1' in result['first_name'].values.tolist()
+    assert 'staff_name_2' in result['first_name'].values.tolist()
+    assert 'staff_name_3' in result['first_name'].values.tolist()
     assert result is not source_df
 
 
@@ -280,9 +280,9 @@ def test_table_merge_gets_latest_version_of_file(
     source_df = pd.read_csv(buffer)
     result = table_merge(source_df)
     print(result)
-    assert 'updated_add_1' in result[8].values.tolist()
-    assert 'add_2' in result[8].values.tolist()
-    assert 'add_3' in result[8].values.tolist()
+    assert 'updated_add_1' in result['address_line_1'].values.tolist()
+    assert 'add_2' in result['address_line_1'].values.tolist()
+    assert 'add_3' in result['address_line_1'].values.tolist()
 
 
 def test_table_merge_gets_latest_file_when_last_update_doesnt_match(
@@ -310,10 +310,9 @@ def test_table_merge_gets_latest_file_when_last_update_doesnt_match(
     buffer = io.StringIO(cp_csv)
     source_df = pd.read_csv(buffer)
     result = table_merge(source_df)
-    print(result)
-    assert 'add_1' in result[8].values.tolist()
-    assert 'add_2' in result[8].values.tolist()
-    assert 'add_3' in result[8].values.tolist()
+    assert 'add_1' in result['address_line_1'].values.tolist()
+    assert 'add_2' in result['address_line_1'].values.tolist()
+    assert 'add_3' in result['address_line_1'].values.tolist()
 
 
 def test_table_merge_raises_key_error_if_table_is_not_in_bucket(
