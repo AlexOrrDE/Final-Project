@@ -10,6 +10,7 @@ resource "aws_s3_bucket" "ingestion_data_bucket" {
 
 resource "aws_s3_bucket" "processed_data_bucket" {
   bucket = "processed-data-bucket-marble"
+  force_destroy = true
 }
 
 # If we just want to zip one python file (with not local dependencies)
