@@ -69,8 +69,8 @@ def handler(event, context):
         else:
             logging.info("Calling next lambda with tables:")
             logging.info(updated_tables)
-            lambda_client = boto3.client('lambda')
-      
+            lambda_client = boto3.client("lambda")
+
             json_tables = json.dumps(updated_tables)
             lambda_client.invoke(
                 FunctionName="processing_handler",

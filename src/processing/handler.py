@@ -29,17 +29,17 @@ function_dict = {
 def handler(event, context):
     logging.info("Processing tables:")
     logging.info(event)
-    s3 = boto3.client('s3')
+    s3 = boto3.client("s3")
     s3_resource = boto3.resource("s3")
     bucket = s3_resource.Bucket("ingestion-data-bucket-marble")
-    
+
     check_dim_date = list(bucket.objects.all())
     if "dim_date" not in check_dim_date:
         our_func = function_dict["date"]
         result = our_func()
         returned_parquet = convert_to_parquet(result)
         write_to_s3("dim_date", returned_parquet)
-    
+
     for table_name in event:
         logging.info("Current table is:")
         logging.info(table_name)
