@@ -226,7 +226,8 @@ class EmailAddress(IA5String):
 
         if value.find('@') != -1:
             mailbox, hostname = value.rsplit('@', 1)
-            encoded_value = mailbox.encode('ascii') + b'@' + hostname.encode('idna')
+            encoded_value = mailbox.encode(
+                'ascii') + b'@' + hostname.encode('idna')
         else:
             encoded_value = value.encode('ascii')
 
@@ -244,14 +245,16 @@ class EmailAddress(IA5String):
         """
 
         # We've seen this in the wild as a PrintableString, and since ascii is a
-        # subset of cp1252, we use the later for decoding to be more user friendly
+        # subset of cp1252, we use the later for decoding to be more user
+        # friendly
         if self._unicode is None:
             contents = self._merge_chunks()
             if contents.find(b'@') == -1:
                 self._unicode = contents.decode('cp1252')
             else:
                 mailbox, hostname = contents.rsplit(b'@', 1)
-                self._unicode = mailbox.decode('cp1252') + '@' + hostname.decode('idna')
+                self._unicode = mailbox.decode(
+                    'cp1252') + '@' + hostname.decode('idna')
         return self._unicode
 
     def __ne__(self, other):
@@ -365,7 +368,8 @@ class IPAddress(OctetString):
             cidr_mask = '1' * cidr
             cidr_mask += '0' * (cidr_size - len(cidr_mask))
             cidr_bytes = int_to_bytes(int(cidr_mask, 2))
-            cidr_bytes = (b'\x00' * ((cidr_size // 8) - len(cidr_bytes))) + cidr_bytes
+            cidr_bytes = (b'\x00' * ((cidr_size // 8) -
+                          len(cidr_bytes))) + cidr_bytes
 
         self._native = original_value
         self.contents = inet_pton(family, value) + cidr_bytes
@@ -746,23 +750,32 @@ class NameTypeAndValue(Sequence):
         """
 
         # Map step
-        string = re.sub('[\u00ad\u1806\u034f\u180b-\u180d\ufe0f-\uff00\ufffc]+', '', string)
+        string = re.sub(
+            '[\u00ad\u1806\u034f\u180b-\u180d\ufe0f-\uff00\ufffc]+',
+            '',
+            string)
         string = re.sub('[\u0009\u000a\u000b\u000c\u000d\u0085]', ' ', string)
         if sys.maxunicode == 0xffff:
             # Some installs of Python 2.7 don't support 8-digit unicode escape
             # ranges, so we have to break them into pieces
             # Original was: \U0001D173-\U0001D17A and \U000E0020-\U000E007F
-            string = re.sub('\ud834[\udd73-\udd7a]|\udb40[\udc20-\udc7f]|\U000e0001', '', string)
+            string = re.sub(
+                '\ud834[\udd73-\udd7a]|\udb40[\udc20-\udc7f]|\U000e0001',
+                '',
+                string)
         else:
-            string = re.sub('[\U0001D173-\U0001D17A\U000E0020-\U000E007F\U000e0001]', '', string)
+            string = re.sub(
+                '[\U0001D173-\U0001D17A\U000E0020-\U000E007F\U000e0001]',
+                '',
+                string)
         string = re.sub(
             '[\u0000-\u0008\u000e-\u001f\u007f-\u0084\u0086-\u009f\u06dd\u070f\u180e\u200c-\u200f'
-            '\u202a-\u202e\u2060-\u2063\u206a-\u206f\ufeff\ufff9-\ufffb]+',
-            '',
-            string
-        )
+            '\u202a-\u202e\u2060-\u2063\u206a-\u206f\ufeff\ufff9-\ufffb]+', '', string)
         string = string.replace('\u200b', '')
-        string = re.sub('[\u00a0\u1680\u2000-\u200a\u2028-\u2029\u202f\u205f\u3000]', ' ', string)
+        string = re.sub(
+            '[\u00a0\u1680\u2000-\u200a\u2028-\u2029\u202f\u205f\u3000]',
+            ' ',
+            string)
 
         string = ''.join(map(stringprep.map_table_b2, string))
 
@@ -923,7 +936,8 @@ class RelativeDistinguishedName(SetOf):
         """
 
         output = {}
-        [output.update([(ntv['type'].native, ntv.prepped_value)]) for ntv in rdn]
+        [output.update([(ntv['type'].native, ntv.prepped_value)])
+         for ntv in rdn]
         return output
 
 
@@ -1397,11 +1411,15 @@ class ExtensionAttributes(SequenceOf):
 
 
 class ORAddress(Sequence):
-    _fields = [
-        ('built_in_standard_attributes', BuiltInStandardAttributes),
-        ('built_in_domain_defined_attributes', BuiltInDomainDefinedAttributes, {'optional': True}),
-        ('extension_attributes', ExtensionAttributes, {'optional': True}),
-    ]
+    _fields = [('built_in_standard_attributes',
+                BuiltInStandardAttributes),
+               ('built_in_domain_defined_attributes',
+                BuiltInDomainDefinedAttributes,
+                {'optional': True}),
+               ('extension_attributes',
+                ExtensionAttributes,
+                {'optional': True}),
+               ]
 
 
 class EDIPartyName(Sequence):
@@ -1529,17 +1547,17 @@ class GeneralSubtrees(SequenceOf):
 
 class NameConstraints(Sequence):
     _fields = [
-        ('permitted_subtrees', GeneralSubtrees, {'implicit': 0, 'optional': True}),
-        ('excluded_subtrees', GeneralSubtrees, {'implicit': 1, 'optional': True}),
-    ]
+        ('permitted_subtrees', GeneralSubtrees, {
+            'implicit': 0, 'optional': True}), ('excluded_subtrees', GeneralSubtrees, {
+                'implicit': 1, 'optional': True}), ]
 
 
 class DistributionPoint(Sequence):
     _fields = [
-        ('distribution_point', DistributionPointName, {'explicit': 0, 'optional': True}),
-        ('reasons', ReasonFlags, {'implicit': 1, 'optional': True}),
-        ('crl_issuer', GeneralNames, {'implicit': 2, 'optional': True}),
-    ]
+        ('distribution_point', DistributionPointName, {
+            'explicit': 0, 'optional': True}), ('reasons', ReasonFlags, {
+                'implicit': 1, 'optional': True}), ('crl_issuer', GeneralNames, {
+                    'implicit': 2, 'optional': True}), ]
 
     _url = False
 
@@ -1656,9 +1674,9 @@ class PolicyMappings(SequenceOf):
 
 class PolicyConstraints(Sequence):
     _fields = [
-        ('require_explicit_policy', Integer, {'implicit': 0, 'optional': True}),
-        ('inhibit_policy_mapping', Integer, {'implicit': 1, 'optional': True}),
-    ]
+        ('require_explicit_policy', Integer, {
+            'implicit': 0, 'optional': True}), ('inhibit_policy_mapping', Integer, {
+                'implicit': 1, 'optional': True}), ]
 
 
 class KeyPurposeId(ObjectIdentifier):
@@ -2587,7 +2605,8 @@ class Certificate(Sequence):
         """
 
         if self._issuer_serial is None:
-            self._issuer_serial = self.issuer.sha256 + b':' + str_cls(self.serial_number).encode('ascii')
+            self._issuer_serial = self.issuer.sha256 + b':' + \
+                str_cls(self.serial_number).encode('ascii')
         return self._issuer_serial
 
     @property
@@ -2633,10 +2652,13 @@ class Certificate(Sequence):
             akiv = self.authority_key_identifier_value
             if akiv and akiv['authority_cert_issuer'].native:
                 issuer = self.authority_key_identifier_value['authority_cert_issuer'][0].chosen
-                # We untag the element since it is tagged via being a choice from GeneralName
+                # We untag the element since it is tagged via being a choice
+                # from GeneralName
                 issuer = issuer.untag()
-                authority_serial = self.authority_key_identifier_value['authority_cert_serial_number'].native
-                self._authority_issuer_serial = issuer.sha256 + b':' + str_cls(authority_serial).encode('ascii')
+                authority_serial = self.authority_key_identifier_value[
+                    'authority_cert_serial_number'].native
+                self._authority_issuer_serial = issuer.sha256 + \
+                    b':' + str_cls(authority_serial).encode('ascii')
             else:
                 self._authority_issuer_serial = None
         return self._authority_issuer_serial
@@ -2651,7 +2673,8 @@ class Certificate(Sequence):
         """
 
         if self._crl_distribution_points is None:
-            self._crl_distribution_points = self._get_http_crl_distribution_points(self.crl_distribution_points_value)
+            self._crl_distribution_points = self._get_http_crl_distribution_points(
+                self.crl_distribution_points_value)
         return self._crl_distribution_points
 
     @property
@@ -2664,7 +2687,8 @@ class Certificate(Sequence):
         """
 
         if self._delta_crl_distribution_points is None:
-            self._delta_crl_distribution_points = self._get_http_crl_distribution_points(self.freshest_crl_value)
+            self._delta_crl_distribution_points = self._get_http_crl_distribution_points(
+                self.freshest_crl_value)
         return self._delta_crl_distribution_points
 
     def _get_http_crl_distribution_points(self, crl_distribution_points):
@@ -2745,7 +2769,8 @@ class Certificate(Sequence):
             # https://tools.ietf.org/html/rfc6125#section-6.4.4, the common
             # name should not be used if the subject alt name is present.
             else:
-                pattern = re.compile('^(\\*\\.)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9\\-]*[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$')
+                pattern = re.compile(
+                    '^(\\*\\.)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9\\-]*[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$')
                 for rdn in self.subject.chosen:
                     for name_type_value in rdn:
                         if name_type_value['type'].native == 'common_name':
@@ -2896,7 +2921,8 @@ class Certificate(Sequence):
         encoded_domain_ip = domain_ip.encode('idna').decode('ascii').lower()
 
         is_ipv6 = encoded_domain_ip.find(':') != -1
-        is_ipv4 = not is_ipv6 and re.match('^\\d+\\.\\d+\\.\\d+\\.\\d+$', encoded_domain_ip)
+        is_ipv4 = not is_ipv6 and re.match(
+            '^\\d+\\.\\d+\\.\\d+\\.\\d+$', encoded_domain_ip)
         is_domain = not is_ipv6 and not is_ipv4
 
         # Handle domain name checks
@@ -2907,7 +2933,8 @@ class Certificate(Sequence):
             domain_labels = encoded_domain_ip.split('.')
 
             for valid_domain in self.valid_domains:
-                encoded_valid_domain = valid_domain.encode('idna').decode('ascii').lower()
+                encoded_valid_domain = valid_domain.encode(
+                    'idna').decode('ascii').lower()
                 valid_domain_labels = encoded_valid_domain.split('.')
 
                 # The domain must be equal in label length to match
@@ -2918,7 +2945,8 @@ class Certificate(Sequence):
                     return True
 
                 is_wildcard = self._is_wildcard_domain(encoded_valid_domain)
-                if is_wildcard and self._is_wildcard_match(domain_labels, valid_domain_labels):
+                if is_wildcard and self._is_wildcard_match(
+                        domain_labels, valid_domain_labels):
                     return True
 
             return False
@@ -2931,7 +2959,8 @@ class Certificate(Sequence):
         normalized_ip = inet_pton(family, encoded_domain_ip)
 
         for valid_ip in self.valid_ips:
-            valid_family = socket.AF_INET if valid_ip.find('.') != -1 else socket.AF_INET6
+            valid_family = socket.AF_INET if valid_ip.find(
+                '.') != -1 else socket.AF_INET6
             normalized_valid_ip = inet_pton(valid_family, valid_ip)
 
             if normalized_valid_ip == normalized_ip:
@@ -3003,7 +3032,8 @@ class Certificate(Sequence):
         if wildcard_label == '*':
             return True
 
-        wildcard_regex = re.compile('^' + wildcard_label.replace('*', '.*') + '$')
+        wildcard_regex = re.compile(
+            '^' + wildcard_label.replace('*', '.*') + '$')
         if wildcard_regex.match(first_domain_label):
             return True
 
@@ -3024,12 +3054,12 @@ class SequenceOfAlgorithmIdentifiers(SequenceOf):
 
 class CertificateAux(Sequence):
     _fields = [
-        ('trust', KeyPurposeIdentifiers, {'optional': True}),
-        ('reject', KeyPurposeIdentifiers, {'implicit': 0, 'optional': True}),
-        ('alias', UTF8String, {'optional': True}),
-        ('keyid', OctetString, {'optional': True}),
-        ('other', SequenceOfAlgorithmIdentifiers, {'implicit': 1, 'optional': True}),
-    ]
+        ('trust', KeyPurposeIdentifiers, {
+            'optional': True}), ('reject', KeyPurposeIdentifiers, {
+                'implicit': 0, 'optional': True}), ('alias', UTF8String, {
+                    'optional': True}), ('keyid', OctetString, {
+                        'optional': True}), ('other', SequenceOfAlgorithmIdentifiers, {
+                            'implicit': 1, 'optional': True}), ]
 
 
 class TrustedCertificate(Concat):

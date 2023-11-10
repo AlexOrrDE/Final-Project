@@ -112,6 +112,7 @@ class LazyList(list):
         new_list = LazyList()
         return new_list
 
+
 # Not all versions of Python declare the same magic methods.
 # Filter out properties that don't exist in this version of Python
 # from the list.
@@ -165,6 +166,7 @@ class LazySet(set):
 
         new_set = LazySet()
         return new_set
+
 
 # Not all versions of Python declare the same magic methods.
 # Filter out properties that don't exist in this version of Python

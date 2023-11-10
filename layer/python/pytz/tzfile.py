@@ -13,6 +13,7 @@ def _byte_string(s):
     """Cast a string or byte string to an ASCII byte string."""
     return s.encode('ASCII')
 
+
 _NULL = _byte_string('\0')
 
 
@@ -121,6 +122,7 @@ def build_tzinfo(zone, fp):
             _transition_info=transition_info))
 
     return cls()
+
 
 if __name__ == '__main__':
     import os.path

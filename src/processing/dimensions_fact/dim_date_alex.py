@@ -2,6 +2,12 @@ import pandas as pd
 
 
 def create_dim_date(sales_order_df):
+    """Transforms date data in sales_order table to dim_date.
+
+    This version of dim_date only shows dates which
+    have associated sales data
+    """
+
     distinct_dates = (
         pd.concat(
             [
@@ -10,11 +16,14 @@ def create_dim_date(sales_order_df):
                 sales_order_df["agreed_delivery_date"],
             ]
         )
-        .apply(pd.to_datetime).dt.date.drop_duplicates().sort_values()
+        .apply(pd.to_datetime)
+        .dt.date.drop_duplicates()
+        .sort_values()
         .reset_index(drop=True)
     )
-    
-    date_components = pd.to_datetime(distinct_dates, format="mixed", dayfirst=True)
+
+    date_components = pd.to_datetime(
+        distinct_dates, format="mixed", dayfirst=True)
     dim_date_data = pd.DataFrame(
         {
             "date_id": date_components.dt.date,
@@ -29,10 +38,3 @@ def create_dim_date(sales_order_df):
     )
 
     return dim_date_data
-
-
-sales_order_df = pd.read_csv(
-    "/Users/alex/Downloads/2023-10-31 16_25_02.790973-sales_order.csv"
-)
-dim_date_df = create_dim_date(sales_order_df)
-print(dim_date_df)

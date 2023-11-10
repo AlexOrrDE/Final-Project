@@ -22,7 +22,7 @@ hypothesis.configuration.set_hypothesis_home_dir(
 
 # We register two custom profiles for Numpy - for details see
 # https://hypothesis.readthedocs.io/en/latest/settings.html
-# The first is designed for our own CI runs; the latter also 
+# The first is designed for our own CI runs; the latter also
 # forces determinism and is designed for use via np.test()
 hypothesis.settings.register_profile(
     name="numpy-profile", deadline=None, print_blob=True,
@@ -32,8 +32,8 @@ hypothesis.settings.register_profile(
     deadline=None, print_blob=True, database=None, derandomize=True,
     suppress_health_check=list(hypothesis.HealthCheck),
 )
-# Note that the default profile is chosen based on the presence 
-# of pytest.ini, but can be overridden by passing the 
+# Note that the default profile is chosen based on the presence
+# of pytest.ini, but can be overridden by passing the
 # --hypothesis-profile=NAME argument to pytest.
 _pytest_ini = os.path.join(os.path.dirname(__file__), "..", "pytest.ini")
 hypothesis.settings.load_profile(
@@ -43,15 +43,18 @@ hypothesis.settings.load_profile(
 # The experimentalAPI is used in _umath_tests
 os.environ["NUMPY_EXPERIMENTAL_DTYPE_API"] = "1"
 
+
 def pytest_configure(config):
-    config.addinivalue_line("markers",
+    config.addinivalue_line(
+        "markers",
         "valgrind_error: Tests that are known to error under valgrind.")
-    config.addinivalue_line("markers",
+    config.addinivalue_line(
+        "markers",
         "leaks_references: Tests that are known to leak references.")
     config.addinivalue_line("markers",
-        "slow: Tests that are very slow.")
+                            "slow: Tests that are very slow.")
     config.addinivalue_line("markers",
-        "slow_pypy: Tests that are very slow on pypy.")
+                            "slow_pypy: Tests that are very slow on pypy.")
 
 
 def pytest_addoption(parser):
@@ -70,7 +73,7 @@ def pytest_sessionstart(session):
         os.environ['NPY_AVAILABLE_MEM'] = available_mem
 
 
-#FIXME when yield tests are gone.
+# FIXME when yield tests are gone.
 @pytest.hookimpl()
 def pytest_itemcollected(item):
     """
@@ -115,6 +118,7 @@ def check_fpu_mode(request):
 @pytest.fixture(autouse=True)
 def add_np(doctest_namespace):
     doctest_namespace['np'] = numpy
+
 
 @pytest.fixture(autouse=True)
 def env_setup(monkeypatch):

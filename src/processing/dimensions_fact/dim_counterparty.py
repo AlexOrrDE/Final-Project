@@ -1,4 +1,6 @@
 def create_dim_counterparty(cp_merge_df):
+    """Transforms counterparty table to dim_counterparty."""
+
     column_name_mapping = {
         "address_line_1": "counterparty_legal_address_line_1",
         "address_line_2": "counterparty_legal_address_line_2",

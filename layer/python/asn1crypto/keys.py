@@ -574,7 +574,8 @@ class ECPrivateKey(Sequence):
     # Ensures the key is set to the correct length when encoding
     _key_size = None
 
-    # This is necessary to ensure the private_key IntegerOctetString is encoded properly
+    # This is necessary to ensure the private_key IntegerOctetString is
+    # encoded properly
     def __setitem__(self, key, value):
         res = super(ECPrivateKey, self).__setitem__(key, value)
 
@@ -582,7 +583,9 @@ class ECPrivateKey(Sequence):
             if self._key_size is None:
                 # Infer the key_size from the existing private key if possible
                 pkey_contents = self['private_key'].contents
-                if isinstance(pkey_contents, byte_cls) and len(pkey_contents) > 1:
+                if isinstance(
+                        pkey_contents,
+                        byte_cls) and len(pkey_contents) > 1:
                     self.set_key_size(len(self['private_key'].contents))
 
             elif self._key_size is not None:
@@ -610,7 +613,8 @@ class ECPrivateKey(Sequence):
         Ensure the private_key explicit encoding width is set
         """
 
-        if self._key_size is not None and isinstance(self['private_key'], IntegerOctetString):
+        if self._key_size is not None and isinstance(
+                self['private_key'], IntegerOctetString):
             self['private_key'].set_encoded_width(self._key_size)
 
 
@@ -744,7 +748,11 @@ class PrivateKeyInfo(Sequence):
             A PrivateKeyInfo object
         """
 
-        if not isinstance(private_key, byte_cls) and not isinstance(private_key, Asn1Value):
+        if not isinstance(
+                private_key,
+                byte_cls) and not isinstance(
+                private_key,
+                Asn1Value):
             raise TypeError(unwrap(
                 '''
                 private_key must be a byte string or Asn1Value, not %s
@@ -812,7 +820,8 @@ class PrivateKeyInfo(Sequence):
                 algorithm['parameters'].name != 'implicit_ca' and \
                 isinstance(self['private_key'], ParsableOctetString) and \
                 isinstance(self['private_key'].parsed, ECPrivateKey):
-            self['private_key'].parsed.set_key_size(algorithm['parameters'].key_size)
+            self['private_key'].parsed.set_key_size(
+                algorithm['parameters'].key_size)
 
         return res
 
@@ -885,7 +894,8 @@ class PrivateKeyInfo(Sequence):
                 self.algorithm.upper()
             ))
 
-        byte_len = math.log(self['private_key_algorithm']['parameters']['q'].native, 2) / 8
+        byte_len = math.log(self['private_key_algorithm']
+                            ['parameters']['q'].native, 2) / 8
 
         return 'sha1' if byte_len <= 20 else 'sha2'
 
@@ -1112,7 +1122,11 @@ class PublicKeyInfo(Sequence):
             A PublicKeyInfo object
         """
 
-        if not isinstance(public_key, byte_cls) and not isinstance(public_key, Asn1Value):
+        if not isinstance(
+                public_key,
+                byte_cls) and not isinstance(
+                public_key,
+                Asn1Value):
             raise TypeError(unwrap(
                 '''
                 public_key must be a byte string or Asn1Value, not %s
@@ -1238,7 +1252,8 @@ class PublicKeyInfo(Sequence):
 
         if self._bit_size is None:
             if self.algorithm == 'ec':
-                self._bit_size = int(((len(self['public_key'].native) - 1) / 2) * 8)
+                self._bit_size = int(
+                    ((len(self['public_key'].native) - 1) / 2) * 8)
             else:
                 if self.algorithm == 'rsa' or self.algorithm == 'rsassa_pss':
                     prime = self['public_key'].parsed['modulus'].native
@@ -1279,7 +1294,8 @@ class PublicKeyInfo(Sequence):
         """
 
         if self._sha256 is None:
-            self._sha256 = hashlib.sha256(byte_cls(self['public_key'])).digest()
+            self._sha256 = hashlib.sha256(
+                byte_cls(self['public_key'])).digest()
         return self._sha256
 
     @property

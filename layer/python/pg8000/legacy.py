@@ -208,7 +208,8 @@ class Cursor:
             return None
         columns = []
         for col in row_desc:
-            columns.append((col["name"], col["type_oid"], None, None, None, None, None))
+            columns.append(
+                (col["name"], col["type_oid"], None, None, None, None, None))
         return columns
 
     ##
@@ -250,7 +251,8 @@ class Cursor:
             if len(args) == 0 and stream is None:
                 self._context = self._c.execute_simple(operation)
             else:
-                statement, vals = convert_paramstyle(self.paramstyle, operation, args)
+                statement, vals = convert_paramstyle(
+                    self.paramstyle, operation, args)
                 self._context = self._c.execute_unnamed(
                     statement, vals=vals, oids=self._input_oids, stream=stream
                 )
@@ -436,7 +438,8 @@ class Connection(CoreConnection):
     IntegrityError = property(lambda self: self._getError(IntegrityError))
     InternalError = property(lambda self: self._getError(InternalError))
     ProgrammingError = property(lambda self: self._getError(ProgrammingError))
-    NotSupportedError = property(lambda self: self._getError(NotSupportedError))
+    NotSupportedError = property(
+        lambda self: self._getError(NotSupportedError))
 
     def __init__(self, *args, **kwargs):
         try:
@@ -461,7 +464,10 @@ class Connection(CoreConnection):
         self.autocommit = False
 
     def _getError(self, error):
-        warn("DB-API extension connection.%s used" % error.__name__, stacklevel=3)
+        warn(
+            "DB-API extension connection.%s used" %
+            error.__name__,
+            stacklevel=3)
         return error
 
     def cursor(self):
@@ -479,7 +485,8 @@ class Connection(CoreConnection):
 
     @property
     def _in_transaction(self):
-        return self._transaction_status in (IN_TRANSACTION, IN_FAILED_TRANSACTION)
+        return self._transaction_status in (
+            IN_TRANSACTION, IN_FAILED_TRANSACTION)
 
     def commit(self):
         """Commits the current database transaction.
@@ -570,7 +577,8 @@ class Connection(CoreConnection):
             xid = self._xid
 
         if xid is None:
-            raise ProgrammingError("Cannot tpc_commit() without a TPC transaction!")
+            raise ProgrammingError(
+                "Cannot tpc_commit() without a TPC transaction!")
 
         try:
             previous_autocommit_mode = self.autocommit
@@ -737,8 +745,7 @@ class PreparedStatement:
             if not self.con._in_transaction and not self.con.autocommit:
                 self.con.execute_unnamed("begin transaction")
             self._context = self.con.execute_named(
-                self.name_bin, params, self.row_desc, self.input_funcs, self.operation
-            )
+                self.name_bin, params, self.row_desc, self.input_funcs, self.operation)
         except AttributeError as e:
             if self.con is None:
                 raise InterfaceError("Cursor closed")

@@ -9,24 +9,30 @@ class InvalidStoredCredentials(Exception):
         self.message = "Incorrect credentials"
 
 
-def connect_to_database():
-    """Starts connection with totesys database.
+def connect_to_database(db='Totesys'):
+    """Starts a connection with the specified database.
 
-    Typical usage example:
+    Args:
+        db (str, optional): The name of the database to connect to.
+            Defaults to 'Totesys'. If set to 'Warehouse', it connects to
+            the data warehouse.
 
-      conn = connect_to_database()
-      data = get_data(conn)
+    Returns:
+        pg8000.dbapi.Connection: A connection object for specified database.
+
+    Raises:
+        InterfaceError: If there is an error in connecting to the database.
     """
 
     try:
-        totesys_credentials = retrieve_totesys_credentials(
-            "Totesys-Credentials")
+        credentials = retrieve_credentials(
+            f"{db.capitalize()}-Credentials")
         conn = Connection(
-            host=totesys_credentials["host"],
-            port=totesys_credentials["port"],
-            database=totesys_credentials["database"],
-            user=totesys_credentials["user"],
-            password=totesys_credentials["password"],
+            host=credentials["host"],
+            port=credentials["port"],
+            database=credentials["database"],
+            user=credentials["user"],
+            password=credentials["password"],
         )
         return conn
 
@@ -35,7 +41,7 @@ def connect_to_database():
         raise db_connection_error
 
 
-def retrieve_totesys_credentials(secret_name):
+def retrieve_credentials(secret_name):
     """
     Retrieve database credentials from AWS Secrets Manager.
 
@@ -68,7 +74,7 @@ def retrieve_totesys_credentials(secret_name):
         credentials = json.loads(response["SecretString"])
 
     except json.JSONDecodeError as de:
-        logging.info("Error occured in retrieve_totesys_credentials")
+        logging.info("Error occured in retrieve_credentials")
         raise de
 
     valid_keys = ["host", "port", "database", "user", "password"]
@@ -78,6 +84,3 @@ def retrieve_totesys_credentials(secret_name):
         raise InvalidStoredCredentials()
 
     return credentials
-
-
-connect_to_database()

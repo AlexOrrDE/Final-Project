@@ -49,13 +49,17 @@ def emit(class_, method, tag, contents):
     """
 
     if not isinstance(class_, int):
-        raise TypeError('class_ must be an integer, not %s' % type_name(class_))
+        raise TypeError(
+            'class_ must be an integer, not %s' %
+            type_name(class_))
 
     if class_ < 0 or class_ > 3:
         raise ValueError('class_ must be one of 0, 1, 2 or 3, not %s' % class_)
 
     if not isinstance(method, int):
-        raise TypeError('method must be an integer, not %s' % type_name(method))
+        raise TypeError(
+            'method must be an integer, not %s' %
+            type_name(method))
 
     if method < 0 or method > 1:
         raise ValueError('method must be 0 or 1, not %s' % method)
@@ -67,7 +71,9 @@ def emit(class_, method, tag, contents):
         raise ValueError('tag must be greater than zero, not %s' % tag)
 
     if not isinstance(contents, byte_cls):
-        raise TypeError('contents must be a byte string, not %s' % type_name(contents))
+        raise TypeError(
+            'contents must be a byte string, not %s' %
+            type_name(contents))
 
     return _dump_header(class_, method, tag, contents) + contents
 
@@ -102,12 +108,16 @@ def parse(contents, strict=False):
     """
 
     if not isinstance(contents, byte_cls):
-        raise TypeError('contents must be a byte string, not %s' % type_name(contents))
+        raise TypeError(
+            'contents must be a byte string, not %s' %
+            type_name(contents))
 
     contents_len = len(contents)
     info, consumed = _parse(contents, contents_len)
     if strict and consumed != contents_len:
-        raise ValueError('Extra data - %d bytes of trailing data were provided' % (contents_len - consumed))
+        raise ValueError(
+            'Extra data - %d bytes of trailing data were provided' %
+            (contents_len - consumed))
     return info
 
 
@@ -131,7 +141,9 @@ def peek(contents):
     """
 
     if not isinstance(contents, byte_cls):
-        raise TypeError('contents must be a byte string, not %s' % type_name(contents))
+        raise TypeError(
+            'contents must be a byte string, not %s' %
+            type_name(contents))
 
     info, consumed = _parse(contents, len(contents))
     return consumed
@@ -182,7 +194,9 @@ def _parse(encoded_data, data_len, pointer=0, lengths_only=False, depth=0):
         tag = 0
         while True:
             if data_len < pointer + 1:
-                raise ValueError(_INSUFFICIENT_DATA_MESSAGE % (1, data_len - pointer))
+                raise ValueError(
+                    _INSUFFICIENT_DATA_MESSAGE %
+                    (1, data_len - pointer))
             num = ord(encoded_data[pointer]) if _PY2 else encoded_data[pointer]
             pointer += 1
             if num == 0x80 and tag == 0:
@@ -196,7 +210,8 @@ def _parse(encoded_data, data_len, pointer=0, lengths_only=False, depth=0):
 
     if data_len < pointer + 1:
         raise ValueError(_INSUFFICIENT_DATA_MESSAGE % (1, data_len - pointer))
-    length_octet = ord(encoded_data[pointer]) if _PY2 else encoded_data[pointer]
+    length_octet = ord(encoded_data[pointer]
+                       ) if _PY2 else encoded_data[pointer]
     pointer += 1
     trailer = b''
 
@@ -207,9 +222,12 @@ def _parse(encoded_data, data_len, pointer=0, lengths_only=False, depth=0):
         length_octets = length_octet & 127
         if length_octets:
             if data_len < pointer + length_octets:
-                raise ValueError(_INSUFFICIENT_DATA_MESSAGE % (length_octets, data_len - pointer))
+                raise ValueError(
+                    _INSUFFICIENT_DATA_MESSAGE %
+                    (length_octets, data_len - pointer))
             pointer += length_octets
-            contents_end = pointer + int_from_bytes(encoded_data[pointer - length_octets:pointer], signed=False)
+            contents_end = pointer + \
+                int_from_bytes(encoded_data[pointer - length_octets:pointer], signed=False)
 
         else:
             # To properly parse indefinite length values, we need to scan forward
@@ -217,15 +235,20 @@ def _parse(encoded_data, data_len, pointer=0, lengths_only=False, depth=0):
             # just scanned looking for \x00\x00, nested indefinite length values
             # would not work.
             if not constructed:
-                raise ValueError('Indefinite-length element must be constructed')
+                raise ValueError(
+                    'Indefinite-length element must be constructed')
             contents_end = pointer
-            while data_len < contents_end + 2 or encoded_data[contents_end:contents_end+2] != b'\x00\x00':
-                _, contents_end = _parse(encoded_data, data_len, contents_end, lengths_only=True, depth=depth+1)
+            while data_len < contents_end + \
+                    2 or encoded_data[contents_end:contents_end + 2] != b'\x00\x00':
+                _, contents_end = _parse(
+                    encoded_data, data_len, contents_end, lengths_only=True, depth=depth + 1)
             contents_end += 2
             trailer = b'\x00\x00'
 
     if contents_end > data_len:
-        raise ValueError(_INSUFFICIENT_DATA_MESSAGE % (contents_end - pointer, data_len - pointer))
+        raise ValueError(
+            _INSUFFICIENT_DATA_MESSAGE %
+            (contents_end - pointer, data_len - pointer))
 
     if lengths_only:
         return (pointer, contents_end)
@@ -236,7 +259,7 @@ def _parse(encoded_data, data_len, pointer=0, lengths_only=False, depth=0):
             constructed,
             tag,
             encoded_data[start:pointer],
-            encoded_data[pointer:contents_end-len(trailer)],
+            encoded_data[pointer:contents_end - len(trailer)],
             trailer
         ),
         contents_end

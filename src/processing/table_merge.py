@@ -32,7 +32,6 @@ def table_merge(source_df):
             table_2 = table_dict[table_1][0]
             table_1_key = table_dict[table_1][1]
             table_2_key = f'{table_dict[table_1][0]}_id'
-
             # call to s3 client, lists objects in data bucket
             s3 = boto3.client('s3')
             response = s3.list_objects(Bucket='ingestion-data-bucket-marble')
@@ -58,12 +57,16 @@ def table_merge(source_df):
                             row.to_frame().T, match,
                             left_on=f'{table_1_key}',
                             right_on=f'{table_2_key}')
+                        merged_columns = result.columns.tolist()
                         merged_table.append(result.values.tolist()[0])
+
                         break
             logging.info(
                 'Tables %s and %s have been merged.', table_1, table_2)
             pd.set_option('display.max_columns', None)
-            return pd.DataFrame(merged_table)
+            merged_df = pd.DataFrame(merged_table)
+            merged_df.columns = merged_columns
+            return merged_df
         else:
             logging.info('No need to merge')
             return source_df

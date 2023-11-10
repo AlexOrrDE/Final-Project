@@ -221,17 +221,30 @@ class Asn1Value(object):
         """
 
         if not isinstance(encoded_data, byte_cls):
-            raise TypeError('encoded_data must be a byte string, not %s' % type_name(encoded_data))
+            raise TypeError(
+                'encoded_data must be a byte string, not %s' %
+                type_name(encoded_data))
 
         spec = None
         if cls.tag is not None:
             spec = cls
 
-        value, _ = _parse_build(encoded_data, spec=spec, spec_params=kwargs, strict=strict)
+        value, _ = _parse_build(
+            encoded_data, spec=spec, spec_params=kwargs, strict=strict)
         return value
 
-    def __init__(self, explicit=None, implicit=None, no_explicit=False, tag_type=None, class_=None, tag=None,
-                 optional=None, default=None, contents=None, method=None):
+    def __init__(
+            self,
+            explicit=None,
+            implicit=None,
+            no_explicit=False,
+            tag_type=None,
+            class_=None,
+            tag=None,
+            optional=None,
+            default=None,
+            contents=None,
+            method=None):
         """
         The optional parameter is not used, but rather included so we don't
         have to delete it from the parameter dictionary when passing as keyword
@@ -291,7 +304,8 @@ class Asn1Value(object):
                 cls = self.__class__
                 # Allow explicit to be specified as a simple 2-element tuple
                 # instead of requiring the user make a nested tuple
-                if cls.explicit is not None and isinstance(cls.explicit[0], int_types):
+                if cls.explicit is not None and isinstance(
+                        cls.explicit[0], int_types):
                     cls.explicit = (cls.explicit, )
                 if hasattr(cls, '_setup'):
                     self._setup()
@@ -433,7 +447,9 @@ class Asn1Value(object):
 
         except (ValueError, TypeError) as e:
             args = e.args[1:]
-            e.args = (e.args[0] + '\n    while constructing %s' % type_name(self),) + args
+            e.args = (
+                e.args[0] + '\n    while constructing %s' %
+                type_name(self),) + args
             raise e
 
     def __str__(self):
@@ -457,9 +473,11 @@ class Asn1Value(object):
         """
 
         if _PY2:
-            return '<%s %s b%s>' % (type_name(self), id(self), repr(self.dump()))
+            return '<%s %s b%s>' % (
+                type_name(self), id(self), repr(self.dump()))
         else:
-            return '<%s %s %s>' % (type_name(self), id(self), repr(self.dump()))
+            return '<%s %s %s>' % (
+                type_name(self), id(self), repr(self.dump()))
 
     def __bytes__(self):
         """
@@ -552,7 +570,9 @@ class Asn1Value(object):
         # This is required to preserve the old API
         if not isinstance(tagging, dict):
             tagging = {tagging: tag}
-        new_obj = self.__class__(explicit=tagging.get('explicit'), implicit=tagging.get('implicit'))
+        new_obj = self.__class__(
+            explicit=tagging.get('explicit'),
+            implicit=tagging.get('implicit'))
         new_obj._copy(self, copy.deepcopy)
         return new_obj
 
@@ -636,11 +656,16 @@ class Asn1Value(object):
             if isinstance(self, Constructable) and self._indefinite:
                 self.method = 0
 
-            header = _dump_header(self.class_, self.method, self.tag, self.contents)
+            header = _dump_header(
+                self.class_,
+                self.method,
+                self.tag,
+                self.contents)
 
             if self.explicit is not None:
                 for class_, tag in self.explicit:
-                    header = _dump_header(class_, 1, tag, header + self.contents) + header
+                    header = _dump_header(
+                        class_, 1, tag, header + self.contents) + header
 
             self._header = header
             self._trailer = b''
@@ -743,8 +768,10 @@ class Constructable(object):
         output = None
 
         while pointer < contents_len:
-            # We pass the current class as the spec so content semantics are preserved
-            sub_value, pointer = _parse_build(self.contents, pointer, spec=self.__class__)
+            # We pass the current class as the spec so content semantics are
+            # preserved
+            sub_value, pointer = _parse_build(
+                self.contents, pointer, spec=self.__class__)
             if output is None:
                 output = sub_value._merge_chunks()
             else:
@@ -893,7 +920,9 @@ class Any(Asn1Value):
 
         except (ValueError, TypeError) as e:
             args = e.args[1:]
-            e.args = (e.args[0] + '\n    while constructing %s' % type_name(self),) + args
+            e.args = (
+                e.args[0] + '\n    while constructing %s' %
+                type_name(self),) + args
             raise e
 
     @property
@@ -948,7 +977,8 @@ class Any(Asn1Value):
                 _tag_type_to_explicit_implicit(passed_params)
                 if self.explicit is not None:
                     if 'explicit' in passed_params:
-                        passed_params['explicit'] = self.explicit + passed_params['explicit']
+                        passed_params['explicit'] = self.explicit + \
+                            passed_params['explicit']
                     else:
                         passed_params['explicit'] = self.explicit
                 contents = self._header + self.contents + self._trailer
@@ -970,7 +1000,9 @@ class Any(Asn1Value):
 
             except (ValueError, TypeError) as e:
                 args = e.args[1:]
-                e.args = (e.args[0] + '\n    while parsing %s' % type_name(self),) + args
+                e.args = (
+                    e.args[0] + '\n    while parsing %s' %
+                    type_name(self),) + args
                 raise e
         return self._parsed[0]
 
@@ -1059,9 +1091,12 @@ class Choice(Asn1Value):
         """
 
         if not isinstance(encoded_data, byte_cls):
-            raise TypeError('encoded_data must be a byte string, not %s' % type_name(encoded_data))
+            raise TypeError(
+                'encoded_data must be a byte string, not %s' %
+                type_name(encoded_data))
 
-        value, _ = _parse_build(encoded_data, spec=cls, spec_params=kwargs, strict=strict)
+        value, _ = _parse_build(
+            encoded_data, spec=cls, spec_params=kwargs, strict=strict)
         return value
 
     def _setup(self):
@@ -1161,7 +1196,9 @@ class Choice(Asn1Value):
 
         except (ValueError, TypeError) as e:
             args = e.args[1:]
-            e.args = (e.args[0] + '\n    while constructing %s' % type_name(self),) + args
+            e.args = (
+                e.args[0] + '\n    while constructing %s' %
+                type_name(self),) + args
             raise e
 
     @property
@@ -1206,10 +1243,13 @@ class Choice(Asn1Value):
         if self._parsed is None:
             try:
                 _, spec, params = self._alternatives[self._choice]
-                self._parsed, _ = _parse_build(self._contents, spec=spec, spec_params=params)
+                self._parsed, _ = _parse_build(
+                    self._contents, spec=spec, spec_params=params)
             except (ValueError, TypeError) as e:
                 args = e.args[1:]
-                e.args = (e.args[0] + '\n    while parsing %s' % type_name(self),) + args
+                e.args = (
+                    e.args[0] + '\n    while parsing %s' %
+                    type_name(self),) + args
                 raise e
         return self._parsed
 
@@ -1285,7 +1325,8 @@ class Choice(Asn1Value):
                 return
 
         asn1 = self._format_class_tag(class_, tag)
-        asn1s = [self._format_class_tag(pair[0], pair[1]) for pair in self._id_map]
+        asn1s = [self._format_class_tag(pair[0], pair[1])
+                 for pair in self._id_map]
 
         raise ValueError(unwrap(
             '''
@@ -1343,7 +1384,8 @@ class Choice(Asn1Value):
             self._header = b''
             if self.explicit is not None:
                 for class_, tag in self.explicit:
-                    self._header = _dump_header(class_, 1, tag, self._header + self._contents) + self._header
+                    self._header = _dump_header(
+                        class_, 1, tag, self._header + self._contents) + self._header
         return self._header + self._contents
 
 
@@ -1403,18 +1445,23 @@ class Concat(object):
                 offset = 0
                 for spec in self._child_specs:
                     if offset < contents_len:
-                        child_value, offset = _parse_build(contents, pointer=offset, spec=spec)
+                        child_value, offset = _parse_build(
+                            contents, pointer=offset, spec=spec)
                     else:
                         child_value = spec()
                     self._children.append(child_value)
 
                 if strict and offset != contents_len:
                     extra_bytes = contents_len - offset
-                    raise ValueError('Extra data - %d bytes of trailing data were provided' % extra_bytes)
+                    raise ValueError(
+                        'Extra data - %d bytes of trailing data were provided' %
+                        extra_bytes)
 
             except (ValueError, TypeError) as e:
                 args = e.args[1:]
-                e.args = (e.args[0] + '\n    while constructing %s' % type_name(self),) + args
+                e.args = (
+                    e.args[0] + '\n    while constructing %s' %
+                    type_name(self),) + args
                 raise e
 
         if value is not None:
@@ -1673,7 +1720,9 @@ class Primitive(Asn1Value):
 
         except (ValueError, TypeError) as e:
             args = e.args[1:]
-            e.args = (e.args[0] + '\n    while constructing %s' % type_name(self),) + args
+            e.args = (
+                e.args[0] + '\n    while constructing %s' %
+                type_name(self),) + args
             raise e
 
     def set(self, value):
@@ -1750,8 +1799,10 @@ class Primitive(Asn1Value):
 
         # If the objects share a common base class that is not too low-level
         # then we can compare the contents
-        self_bases = (set(self.__class__.__bases__) | set([self.__class__])) - set([Asn1Value, Primitive, ValueMap])
-        other_bases = (set(other.__class__.__bases__) | set([other.__class__])) - set([Asn1Value, Primitive, ValueMap])
+        self_bases = (set(self.__class__.__bases__) | set(
+            [self.__class__])) - set([Asn1Value, Primitive, ValueMap])
+        other_bases = (set(other.__class__.__bases__) | set(
+            [other.__class__])) - set([Asn1Value, Primitive, ValueMap])
         if self_bases | other_bases:
             return self.contents == other.contents
 
@@ -2013,13 +2064,18 @@ class _IntegerBitString(object):
 
         if len(self.contents) == 1:
             # Disallowed by X.690 §8.6.2.3
-            raise ValueError('Empty bit string has {0} unused bits'.format(unused_bits_len))
+            raise ValueError(
+                'Empty bit string has {0} unused bits'.format(unused_bits_len))
 
         if unused_bits_len > 7:
             # Disallowed by X.690 §8.6.2.2
-            raise ValueError('Bit string has {0} unused bits'.format(unused_bits_len))
+            raise ValueError(
+                'Bit string has {0} unused bits'.format(unused_bits_len))
 
-        unused_bits = _int_to_bit_tuple(value & ((1 << unused_bits_len) - 1), unused_bits_len)
+        unused_bits = _int_to_bit_tuple(
+            value & (
+                (1 << unused_bits_len) - 1),
+            unused_bits_len)
         value >>= unused_bits_len
         bits -= unused_bits_len
 
@@ -2050,7 +2106,8 @@ class _IntegerBitString(object):
         for chunk, bits, unused_bits in self._merge_chunks():
             if total_bits & 7:
                 # Disallowed by X.690 §8.6.4
-                raise ValueError('Only last chunk in a bit string may have unused bits')
+                raise ValueError(
+                    'Only last chunk in a bit string may have unused bits')
             total_bits += bits
             value = (value << bits) | chunk
 
@@ -2086,7 +2143,12 @@ class _IntegerBitString(object):
         return self._unused_bits
 
 
-class BitString(_IntegerBitString, Constructable, Castable, Primitive, ValueMap):
+class BitString(
+        _IntegerBitString,
+        Constructable,
+        Castable,
+        Primitive,
+        ValueMap):
     """
     Represents a bit string from ASN.1 as a Python tuple of 1s and 0s
     """
@@ -2194,7 +2256,8 @@ class BitString(_IntegerBitString, Constructable, Castable, Primitive, ValueMap)
         else:
             value_bytes = int_to_bytes(int(value, 2))
         if len(value_bytes) != size_in_bytes:
-            value_bytes = (b'\x00' * (size_in_bytes - len(value_bytes))) + value_bytes
+            value_bytes = (b'\x00' * (size_in_bytes -
+                           len(value_bytes))) + value_bytes
 
         self.contents = extra_bits_byte + value_bytes
         self._unused_bits = (0,) * extra_bits
@@ -2402,7 +2465,8 @@ class OctetBitString(Constructable, Castable, Primitive):
                 for chunk in chunks:
                     if self._unused_bits:
                         # Disallowed by X.690 §8.6.4
-                        raise ValueError('Only last chunk in a bit string may have unused bits')
+                        raise ValueError(
+                            'Only last chunk in a bit string may have unused bits')
                     self._unused_bits = chunk[1]
                 self._bytes = b''.join(chunk[0] for chunk in chunks)
 
@@ -2441,18 +2505,21 @@ class OctetBitString(Constructable, Castable, Primitive):
 
         if len(self.contents) == 1:
             # Disallowed by X.690 §8.6.2.3
-            raise ValueError('Empty bit string has {0} unused bits'.format(unused_bits_len))
+            raise ValueError(
+                'Empty bit string has {0} unused bits'.format(unused_bits_len))
 
         if unused_bits_len > 7:
             # Disallowed by X.690 §8.6.2.2
-            raise ValueError('Bit string has {0} unused bits'.format(unused_bits_len))
+            raise ValueError(
+                'Bit string has {0} unused bits'.format(unused_bits_len))
 
         mask = (1 << unused_bits_len) - 1
         last_byte = ord(self.contents[-1]) if _PY2 else self.contents[-1]
 
         # zero out the unused bits in the last byte.
         zeroed_byte = last_byte & ~mask
-        value = self.contents[1:-1] + (chr(zeroed_byte) if _PY2 else bytes((zeroed_byte,)))
+        value = self.contents[1:-1] + \
+            (chr(zeroed_byte) if _PY2 else bytes((zeroed_byte,)))
 
         unused_bits = _int_to_bit_tuple(last_byte & mask, unused_bits_len)
 
@@ -2673,7 +2740,8 @@ class IntegerOctetString(Constructable, Castable, Primitive):
             ))
 
         self._native = value
-        self.contents = int_to_bytes(value, signed=False, width=self._encoded_width)
+        self.contents = int_to_bytes(
+            value, signed=False, width=self._encoded_width)
         self._header = None
         if self._indefinite:
             self._indefinite = False
@@ -2735,7 +2803,8 @@ class ParsableOctetString(Constructable, Castable, Primitive):
         """
 
         set_parsed = False
-        if value is None and parsed is not None and isinstance(parsed, Asn1Value):
+        if value is None and parsed is not None and isinstance(
+                parsed, Asn1Value):
             value = parsed.dump()
             set_parsed = True
 
@@ -2789,7 +2858,8 @@ class ParsableOctetString(Constructable, Castable, Primitive):
         """
 
         if self._parsed is None or self._parsed[1:3] != (spec, spec_params):
-            parsed_value, _ = _parse_build(self.__bytes__(), spec=spec, spec_params=spec_params)
+            parsed_value, _ = _parse_build(
+                self.__bytes__(), spec=spec, spec_params=spec_params)
             self._parsed = (parsed_value, spec, spec_params)
         return self._parsed[0]
 
@@ -2936,7 +3006,8 @@ class ParsableOctetBitString(ParsableOctetString):
 
         unused_bits_len = ord(self.contents[0]) if _PY2 else self.contents[0]
         if unused_bits_len:
-            raise ValueError('ParsableOctetBitString should have no unused bits')
+            raise ValueError(
+                'ParsableOctetBitString should have no unused bits')
 
         return self.contents[1:]
 
@@ -3346,7 +3417,8 @@ class Sequence(Asn1Value):
     # A dict that maps unicode string field names to an index in _fields
     _field_map = None
 
-    # A list in the same order as _fields that has tuples in the form (class_, tag)
+    # A list in the same order as _fields that has tuples in the form (class_,
+    # tag)
     _field_ids = None
 
     # An optional 2-element tuple that defines the field names of an OID field
@@ -3392,7 +3464,8 @@ class Sequence(Asn1Value):
             try:
                 # Fields are iterated in definition order to allow things like
                 # OID-based specs. Otherwise sometimes the value would be processed
-                # before the OID field, resulting in invalid value object creation.
+                # before the OID field, resulting in invalid value object
+                # creation.
                 if self._fields:
                     keys = [info[0] for info in self._fields]
                     unused_keys = set(value.keys())
@@ -3405,7 +3478,8 @@ class Sequence(Asn1Value):
                     # been set for the field, then skip it
                     if check_existing:
                         index = self._field_map[key]
-                        if index < len(self.children) and self.children[index] is not VOID:
+                        if index < len(
+                                self.children) and self.children[index] is not VOID:
                             if key in unused_keys:
                                 unused_keys.remove(key)
                             continue
@@ -3426,7 +3500,9 @@ class Sequence(Asn1Value):
 
             except (ValueError, TypeError) as e:
                 args = e.args[1:]
-                e.args = (e.args[0] + '\n    while constructing %s' % type_name(self),) + args
+                e.args = (
+                    e.args[0] + '\n    while constructing %s' %
+                    type_name(self),) + args
                 raise e
 
     @property
@@ -3463,7 +3539,9 @@ class Sequence(Asn1Value):
         mutated = self._mutated
         if self.children is not None:
             for child in self.children:
-                if isinstance(child, Sequence) or isinstance(child, SequenceOf):
+                if isinstance(
+                        child, Sequence) or isinstance(
+                        child, SequenceOf):
                     mutated = mutated or child._is_mutated()
 
         return mutated
@@ -3532,7 +3610,9 @@ class Sequence(Asn1Value):
 
         except (ValueError, TypeError) as e:
             args = e.args[1:]
-            e.args = (e.args[0] + '\n    while parsing %s' % type_name(self),) + args
+            e.args = (
+                e.args[0] + '\n    while parsing %s' %
+                type_name(self),) + args
             raise e
 
     def __setitem__(self, key, value):
@@ -3565,9 +3645,15 @@ class Sequence(Asn1Value):
                 ))
             key = self._field_map[key]
 
-        field_name, field_spec, value_spec, field_params, _ = self._determine_spec(key)
+        field_name, field_spec, value_spec, field_params, _ = self._determine_spec(
+            key)
 
-        new_value = self._make_value(field_name, field_spec, value_spec, field_params, value)
+        new_value = self._make_value(
+            field_name,
+            field_spec,
+            value_spec,
+            field_params,
+            value)
 
         invalid_value = False
         if isinstance(new_value, Any):
@@ -3617,7 +3703,8 @@ class Sequence(Asn1Value):
             key = self._field_map[key]
 
         name, _, params = self._fields[key]
-        if not params or ('default' not in params and 'optional' not in params):
+        if not params or (
+                'default' not in params and 'optional' not in params):
             raise ValueError(unwrap(
                 '''
                 Can not delete the value for the field "%s" of %s since it is
@@ -3698,7 +3785,8 @@ class Sequence(Asn1Value):
             cls._field_ids.append(_build_id_tuple(field[2], field[1]))
 
         if cls._oid_pair is not None:
-            cls._oid_nums = (cls._field_map[cls._oid_pair[0]], cls._field_map[cls._oid_pair[1]])
+            cls._oid_nums = (
+                cls._field_map[cls._oid_pair[0]], cls._field_map[cls._oid_pair[1]])
 
         for index, field in enumerate(cls._fields):
             has_callback = cls._spec_callbacks is not None and field[0] in cls._spec_callbacks
@@ -3706,7 +3794,8 @@ class Sequence(Asn1Value):
             if has_callback or is_mapped_oid:
                 cls._precomputed_specs.append(None)
             else:
-                cls._precomputed_specs.append((field[0], field[1], field[1], field[2], None))
+                cls._precomputed_specs.append(
+                    (field[0], field[1], field[1], field[2], None))
 
     def _determine_spec(self, index):
         """
@@ -3734,12 +3823,14 @@ class Sequence(Asn1Value):
             if spec_override:
                 # Allow a spec callback to specify both the base spec and
                 # the override, for situations such as OctetString and parse_as
-                if spec_override.__class__ == tuple and len(spec_override) == 2:
+                if spec_override.__class__ == tuple and len(
+                        spec_override) == 2:
                     field_spec, value_spec = spec_override
                     if value_spec is None:
                         value_spec = field_spec
                         spec_override = None
-                # When no field spec is specified, use a single return value as that
+                # When no field spec is specified, use a single return value as
+                # that
                 elif field_spec is None:
                     field_spec = spec_override
                     value_spec = field_spec
@@ -3755,7 +3846,13 @@ class Sequence(Asn1Value):
 
         return (name, field_spec, value_spec, field_params, spec_override)
 
-    def _make_value(self, field_name, field_spec, value_spec, field_params, value):
+    def _make_value(
+            self,
+            field_name,
+            field_spec,
+            value_spec,
+            field_params,
+            value):
         """
         Contructs an appropriate Asn1Value object for a field
 
@@ -3871,10 +3968,13 @@ class Sequence(Asn1Value):
                 for index, (_, _, params) in enumerate(self._fields):
                     if 'default' in params:
                         if cls._precomputed_specs[index]:
-                            field_name, field_spec, value_spec, field_params, _ = cls._precomputed_specs[index]
+                            field_name, field_spec, value_spec, field_params, _ = cls._precomputed_specs[
+                                index]
                         else:
-                            field_name, field_spec, value_spec, field_params, _ = self._determine_spec(index)
-                        self.children[index] = self._make_value(field_name, field_spec, value_spec, field_params, None)
+                            field_name, field_spec, value_spec, field_params, _ = self._determine_spec(
+                                index)
+                        self.children[index] = self._make_value(
+                            field_name, field_spec, value_spec, field_params, None)
             return
 
         try:
@@ -3887,16 +3987,20 @@ class Sequence(Asn1Value):
             again = child_pointer < contents_length
             while again:
                 if parts is None:
-                    parts, child_pointer = _parse(self._contents, contents_length, pointer=child_pointer)
+                    parts, child_pointer = _parse(
+                        self._contents, contents_length, pointer=child_pointer)
                 again = child_pointer < contents_length
 
                 if field < field_len:
                     _, field_spec, value_spec, field_params, spec_override = (
                         cls._precomputed_specs[field] or self._determine_spec(field))
 
-                    # If the next value is optional or default, allow it to be absent
-                    if field_params and ('optional' in field_params or 'default' in field_params):
-                        if self._field_ids[field] != (parts[0], parts[2]) and field_spec != Any:
+                    # If the next value is optional or default, allow it to be
+                    # absent
+                    if field_params and (
+                            'optional' in field_params or 'default' in field_params):
+                        if self._field_ids[field] != (
+                                parts[0], parts[2]) and field_spec != Any:
 
                             # See if the value is a valid choice before assuming
                             # that we have a missing optional or default value
@@ -3904,7 +4008,8 @@ class Sequence(Asn1Value):
                             if issubclass(field_spec, Choice):
                                 try:
                                     tester = field_spec(**field_params)
-                                    tester.validate(parts[0], parts[2], parts[4])
+                                    tester.validate(
+                                        parts[0], parts[2], parts[4])
                                     choice_match = True
                                 except (ValueError):
                                     pass
@@ -3913,12 +4018,16 @@ class Sequence(Asn1Value):
                                 if 'optional' in field_params:
                                     self.children.append(VOID)
                                 else:
-                                    self.children.append(field_spec(**field_params))
+                                    self.children.append(
+                                        field_spec(**field_params))
                                 field += 1
                                 again = True
                                 continue
 
-                    if field_spec is None or (spec_override and issubclass(field_spec, Any)):
+                    if field_spec is None or (
+                        spec_override and issubclass(
+                            field_spec,
+                            Any)):
                         field_spec = value_spec
                         spec_override = None
 
@@ -3927,7 +4036,8 @@ class Sequence(Asn1Value):
                     else:
                         child = parts + (field_spec, field_params)
 
-                # Handle situations where an optional or defaulted field definition is incorrect
+                # Handle situations where an optional or defaulted field
+                # definition is incorrect
                 elif field_len > 0 and field + 1 <= field_len:
                     missed_fields = []
                     prev_field = field - 1
@@ -3984,7 +4094,9 @@ class Sequence(Asn1Value):
         except (ValueError, TypeError) as e:
             self.children = None
             args = e.args[1:]
-            e.args = (e.args[0] + '\n    while parsing %s' % type_name(self),) + args
+            e.args = (
+                e.args[0] + '\n    while parsing %s' %
+                type_name(self),) + args
             raise e
 
     def spec(self, field_name):
@@ -4056,7 +4168,9 @@ class Sequence(Asn1Value):
             except (ValueError, TypeError) as e:
                 self._native = None
                 args = e.args[1:]
-                e.args = (e.args[0] + '\n    while parsing %s' % type_name(self),) + args
+                e.args = (
+                    e.args[0] + '\n    while parsing %s' %
+                    type_name(self),) + args
                 raise e
         return self._native
 
@@ -4160,7 +4274,13 @@ class SequenceOf(Asn1Value):
     # An Asn1Value class to use when parsing children
     _child_spec = None
 
-    def __init__(self, value=None, default=None, contents=None, spec=None, **kwargs):
+    def __init__(
+            self,
+            value=None,
+            default=None,
+            contents=None,
+            spec=None,
+            **kwargs):
         """
         Allows setting child objects and the _child_spec via the spec parameter
         before passing everything else along to Asn1Value.__init__()
@@ -4200,7 +4320,9 @@ class SequenceOf(Asn1Value):
 
         except (ValueError, TypeError) as e:
             args = e.args[1:]
-            e.args = (e.args[0] + '\n    while constructing %s' % type_name(self),) + args
+            e.args = (
+                e.args[0] + '\n    while constructing %s' %
+                type_name(self),) + args
             raise e
 
     @property
@@ -4237,7 +4359,9 @@ class SequenceOf(Asn1Value):
         mutated = self._mutated
         if self.children is not None:
             for child in self.children:
-                if isinstance(child, Sequence) or isinstance(child, SequenceOf):
+                if isinstance(
+                        child, Sequence) or isinstance(
+                        child, SequenceOf):
                     mutated = mutated or child._is_mutated()
 
         return mutated
@@ -4305,7 +4429,9 @@ class SequenceOf(Asn1Value):
         if self._child_spec.explicit:
             params['explicit'] = self._child_spec.explicit
         if self._child_spec.implicit:
-            params['implicit'] = (self._child_spec.class_, self._child_spec.tag)
+            params['implicit'] = (
+                self._child_spec.class_,
+                self._child_spec.tag)
         return _fix_tagging(new_value, params)
 
     def __len__(self):
@@ -4484,7 +4610,8 @@ class SequenceOf(Asn1Value):
             contents_length = len(self._contents)
             child_pointer = 0
             while child_pointer < contents_length:
-                parts, child_pointer = _parse(self._contents, contents_length, pointer=child_pointer)
+                parts, child_pointer = _parse(
+                    self._contents, contents_length, pointer=child_pointer)
                 if self._child_spec:
                     child = parts + (self._child_spec,)
                 else:
@@ -4497,7 +4624,9 @@ class SequenceOf(Asn1Value):
         except (ValueError, TypeError) as e:
             self.children = None
             args = e.args[1:]
-            e.args = (e.args[0] + '\n    while parsing %s' % type_name(self),) + args
+            e.args = (
+                e.args[0] + '\n    while parsing %s' %
+                type_name(self),) + args
             raise e
 
     def spec(self):
@@ -4531,7 +4660,9 @@ class SequenceOf(Asn1Value):
                 self._native = [child.native for child in self]
             except (ValueError, TypeError) as e:
                 args = e.args[1:]
-                e.args = (e.args[0] + '\n    while parsing %s' % type_name(self),) + args
+                e.args = (
+                    e.args[0] + '\n    while parsing %s' %
+                    type_name(self),) + args
                 raise e
         return self._native
 
@@ -4622,7 +4753,8 @@ class Set(Sequence):
             cls._field_ids[_build_id_tuple(field[2], field[1])] = index
 
         if cls._oid_pair is not None:
-            cls._oid_nums = (cls._field_map[cls._oid_pair[0]], cls._field_map[cls._oid_pair[1]])
+            cls._oid_nums = (
+                cls._field_map[cls._oid_pair[0]], cls._field_map[cls._oid_pair[1]])
 
         for index, field in enumerate(cls._fields):
             has_callback = cls._spec_callbacks is not None and field[0] in cls._spec_callbacks
@@ -4630,7 +4762,8 @@ class Set(Sequence):
             if has_callback or is_mapped_oid:
                 cls._precomputed_specs.append(None)
             else:
-                cls._precomputed_specs.append((field[0], field[1], field[1], field[2], None))
+                cls._precomputed_specs.append(
+                    (field[0], field[1], field[1], field[2], None))
 
     def _parse_children(self, recurse=False):
         """
@@ -4652,10 +4785,13 @@ class Set(Sequence):
                 for index, (_, _, params) in enumerate(self._fields):
                     if 'default' in params:
                         if cls._precomputed_specs[index]:
-                            field_name, field_spec, value_spec, field_params, _ = cls._precomputed_specs[index]
+                            field_name, field_spec, value_spec, field_params, _ = cls._precomputed_specs[
+                                index]
                         else:
-                            field_name, field_spec, value_spec, field_params, _ = self._determine_spec(index)
-                        self.children[index] = self._make_value(field_name, field_spec, value_spec, field_params, None)
+                            field_name, field_spec, value_spec, field_params, _ = self._determine_spec(
+                                index)
+                        self.children[index] = self._make_value(
+                            field_name, field_spec, value_spec, field_params, None)
             return
 
         try:
@@ -4664,7 +4800,8 @@ class Set(Sequence):
             child_pointer = 0
             seen_field = 0
             while child_pointer < contents_length:
-                parts, child_pointer = _parse(self.contents, contents_length, pointer=child_pointer)
+                parts, child_pointer = _parse(
+                    self.contents, contents_length, pointer=child_pointer)
 
                 id_ = (parts[0], parts[2])
 
@@ -4684,7 +4821,10 @@ class Set(Sequence):
                 _, field_spec, value_spec, field_params, spec_override = (
                     cls._precomputed_specs[field] or self._determine_spec(field))
 
-                if field_spec is None or (spec_override and issubclass(field_spec, Any)):
+                if field_spec is None or (
+                    spec_override and issubclass(
+                        field_spec,
+                        Any)):
                     field_spec = value_spec
                     spec_override = None
 
@@ -4710,7 +4850,10 @@ class Set(Sequence):
                 name, field_spec, value_spec, field_params, spec_override = (
                     cls._precomputed_specs[index] or self._determine_spec(index))
 
-                if field_spec is None or (spec_override and issubclass(field_spec, Any)):
+                if field_spec is None or (
+                    spec_override and issubclass(
+                        field_spec,
+                        Any)):
                     field_spec = value_spec
                     spec_override = None
 
@@ -4740,7 +4883,9 @@ class Set(Sequence):
 
         except (ValueError, TypeError) as e:
             args = e.args[1:]
-            e.args = (e.args[0] + '\n    while parsing %s' % type_name(self),) + args
+            e.args = (
+                e.args[0] + '\n    while parsing %s' %
+                type_name(self),) + args
             raise e
 
     def _set_contents(self, force=False):
@@ -4967,7 +5112,8 @@ class UTCTime(AbstractTime):
 
     tag = 23
 
-    # Regular expression for UTCTime as described in X.680 sect. 43 and ISO 8601
+    # Regular expression for UTCTime as described in X.680 sect. 43 and ISO
+    # 8601
     _TIMESTRING_RE = re.compile(r'''
         ^
         # YYMMDD
@@ -5015,7 +5161,8 @@ class UTCTime(AbstractTime):
             value = value.astimezone(utc_with_dst)
 
             if not 1950 <= value.year <= 2049:
-                raise ValueError('Year of the UTCTime is not in range [1950, 2049], use GeneralizedTime instead')
+                raise ValueError(
+                    'Year of the UTCTime is not in range [1950, 2049], use GeneralizedTime instead')
 
             value = value.strftime('%y%m%d%H%M%SZ')
             if _PY2:
@@ -5054,7 +5201,8 @@ class GeneralizedTime(AbstractTime):
 
     tag = 24
 
-    # Regular expression for GeneralizedTime as described in X.680 sect. 42 and ISO 8601
+    # Regular expression for GeneralizedTime as described in X.680 sect. 42
+    # and ISO 8601
     _TIMESTRING_RE = re.compile(r'''
         ^
         # YYYYMMDD
@@ -5212,7 +5360,10 @@ def _basic_debug(prefix, self):
 
     print('%s%s Object #%s' % (prefix, type_name(self), id(self)))
     if self._header:
-        print('%s  Header: 0x%s' % (prefix, binascii.hexlify(self._header or b'').decode('utf-8')))
+        print(
+            '%s  Header: 0x%s' %
+            (prefix, binascii.hexlify(
+                self._header or b'').decode('utf-8')))
 
     has_header = self.method is not None and self.class_ is not None and self.tag is not None
     if has_header:
@@ -5230,19 +5381,30 @@ def _basic_debug(prefix, self):
                 )
             )
         if has_header:
-            print('%s      %s %s %s' % (prefix, method_name, class_name, self.tag))
+            print(
+                '%s      %s %s %s' %
+                (prefix, method_name, class_name, self.tag))
 
     elif self.implicit:
         if has_header:
-            print('%s    %s %s tag %s (implicitly tagged)' % (prefix, method_name, class_name, self.tag))
+            print('%s    %s %s tag %s (implicitly tagged)' %
+                  (prefix, method_name, class_name, self.tag))
 
     elif has_header:
-        print('%s    %s %s tag %s' % (prefix, method_name, class_name, self.tag))
+        print(
+            '%s    %s %s tag %s' %
+            (prefix, method_name, class_name, self.tag))
 
     if self._trailer:
-        print('%s  Trailer: 0x%s' % (prefix, binascii.hexlify(self._trailer or b'').decode('utf-8')))
+        print(
+            '%s  Trailer: 0x%s' %
+            (prefix, binascii.hexlify(
+                self._trailer or b'').decode('utf-8')))
 
-    print('%s  Data: 0x%s' % (prefix, binascii.hexlify(self.contents or b'').decode('utf-8')))
+    print(
+        '%s  Data: 0x%s' %
+        (prefix, binascii.hexlify(
+            self.contents or b'').decode('utf-8')))
 
 
 def _tag_type_to_explicit_implicit(params):
@@ -5340,7 +5502,8 @@ def _build_id_tuple(params, spec):
         else:
             required_class = 2
             required_tag = params['implicit']
-    if required_class is not None and not isinstance(required_class, int_types):
+    if required_class is not None and not isinstance(
+            required_class, int_types):
         required_class = CLASS_NAME_TO_NUM_MAP[required_class]
 
     required_class = params.get('class_', required_class)
@@ -5368,7 +5531,9 @@ def _int_to_bit_tuple(value, bits):
 
     result = tuple(map(int, format(value, '0{0}b'.format(bits))))
     if len(result) != bits:
-        raise ValueError('Result too large: {0} > {1}'.format(len(result), bits))
+        raise ValueError(
+            'Result too large: {0} > {1}'.format(
+                len(result), bits))
 
     return result
 
@@ -5405,7 +5570,16 @@ _UNIVERSAL_SPECS = {
 }
 
 
-def _build(class_, method, tag, header, contents, trailer, spec=None, spec_params=None, nested_spec=None):
+def _build(
+        class_,
+        method,
+        tag,
+        header,
+        contents,
+        trailer,
+        spec=None,
+        spec_params=None,
+        nested_spec=None):
     """
     Builds an Asn1Value object generically, or using a spec with optional params
 
@@ -5459,7 +5633,9 @@ def _build(class_, method, tag, header, contents, trailer, spec=None, spec_param
         # If there is explicit tagging and contents, we have to split
         # the header and trailer off before we do the parsing
         no_explicit = spec_params and 'no_explicit' in spec_params
-        if not no_explicit and (spec.explicit or (spec_params and 'explicit' in spec_params)):
+        if not no_explicit and (
+            spec.explicit or (
+                spec_params and 'explicit' in spec_params)):
             if spec_params:
                 value = spec(**spec_params)
             else:
@@ -5484,15 +5660,17 @@ def _build(class_, method, tag, header, contents, trailer, spec=None, spec_param
                         CLASS_NUM_TO_NAME_MAP.get(parsed_class, parsed_class)
                     ))
                 if parsed_method != 1:
-                    raise ValueError(unwrap(
-                        '''
+                    raise ValueError(
+                        unwrap(
+                            '''
                         Error parsing %s - explicitly-tagged method should have
                         been %s, but %s was found
                         ''',
-                        type_name(value),
-                        METHOD_NUM_TO_NAME_MAP.get(1),
-                        METHOD_NUM_TO_NAME_MAP.get(parsed_method, parsed_method)
-                    ))
+                            type_name(value),
+                            METHOD_NUM_TO_NAME_MAP.get(1),
+                            METHOD_NUM_TO_NAME_MAP.get(
+                                parsed_method,
+                                parsed_method)))
                 if parsed_tag != expected_tag:
                     raise ValueError(unwrap(
                         '''
@@ -5533,7 +5711,9 @@ def _build(class_, method, tag, header, contents, trailer, spec=None, spec_param
                     value.parse()
                 except (ValueError, TypeError) as e:
                     args = e.args[1:]
-                    e.args = (e.args[0] + '\n    while parsing %s' % type_name(value),) + args
+                    e.args = (
+                        e.args[0] + '\n    while parsing %s' %
+                        type_name(value),) + args
                     raise e
 
             else:
@@ -5632,13 +5812,20 @@ def _build(class_, method, tag, header, contents, trailer, spec=None, spec_param
             value.parse(nested_spec)
         except (ValueError, TypeError) as e:
             args = e.args[1:]
-            e.args = (e.args[0] + '\n    while parsing %s' % type_name(value),) + args
+            e.args = (
+                e.args[0] + '\n    while parsing %s' %
+                type_name(value),) + args
             raise e
 
     return value
 
 
-def _parse_build(encoded_data, pointer=0, spec=None, spec_params=None, strict=False):
+def _parse_build(
+        encoded_data,
+        pointer=0,
+        spec=None,
+        spec_params=None,
+        strict=False):
     """
     Parses a byte string generically, or using a spec with optional params
 
@@ -5672,5 +5859,7 @@ def _parse_build(encoded_data, pointer=0, spec=None, spec_params=None, strict=Fa
     info, new_pointer = _parse(encoded_data, encoded_len, pointer)
     if strict and new_pointer != pointer + encoded_len:
         extra_bytes = pointer + encoded_len - new_pointer
-        raise ValueError('Extra data - %d bytes of trailing data were provided' % extra_bytes)
+        raise ValueError(
+            'Extra data - %d bytes of trailing data were provided' %
+            extra_bytes)
     return (_build(*info, spec=spec, spec_params=spec_params), new_pointer)

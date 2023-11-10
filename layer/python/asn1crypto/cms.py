@@ -510,7 +510,8 @@ class CertificateChoices(Choice):
 
         super(CertificateChoices, self).validate(class_, tag, contents)
         if self._choice == 2:
-            if AttCertVersion.load(Sequence.load(contents)[0].dump()).native == 'v2':
+            if AttCertVersion.load(
+                    Sequence.load(contents)[0].dump()).native == 'v2':
                 self._choice = 3
 
 
@@ -876,7 +877,8 @@ class AuthenticatedData(Sequence):
         ('originator_info', OriginatorInfo, {'implicit': 0, 'optional': True}),
         ('recipient_infos', RecipientInfos),
         ('mac_algorithm', HmacAlgorithm),
-        ('digest_algorithm', DigestAlgorithm, {'implicit': 1, 'optional': True}),
+        ('digest_algorithm', DigestAlgorithm,
+         {'implicit': 1, 'optional': True}),
         # This does not require the _spec_callbacks approach of SignedData and
         # DigestedData since AuthenticatedData was not part of PKCS#7
         ('encap_content_info', EncapsulatedContentInfo),
@@ -925,7 +927,8 @@ class CompressedData(Sequence):
         if self._decompressed is None:
             if zlib is None:
                 raise SystemError('The zlib module is not available')
-            self._decompressed = zlib.decompress(self['encap_content_info']['content'].native)
+            self._decompressed = zlib.decompress(
+                self['encap_content_info']['content'].native)
         return self._decompressed
 
 

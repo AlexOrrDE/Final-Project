@@ -37,7 +37,8 @@ from .x509 import (
 )
 
 
-# The structures in this file are taken from https://tools.ietf.org/html/rfc5280
+# The structures in this file are taken from
+# https://tools.ietf.org/html/rfc5280
 
 
 class Version(Integer):
@@ -494,13 +495,16 @@ class CertificateList(Sequence):
             if self.freshest_crl_value is not None:
                 for distribution_point in self.freshest_crl_value:
                     distribution_point_name = distribution_point['distribution_point']
-                    # RFC 5280 indicates conforming CA should not use the relative form
+                    # RFC 5280 indicates conforming CA should not use the
+                    # relative form
                     if distribution_point_name.name == 'name_relative_to_crl_issuer':
                         continue
-                    # This library is currently only concerned with HTTP-based CRLs
+                    # This library is currently only concerned with HTTP-based
+                    # CRLs
                     for general_name in distribution_point_name.chosen:
                         if general_name.name == 'uniform_resource_identifier':
-                            self._delta_crl_distribution_points.append(distribution_point)
+                            self._delta_crl_distribution_points.append(
+                                distribution_point)
 
         return self._delta_crl_distribution_points
 

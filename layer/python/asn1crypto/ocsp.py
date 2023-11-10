@@ -34,7 +34,8 @@ from .keys import PublicKeyAlgorithm
 from .x509 import Certificate, GeneralName, GeneralNames, Name
 
 
-# The structures in this file are taken from https://tools.ietf.org/html/rfc6960
+# The structures in this file are taken from
+# https://tools.ietf.org/html/rfc6960
 
 
 class Version(Integer):
@@ -83,10 +84,8 @@ class RequestExtensions(SequenceOf):
 
 
 class Request(Sequence):
-    _fields = [
-        ('req_cert', CertId),
-        ('single_request_extensions', RequestExtensions, {'explicit': 0, 'optional': True}),
-    ]
+    _fields = [('req_cert', CertId), ('single_request_extensions',
+                                      RequestExtensions, {'explicit': 0, 'optional': True}), ]
 
     _processed_extensions = False
     _critical_extensions = None
@@ -330,7 +329,8 @@ class StatusGood(Null):
             None or 'good'
         """
 
-        if value is not None and value != 'good' and not isinstance(value, Null):
+        if value is not None and value != 'good' and not isinstance(
+                value, Null):
             raise ValueError(unwrap(
                 '''
                 value must be one of None, "good", not %s
@@ -355,7 +355,8 @@ class StatusUnknown(Null):
             None or 'unknown'
         """
 
-        if value is not None and value != 'unknown' and not isinstance(value, Null):
+        if value is not None and value != 'unknown' and not isinstance(
+                value, Null):
             raise ValueError(unwrap(
                 '''
                 value must be one of None, "unknown", not %s

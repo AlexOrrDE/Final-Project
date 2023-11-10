@@ -4,6 +4,7 @@ terraform/.terraform
 __pycache__/
 *.py[cod]
 *$py.class
+layer/
 
 # C extensions
 *.so
