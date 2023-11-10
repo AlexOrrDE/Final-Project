@@ -30,4 +30,5 @@ resource "aws_lambda_function" "processing_handler" {
   timeout = 300
   depends_on = [aws_cloudwatch_log_group.processing_lambda_log_group]
   source_code_hash = data.archive_file.processing_lambda_zip.output_base64sha256
+  reserved_concurrent_executions = 1
 }

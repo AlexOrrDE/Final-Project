@@ -67,8 +67,10 @@ def handler(event, context):
         if not update:
             logging.info("No need to update")
         else:
-            logging.info("Calling next lambda")
-            lambda_client = boto3.client("lambda")
+            logging.info("Calling next lambda with tables:")
+            logging.info(updated_tables)
+            lambda_client = boto3.client('lambda')
+      
             json_tables = json.dumps(updated_tables)
             lambda_client.invoke(
                 FunctionName="processing_handler",
