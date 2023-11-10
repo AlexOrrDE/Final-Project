@@ -9,7 +9,7 @@ class InvalidStoredCredentials(Exception):
         self.message = "Incorrect credentials"
 
 
-def connect_to_database(db='Totesys'):
+def connect_to_database(db="Totesys"):
     """Starts a connection with the specified database.
 
     Args:
@@ -25,8 +25,7 @@ def connect_to_database(db='Totesys'):
     """
 
     try:
-        credentials = retrieve_credentials(
-            f"{db.capitalize()}-Credentials")
+        credentials = retrieve_credentials(f"{db.capitalize()}-Credentials")
         conn = Connection(
             host=credentials["host"],
             port=credentials["port"],
