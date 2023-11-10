@@ -2,21 +2,16 @@ import pandas as pd
 
 
 def create_fact_sales_order(sales_order_df):
-    sales_order_df["created_date"] = pd.to_datetime(
-        sales_order_df["created_at"]
-    ).dt.date
-
-    sales_order_df["created_time"] = pd.to_datetime(
-        sales_order_df["created_at"]
-    ).dt.time
-
-    sales_order_df["last_updated_date"] = pd.to_datetime(
-        sales_order_df["last_updated"]
-    ).dt.date
-
-    sales_order_df["last_updated_time"] = pd.to_datetime(
-        sales_order_df["last_updated"]
-    ).dt.time
+    date_time_cols = [
+        "created_date",
+        "last_updated_date",
+        "agreed_payment_date",
+        "agreed_delivery_date",
+    ]
+    sales_order_df["created_time"] = pd.to_datetime(sales_order_df["created_at"], exact=False).dt.strftime("%H:%M:%S")
+    sales_order_df["last_updated_time"] = pd.to_datetime(sales_order_df["last_updated"], exact=False).dt.strftime("%H:%M:%S")
+    sales_order_df["created_date"] = pd.to_datetime(sales_order_df["created_at"], exact=False).dt.strftime("%Y-%m-%d")
+    sales_order_df["last_updated_date"] = pd.to_datetime(sales_order_df["last_updated"], exact=False).dt.strftime("%Y-%m-%d")
 
     sales_order_df["unit_price"] = sales_order_df["unit_price"].round(2)
 

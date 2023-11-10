@@ -42,6 +42,21 @@ def test_create_dim_currency_returns_correct_columns():
 
     pd.testing.assert_frame_equal(result_df, pd.DataFrame(expected_result))
 
+def test_should_return_columns_with_correct_datatypes():
+    '''Test dim_currency returns a dataframe with columns that have the required datatypes'''
+    test_data = {
+        "currency_id": [1],
+        "currency_code": ["GBP"],
+        "created_at": ["2023-11-09 00:00:00"],
+        "last_updated": ["2023-11-08 00:00:00"]
+    }
+    test_df = pd.DataFrame(test_data)
+    result_df = create_dim_currency(test_df)
+
+    assert pd.api.types.is_numeric_dtype(result_df['currency_id'])
+    assert pd.api.types.is_string_dtype(result_df['currency_code'])
+    assert pd.api.types.is_string_dtype(result_df['currency_name'])
+    
 
 def test_should_raise_error_if_given_incorrect_dataframe():
     """
