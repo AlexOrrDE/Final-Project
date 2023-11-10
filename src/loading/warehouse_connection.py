@@ -1,10 +1,9 @@
 from src.ingestion.connection import connect_to_database
-import pg8000
 
 
 '''
 just checking if connection to data warehouse is all good,
-to connect just pass the argument 'warehouse' into 
+to connect just pass the argument 'warehouse' into
 connect_to_database, case-insensitive'''
 
 warehouse_connection = connect_to_database('warehouse')
@@ -23,8 +22,4 @@ def fetch_tables(conn):
     return table_names
 
 
-
 print(fetch_tables(warehouse_connection))
-
-
-
