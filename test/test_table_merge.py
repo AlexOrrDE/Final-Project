@@ -279,11 +279,10 @@ def test_table_merge_gets_latest_version_of_file(
     buffer = io.StringIO(cp_csv)
     source_df = pd.read_csv(buffer)
     result = table_merge(source_df)
-    print(result)
+
     assert 'updated_add_1' in result['address_line_1'].values.tolist()
     assert 'add_2' in result['address_line_1'].values.tolist()
     assert 'add_3' in result['address_line_1'].values.tolist()
-
 
 def test_table_merge_gets_latest_file_when_last_update_doesnt_match(
         create_bucket, s3_client, create_counterparty_data,
@@ -310,10 +309,10 @@ def test_table_merge_gets_latest_file_when_last_update_doesnt_match(
     buffer = io.StringIO(cp_csv)
     source_df = pd.read_csv(buffer)
     result = table_merge(source_df)
+
     assert 'add_1' in result['address_line_1'].values.tolist()
     assert 'add_2' in result['address_line_1'].values.tolist()
     assert 'add_3' in result['address_line_1'].values.tolist()
-
 
 def test_table_merge_raises_key_error_if_table_is_not_in_bucket(
         create_staff_data, create_bucket, s3_client):

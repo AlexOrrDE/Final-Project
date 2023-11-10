@@ -70,11 +70,13 @@ def handler(event, context):
             logging.info("Calling next lambda with tables:")
             logging.info(updated_tables)
             lambda_client = boto3.client('lambda')
+      
             json_tables = json.dumps(updated_tables)
             lambda_client.invoke(
-                FunctionName='processing_handler',
-                InvocationType='Event',
-                Payload=json_tables)
+                FunctionName="processing_handler",
+                InvocationType="Event",
+                Payload=json_tables,
+            )
 
     except RuntimeError as e:
         logging.error("Error:", e)
