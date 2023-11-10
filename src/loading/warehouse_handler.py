@@ -5,7 +5,6 @@ import pandas as pd
 from io import BytesIO
 import logging
 import botocore
-import re
 
 
 def handler(event, context):
@@ -32,17 +31,23 @@ def handler(event, context):
                 response = s3.get_object(Bucket=bucket_name, Key=s3_key)
                 df = pd.read_parquet(BytesIO(response["Body"].read()))
 
+                for col in df.columns:
+                    print(col)
+
                 cursor = conn.cursor()
-                print(df.iterrows())
+
                 for row in df.iterrows():
-                    print(table_name)
-                    print(row[1])
+                    print(table_name, "<<< table name")
+                    print(row)
+
                     insert_query = f"""INSERT INTO {table_name} VALUES
                                     ({', '.join(['%s'] * len(row))}) ON CONFLICT
                                     ({primary_key_column}) DO UPDATE SET
                                     {', '.join([f'{col}=EXCLUDED.{col}' for col in
-                                    df.columns])};"""
+                                    df.columns if col != primary_key_column])};"""
+
                     print(insert_query)
+
                     cursor.execute(insert_query, tuple(row))
 
                 logging.info(f"Data uploaded to {table_name} successfully.")
