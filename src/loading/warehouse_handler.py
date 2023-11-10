@@ -36,7 +36,7 @@ def handler(event, context):
 
                 cursor = conn.cursor()
 
-                for row in df.iterrows():
+                for index, row in df.iterrows():
                     print(table_name, "<<< table name")
                     print(row)
 
