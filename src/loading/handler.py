@@ -9,14 +9,13 @@ logging.basicConfig(level=logging.INFO)
 
 
 def handler(event, context):
-    """Fetches parquet files from S3 bucket and uploads data to the warehouse."""
+    """Fetches parquet files from S3 and uploads data to warehouse."""
 
     bucket_name = "alex-test-processing"
     s3 = boto3.client("s3")
 
     try:
         conn = connect_to_database("warehouse")
-        cursor = conn.cursor()
         logging.info("Connected to the local database")
 
         tables_names = fetch_tables_with_pk(conn)
@@ -28,11 +27,15 @@ def handler(event, context):
             )
             logging.info(f"Fetched table {table_name}")
 
-            s3_key = f"{table_name}/16_34.parquet"
-            df = fetch_data_from_s3(s3, bucket_name, s3_key)
+            prefix = f"{table_name}"
+            response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
+            keys = [obj["Key"] for obj in response.get("Contents", [])]
 
-            if df is not None:
-                upload_to_warehouse(conn, table_name, primary_key_column, df)
+            for s3_key in keys:
+                df = fetch_data_from_s3(s3, bucket_name, s3_key)
+                if df is not None:
+                    upload_to_warehouse(
+                        conn, table_name, primary_key_column, df)
 
     except Exception as e:
         logging.error(f"An error occurred: {e}")

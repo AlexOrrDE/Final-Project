@@ -18,5 +18,6 @@ def fetch_tables_with_pk(conn):
     cursor.execute(query)
     data = cursor.fetchall()
 
-    table_info = [{"table_name": row[0], "primary_key_column": row[1]} for row in data]
+    table_info = [{"table_name": row[0], "primary_key_column": row[1]}
+                  for row in data]
     return table_info
