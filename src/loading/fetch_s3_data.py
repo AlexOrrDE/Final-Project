@@ -15,3 +15,4 @@ def fetch_data_from_s3(s3_client, bucket_name, s3_key):
         logging.warning(
             f"The specified key '{s3_key}' does not exist in the S3 bucket."
         )
+        return None
