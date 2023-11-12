@@ -63,24 +63,19 @@ def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
         Bucket="ingestion-data-bucket-marble",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
-    with patch("src.ingestion.handler.connect_to_database") as mock:
-        with patch(
-            "src.ingestion.handler.fetch_tables",
-            return_value=["table1", "table2", "table3"],
-        ):
-            with patch(
-                "src.ingestion.handler.get_previous_update_dt",
-                return_value=True
-            ):
-                with patch(
-                    "src.ingestion.handler.fetch_data_from_tables",
-                    return_value={"table_name": "table1", "data": ["data1"]},
-                ):
-                    mock.cursor = True
-                    mock.execute = True
-                    handler("event", "context")
-                    assert "has been updated. Pulling new data" in caplog.text
-                    assert "No need to update." not in caplog.text
+    with (
+        patch("src.ingestion.handler.connect_to_database") as conn,
+        patch("src.ingestion.handler.fetch_tables",
+              return_value=["table1", "table2", "table3"]),
+        patch("src.ingestion.handler.get_previous_update_dt",
+              return_value=True),
+        patch("src.ingestion.handler.fetch_data_from_tables",
+              return_value={"table_name": "table1", "data": ["data1"]})):
+        conn.cursor = True
+        conn.execute = True
+        handler("event", "context")
+        assert "has been updated. Pulling new data" in caplog.text
+        assert "No need to update." not in caplog.text
 
 
 def test_handler_logs_no_need_to_update_if_bucket_has_file(

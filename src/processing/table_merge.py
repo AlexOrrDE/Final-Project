@@ -36,7 +36,7 @@ def table_merge(source_df):
             s3 = boto3.client("s3")
             response = s3.list_objects(
                 Bucket="ingestion-data-bucket-marble"
-                )
+            )
             second_tables = [
                 obj["Key"] for obj in response["Contents"]
                 if table_2 in obj["Key"]
