@@ -190,9 +190,9 @@ else:
         ("int", _int_extended_msg.format("int"))]
 
     __former_attrs__ = {
-         n: _msg.format(n=n, extended_msg=extended_msg)
-         for n, extended_msg in _type_info
-     }
+        n: _msg.format(n=n, extended_msg=extended_msg)
+        for n, extended_msg in _type_info
+    }
 
     # Future warning introduced in NumPy 1.24.0, 2022-11-17
     _msg = (
@@ -223,8 +223,8 @@ else:
 
     import math
 
-    __deprecated_attrs__['math'] = (math,
-        "`np.math` is a deprecated alias for the standard library `math` "
+    __deprecated_attrs__['math'] = (
+        math, "`np.math` is a deprecated alias for the standard library `math` "
         "module (Deprecated Numpy 1.25). Replace usages of `np.math` with "
         "`math`")
 
@@ -390,10 +390,12 @@ else:
     if sys.platform == "darwin":
         with warnings.catch_warnings(record=True) as w:
             _mac_os_check()
-            # Throw runtime error, if the test failed Check for warning and error_message
+            # Throw runtime error, if the test failed Check for warning and
+            # error_message
             error_message = ""
             if len(w) > 0:
-                error_message = "{}: {}".format(w[-1].category.__name__, str(w[-1].message))
+                error_message = "{}: {}".format(
+                    w[-1].category.__name__, str(w[-1].message))
                 msg = (
                     "Polyfit sanity test emitted a warning, most likely due "
                     "to using a buggy Accelerate backend."

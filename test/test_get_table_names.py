@@ -39,15 +39,16 @@ def test_fetch_tables_removes_prisma_table(mock_db):
         cursor.execute(
             'CREATE TABLE table1 (id serial PRIMARY KEY, name TEXT)')
         cursor.execute(
-            'CREATE TABLE _prisma_migrations(id serial PRIMARY KEY, value REAL)')  # noqa
+            'CREATE TABLE _prisma_migrations (id serial PRIMARY KEY)')
 
     expected_table_names = ["table1"]
     assert sorted(fetch_tables(mock_db)) == expected_table_names
 
 
-def test_totesys_fetch_tables_throws_pg8000_error_if_db_has_no_schema():
+def test_fetch_tables_throws_pg8000_error_when_database_has_no_schema():
     """check that totesys_fetch_tables returns pg8000.Error
-    when it fails to find any tables in the database."""
+        when it fails to find any tables in the database.
+    """
     class MockConn:
         class cursor:
             def execute(self, *args):
@@ -60,9 +61,9 @@ def test_totesys_fetch_tables_throws_pg8000_error_if_db_has_no_schema():
 
 
 def test_totesys_fetch_tables_returns_a_list_of_table_names_from_schema():
-    """check that totesys_fetch_tables rturns table names in list
-    from the schema and disregards table "_prisma_migrations"."""
-    # arrange
+    """check that totesys_fetch_tables returns table names in list
+    from the schema and disregards table "_prisma_migrations".
+    """
     class MockConn:
         class cursor:
             def execute(self, *args):
@@ -74,5 +75,4 @@ def test_totesys_fetch_tables_returns_a_list_of_table_names_from_schema():
                     ['table2'],
                     ["_prisma_migrations"],
                     ['table3']]
-    # assert
     assert fetch_tables(MockConn) == ['table1', 'table2', 'table3']

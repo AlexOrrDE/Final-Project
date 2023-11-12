@@ -4,6 +4,7 @@ Used for testing against as they are only correct for the years
 1987 to 2006. Do not use these for real code.
 '''
 
+import time as _time
 from datetime import tzinfo, timedelta, datetime
 from pytz import HOUR, ZERO, UTC
 
@@ -39,8 +40,6 @@ class FixedOffset(tzinfo):
         return ZERO
 
 
-import time as _time
-
 STDOFFSET = timedelta(seconds=-_time.timezone)
 if _time.daylight:
     DSTOFFSET = timedelta(seconds=-_time.altzone)
@@ -75,6 +74,7 @@ class LocalTimezone(tzinfo):
         stamp = _time.mktime(tt)
         tt = _time.localtime(stamp)
         return tt.tm_isdst > 0
+
 
 Local = LocalTimezone()
 
@@ -133,6 +133,7 @@ class USTimeZone(tzinfo):
             return HOUR
         else:
             return ZERO
+
 
 Eastern = USTimeZone(-5, "Eastern", "EST", "EDT")
 Central = USTimeZone(-6, "Central", "CST", "CDT")

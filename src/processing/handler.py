@@ -1,56 +1,64 @@
-"""
+import boto3
+import io
+import pandas as pd
+from write_to_s3 import write_to_s3
+from dimensions_fact.dim_counterparty import create_dim_counterparty
+from dimensions_fact.dim_currency import create_dim_currency
+from dimensions_fact.dim_date import create_dim_date
+from dimensions_fact.dim_design import create_dim_design
+from dimensions_fact.dim_location import create_dim_location
+from dimensions_fact.dim_staff import create_dim_staff
+from dimensions_fact.fact_sales_order import create_fact_sales_order
+from table_merge import table_merge
+import logging
+from convert_to_parquet import convert_to_parquet
 
-handler(event, context)
+logging.getLogger().setLevel(logging.INFO)
 
-    retrieve key and bucket names from event
-
-    extract table name from key -----
-
-    get the update data --
-        old_data = s3.get_object(
-        Bucket=bucket_name, Key=old_data_filename)
-    read the updated data --
-        read_old_data = old_data['Body'].read().decode('utf-8')
-
-    convert data to file-like-object --
-        old_file = io.StringIO(read_old_data)
-
-    convert file-like object to panda dataframe --
-        df = pd.read_csv(old_file, index_col=f"{table_name}_id")
-
-    if table name design:
-        return convert_to_parquet(design_transform_data function)
-    elif table name counterparty:
-        return convert_to_paruquet(counterparty_transform_data function)
-
-
-
-    )
-    # example flow of a table which relies on 1 source table
-    design_transform_data(dataframe):
-        relevant tables = [ source design table ]
-        pull design table from s3 bucket
-        convert to dataframe in same way as above
-        transform dataframe to fit dim_design schema ---
-        return transformed dataframe
+function_dict = {
+    "counterparty": create_dim_counterparty,
+    "currency": create_dim_currency,
+    "date": create_dim_date,
+    "design": create_dim_design,
+    "address": create_dim_location,
+    "staff": create_dim_staff,
+    "sales_order": create_fact_sales_order,
+}
 
 
-    # example flow of a table which relies on 2 source tables
-    counterparty_transform_data(dataframe):
-        relevant tables = [ source counterparty table, source address table ]
-        pull relevant tables from s3 bucket
-        convert to dataframe in same way as above
-        transform dataframe to fit dim_counterparty schema ---
-        return transformed dataframe
+def handler(event, context):
+    logging.info("Processing tables:")
+    logging.info(event)
+    s3 = boto3.client("s3")
+    s3_resource = boto3.resource("s3")
+    bucket = s3_resource.Bucket("ingestion-data-bucket-marble")
 
-    convert_to_parquet_function(transformed_dataframe):
-        takes transformed data from previous function
-        converts to parquet
-        return parquet data
+    check_dim_date = list(bucket.objects.all())
+    if "dim_date" not in check_dim_date:
+        our_func = function_dict["date"]
+        result = our_func()
+        returned_parquet = convert_to_parquet(result)
+        write_to_s3("dim_date", returned_parquet)
 
-    write to s3(parquet_data):
-        writes to s3 process bucket
+    for table_name in event:
+        logging.info("Current table is:")
+        logging.info(table_name)
+        if table_name in function_dict:
+            key = event[table_name]
+            update_data = s3.get_object(
+                Bucket="ingestion-data-bucket-marble", Key=key)
 
+            read_update_data = update_data["Body"].read().decode("utf-8")
+            update_file = io.StringIO(read_update_data)
 
+            df = pd.read_csv(update_file, index_col=False)
+            merged = table_merge(df)
+            our_func = function_dict[table_name]
+            result = our_func(merged)
 
-"""
+            key = key[:-4]
+            returned_parquet = convert_to_parquet(result)
+
+            logging.info("Writing file:")
+            logging.info(key)
+            write_to_s3(key, returned_parquet)

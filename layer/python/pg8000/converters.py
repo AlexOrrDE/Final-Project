@@ -436,7 +436,8 @@ def _range_in(elem_func):
         if data == "empty":
             return Range(is_empty=True)
         else:
-            le, ue = [None if v == "" else elem_func(v) for v in data[1:-1].split(",")]
+            le, ue = [None if v == "" else elem_func(
+                v) for v in data[1:-1].split(",")]
             return Range(le, ue, bounds=f"{data[0]}{data[-1]}")
 
     return range_in
