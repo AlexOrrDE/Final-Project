@@ -66,11 +66,11 @@ def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
     with (
         patch("src.ingestion.handler.connect_to_database") as conn,
         patch("src.ingestion.handler.fetch_tables",
-         return_value=["table1", "table2", "table3"]),
+              return_value=["table1", "table2", "table3"]),
         patch("src.ingestion.handler.get_previous_update_dt",
-         return_value=True),
+              return_value=True),
         patch("src.ingestion.handler.fetch_data_from_tables",
-         return_value={"table_name": "table1", "data": ["data1"]})):
+              return_value={"table_name": "table1", "data": ["data1"]})):
         conn.cursor = True
         conn.execute = True
         handler("event", "context")
