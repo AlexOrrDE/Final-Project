@@ -12,7 +12,7 @@ def test_fetch_data_from_s3_success():
     test_data = pd.DataFrame(
         {"column_1": [1, 2, 3], "column_2": ["a", "b", "c"]})
     test_data_bytes = BytesIO()
-    test_data.to_parquet(test_data_bytes, index=False)
+    test_data.to_parquet(test_data_bytes, index=False, engine="fastparquet")
 
     s3_client = boto3.client("s3", region_name="us-east-1")
     s3_client.create_bucket(Bucket=bucket_name)
