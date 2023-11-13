@@ -46,8 +46,7 @@ def handler(event, context):
         if table_name in function_dict:
             key = event[table_name]
             update_data = s3.get_object(
-                Bucket="ingestion-data-bucket-marble", Key=key
-            )
+                Bucket="ingestion-data-bucket-marble", Key=key)
 
             read_update_data = update_data["Body"].read().decode("utf-8")
             update_file = io.StringIO(read_update_data)
@@ -59,8 +58,7 @@ def handler(event, context):
 
             key = key[:-4]
             returned_parquet = convert_to_parquet(result)
-            if "address" in key:
-                key = key.replace("address", "location")
+
             logging.info("Writing file:")
             logging.info(key)
             write_to_s3(key, returned_parquet)
