@@ -22,7 +22,7 @@ def create_dim_counterparty(cp_merge_df):
         "counterparty_legal_city",
         "counterparty_legal_postal_code",
         "counterparty_legal_country",
-        "counterparty_legal_phone-number",
+        "counterparty_legal_phone_number",
     ]
 
     dim_counterparty_df = cp_merge_df[columns_to_keep]
