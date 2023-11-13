@@ -160,7 +160,8 @@ resource "aws_iam_policy" "secrets_policy" {
     {
       "Effect": "Allow",
       "Action": "secretsmanager:GetSecretValue",
-      "Resource": "arn:aws:secretsmanager:eu-west-2:377515970402:secret:Totesys-Credentials-WT7z06"
+      "Resource": ["arn:aws:secretsmanager:eu-west-2:377515970402:secret:Totesys-Credentials-WT7z06", 
+      "arn:aws:secretsmanager:eu-west-2:377515970402:secret:Warehouse-Credentials-gtPzJF"]
     }
   ]
 })
