@@ -5,7 +5,9 @@ from moto import mock_s3
 import boto3
 import os
 import pytest
-from pprint import pprint
+
+import sys
+sys.path.append('processing')
 
 @pytest.fixture(scope="function")
 def aws_credentials():
@@ -64,8 +66,7 @@ event_dict = {
 def test_should_put_to_processing_bucket(s3_client, mock_lambda):
     handler(event_dict, "")
     response = s3_client.list_objects(Bucket="processed-data-bucket-marble")
-    assert len(response['Contents']) is 7
-    # pprint(response)
+    assert len(response['Contents']) == 7
 
 
 def test_should_convert_files_to_parquet(s3_client, mock_lambda):
