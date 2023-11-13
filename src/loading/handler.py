@@ -2,10 +2,12 @@ from src.ingestion.connection import connect_to_database
 from src.loading.fetch_tables_with_pk import fetch_tables_with_pk
 from src.loading.fetch_s3_data import fetch_data_from_s3
 from src.loading.upload_to_warehouse import upload_to_warehouse
+from sqlalchemy import create_engine
 import boto3
 import logging
 
 logging.basicConfig(level=logging.INFO)
+
 
 
 def handler(event, context):
@@ -13,6 +15,7 @@ def handler(event, context):
 
     bucket_name = "alex-test-processing"
     s3 = boto3.client("s3")
+    engine = create_engine(f"postgresql+pg8000://", creator=lambda: conn)
 
     try:
         conn = connect_to_database("warehouse")
@@ -21,10 +24,7 @@ def handler(event, context):
         tables_names = fetch_tables_with_pk(conn)
 
         for table in tables_names:
-            table_name, primary_key_column = (
-                table["table_name"],
-                table["primary_key_column"],
-            )
+            table_name = table["table_name"]
             logging.info(f"Fetched table {table_name}")
 
             prefix = f"{table_name}"
@@ -34,9 +34,7 @@ def handler(event, context):
             for s3_key in keys:
                 df = fetch_data_from_s3(s3, bucket_name, s3_key)
                 if df is not None:
-                    upload_to_warehouse(
-                        conn, table_name, primary_key_column, df
-                    )
+                    upload_to_warehouse(engine, table_name, df)
 
     except Exception as e:
         logging.error(f"An error occurred: {e}")
