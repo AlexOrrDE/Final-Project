@@ -1,3 +1,4 @@
+# General lambda role, used by the three lambda functions
 resource "aws_iam_role" "lambda_role" {
     name_prefix = "role-${var.lambda_name}"
     assume_role_policy = jsonencode(
@@ -19,10 +20,8 @@ resource "aws_iam_role" "lambda_role" {
     })
 }
 
-# Lambda access to S3 policy
-# https://us-east-1.console.aws.amazon.com/iam/home#/policies/arn:aws:iam::aws:policy/AmazonS3FullAccess$jsonEditor
+# Policy to allow a lambda access to S3
 resource "aws_iam_policy" "lambda_access_s3_policy" {
-  # name   = "lambda_access_s3_policy"
   policy = jsonencode({
     "Version": "2012-10-17",
     "Statement": [
@@ -38,24 +37,13 @@ resource "aws_iam_policy" "lambda_access_s3_policy" {
 })
 }
 
-# Attach policy to role
+# Attach access s3 policy to lambda role
 resource "aws_iam_role_policy_attachment" "lambda_access_s3_attach" {
   role = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.lambda_access_s3_policy.arn
 }
 
-# https://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html
-# https://developer.hashicorp.com/terraform/tutorials/aws/aws-iam-policy
-
-# Make a policy of the json file below
-resource "aws_iam_policy" "test_policy" {
-    # name = "testnametestesttest"
-    policy = data.aws_iam_policy_document.example.json
-}
-
-# Policy for invoking a lambda, from
-# https://docs.aws.amazon.com/scheduler/latest/UserGuide/setting-up.html#setting-up-execution-role
-# this is just, the data, it is not attached here
+# Data for the policy for allowing the invokation of lambdas
 data "aws_iam_policy_document" "example" {
   statement {
     actions   = ["lambda:InvokeFunction"]
@@ -64,7 +52,12 @@ data "aws_iam_policy_document" "example" {
   }
 }
 
-# Attach policy to the eventbridge role
+# Make a policy of the above data
+resource "aws_iam_policy" "test_policy" {
+    policy = data.aws_iam_policy_document.example.json
+}
+
+# Attach policy for executing lambdas to the eventbridge role
 resource "aws_iam_role_policy_attachment" "test_attach" {
   role = aws_iam_role.eventbride_role.name
   policy_arn = aws_iam_policy.test_policy.arn

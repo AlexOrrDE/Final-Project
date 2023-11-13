@@ -1,3 +1,4 @@
+# Evnetbridge schedule for calling the first (ingestion) lambda function
 resource "aws_scheduler_schedule" "lambdascheduler" {
   # name       = "my-schedule"
   group_name = "default"
@@ -14,6 +15,7 @@ resource "aws_scheduler_schedule" "lambdascheduler" {
   }
 }
 
+# Eventbridge schedule for calling the third (loading) lambda function
 resource "aws_scheduler_schedule" "thirdlambdascheduler" {
   # name       = "my-schedule"
   group_name = "default"

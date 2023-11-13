@@ -44,3 +44,16 @@ Note that the name for the cloudwatch log group in the iam is important and conn
 
 Because (?) pandas depends on numpy we need to install that too.
 
+Links:
+
+For allowing a lambda access to s3:
+
+https://us-east-1.console.aws.amazon.com/iam/home#/policies/arn:aws:iam::aws:policy/AmazonS3FullAccess$jsonEditor
+
+Instead of attaching the policy directly we can instead create a policy from a JSON, see for more information
+https://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html
+https://developer.hashicorp.com/terraform/tutorials/aws/aws-iam-policy
+
+For example where we make a policy for invoking a (many) lambda, from
+https://docs.aws.amazon.com/scheduler/latest/UserGuide/setting-up.html#setting-up-execution-role
+

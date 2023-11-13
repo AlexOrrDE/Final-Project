@@ -19,6 +19,6 @@ resource "aws_cloudwatch_metric_alarm" "alert_errors" {
   period              = 60
   statistic           = "SampleCount"
   threshold           = 1
-  alarm_description   = "This metric monitors any error occusrence"
+  alarm_description   = "This metric monitors any error occurrence"
   alarm_actions       = ["arn:aws:sns:eu-west-2:377515970402:ingestion_errors"]
 }
