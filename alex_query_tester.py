@@ -16,9 +16,9 @@ def query_database():
             print(row)
 
         # Comment out next 3 lines to not delete data.
-        sql_query = "DELETE FROM dim_date;"
-        cursor.execute(sql_query)
-        conn.commit()
+        # sql_query = "DELETE FROM dim_date;"
+        # cursor.execute(sql_query)
+        # conn.commit()
 
     finally:
         cursor.close()

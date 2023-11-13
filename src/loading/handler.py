@@ -1,5 +1,5 @@
 from src.ingestion.connection import connect_to_database
-from src.loading.warehouse_tables import fetch_tables_with_pk
+from src.loading.fetch_tables_with_pk import fetch_tables_with_pk
 from src.loading.fetch_s3_data import fetch_data_from_s3
 from src.loading.upload_to_warehouse import upload_to_warehouse
 import boto3
@@ -35,7 +35,8 @@ def handler(event, context):
                 df = fetch_data_from_s3(s3, bucket_name, s3_key)
                 if df is not None:
                     upload_to_warehouse(
-                        conn, table_name, primary_key_column, df)
+                        conn, table_name, primary_key_column, df
+                    )
 
     except Exception as e:
         logging.error(f"An error occurred: {e}")
