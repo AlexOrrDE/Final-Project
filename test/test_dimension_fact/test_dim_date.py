@@ -5,7 +5,6 @@ from pytest import raises
 def test_should_return_dataframe_with_correct_columns():
     result = create_dim_date()
     expected = ['date_id', 'year', 'month', 'day', 'day_of_week', 'day_name', 'month_name', 'quarter']
-# different datatypes so trying == but might be flagged by pep8 compliance
     assert result.columns.values.tolist() == expected
 
 def test_should_return_columns_with_correct_datatypes():

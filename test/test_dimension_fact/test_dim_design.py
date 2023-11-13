@@ -17,7 +17,6 @@ def test_should_return_a_pandas_dataframe():
 def test_should_return_dataframe_with_correct_columns():
     result = create_dim_design(df)
     expected = ['design_id', 'design_name', 'file_location', 'file_name']
-# different datatypes so trying == but might be flagged by pep8 compliance
     assert result.columns.values.tolist() == expected
 
 def test_should_return_columns_with_correct_datatypes():

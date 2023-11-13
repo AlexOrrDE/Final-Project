@@ -33,9 +33,6 @@ def mock_lambda(s3_client):
         Bucket="processed-data-bucket-marble",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
-    s3_client.put_object(
-        Bucket="ingestion-data-bucket-marble",
-        Key="True")
     with (open('./test/test_dimension_fact/csv_files/counterparty.csv', 'rb') as a, open('./test/test_dimension_fact/csv_files/currency.csv', 'rb') as b, open('./test/test_dimension_fact/csv_files/department.csv', 'rb') as c, open('./test/test_dimension_fact/csv_files/design.csv', 'rb') as d, open('./test/test_dimension_fact/csv_files/sales_order.csv', 'rb') as e, open('./test/test_dimension_fact/csv_files/staff.csv', 'rb') as f, open('./test/test_dimension_fact/csv_files/address.csv', 'rb') as g):
         files = {
             'counterparty': a, 
@@ -94,21 +91,3 @@ def test_should_change_address_file_name_to_location(s3_client, mock_lambda):
         assert 'location' not in keys_ingestion
         assert 'location.parquet' in keys_processed
         assert 'address.parquet' not in keys_processed
-          
-
-
-
-
-
-
-
-
-#     patch('src.processing.dimensions_fact.dim_counterparty', return_value=a),
-#     patch('src.processing.dimensions_fact.dim_currency', return_value=b),
-#     patch('src.processing.dimensions_fact.dim_date', return_value=True),
-#     patch('src.processing.dimensions_fact.dim_design', return_value=d),
-#     patch('src.processing.dimensions_fact.dim_staff', return_value=True),
-#     patch('src.processing.dimensions_fact.fact_sales_order', return_value=True),
-#     patch('src.processing.table_merge', return_value=True),
-#     patch('src.processing.convert_to_parquet', return_value=True)):
-
