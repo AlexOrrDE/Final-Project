@@ -43,7 +43,7 @@ resource "aws_s3_object" "processing_lambda_code"{
   source_hash = data.archive_file.processing_lambda_zip.output_base64sha256
 }
 
-# Zip directory with each of our processing python files
+# Zip directory with each of our loading python files
 data "archive_file" "loading_lambda_zip"{
   type = "zip"
   source_dir = "../src/loading"

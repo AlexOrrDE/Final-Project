@@ -151,6 +151,11 @@ resource "aws_cloudwatch_log_group" "processing_lambda_log_group" {
     name              = "/aws/lambda/processing_handler"
 }
 
+# Log group for third lambda
+resource "aws_cloudwatch_log_group" "loading_lambda_log_group" {
+    name              = "/aws/lambda/loading_handler"
+}
+
 # Policies for accessing secrets
 # https://docs.aws.amazon.com/secretsmanager/latest/userguide/auth-and-access_examples.html
 
