@@ -1,6 +1,4 @@
-import pytest
 from io import BytesIO
-from botocore.exceptions import ClientError
 import boto3
 import pandas as pd
 from moto import mock_s3
@@ -11,7 +9,8 @@ from src.loading.fetch_s3_data import fetch_data_from_s3
 def test_fetch_data_from_s3_success():
     bucket_name = "test-bucket"
     s3_key = "test-key/parquet_file.parquet"
-    test_data = pd.DataFrame({"column_1": [1, 2, 3], "column_2": ["a", "b", "c"]})
+    test_data = pd.DataFrame(
+        {"column_1": [1, 2, 3], "column_2": ["a", "b", "c"]})
     test_data_bytes = BytesIO()
     test_data.to_parquet(test_data_bytes, index=False)
 

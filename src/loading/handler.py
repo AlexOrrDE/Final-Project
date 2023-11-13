@@ -34,7 +34,9 @@ def handler(event, context):
             for s3_key in keys:
                 df = fetch_data_from_s3(s3, bucket_name, s3_key)
                 if df is not None:
-                    upload_to_warehouse(conn, table_name, primary_key_column, df)
+                    upload_to_warehouse(
+                        conn, table_name, primary_key_column, df
+                    )
 
     except Exception as e:
         logging.error(f"An error occurred: {e}")

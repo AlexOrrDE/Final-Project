@@ -7,7 +7,8 @@ def test_fetch_tables_with_pk(mock_connect):
     mock_conn = mock_connect.return_value
     mock_cursor = mock_conn.cursor.return_value
 
-    mock_cursor.fetchall.return_value = [("table_1", "id_1"), ("table_2", "id_2")]
+    mock_cursor.fetchall.return_value = [
+        ("table_1", "id_1"), ("table_2", "id_2")]
 
     result = fetch_tables_with_pk(mock_conn)
 
