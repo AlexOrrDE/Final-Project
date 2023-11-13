@@ -1,5 +1,5 @@
 from src.ingestion.connection import connect_to_database
-from src.loading.warehouse_tables import fetch_tables_with_pk
+from src.loading.fetch_tables_with_pk import fetch_tables_with_pk
 import boto3
 import pandas as pd
 from io import BytesIO
