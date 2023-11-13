@@ -59,7 +59,7 @@ resource "aws_iam_policy" "test_policy" {
 data "aws_iam_policy_document" "example" {
   statement {
     actions   = ["lambda:InvokeFunction"]
-    resources = ["${aws_lambda_function.handler.arn}"]
+    resources = ["${aws_lambda_function.handler.arn}", "${aws_lambda_function.loading_handler.arn}"]
     effect = "Allow"
   }
 }
