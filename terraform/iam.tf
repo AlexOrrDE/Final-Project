@@ -59,7 +59,7 @@ resource "aws_iam_policy" "test_policy" {
 data "aws_iam_policy_document" "example" {
   statement {
     actions   = ["lambda:InvokeFunction"]
-    resources = ["${aws_lambda_function.handler.arn}"]
+    resources = ["${aws_lambda_function.handler.arn}", "${aws_lambda_function.loading_handler.arn}"]
     effect = "Allow"
   }
 }
@@ -149,6 +149,11 @@ resource "aws_cloudwatch_log_group" "lambda_log_group" {
 # Log group for second lambda
 resource "aws_cloudwatch_log_group" "processing_lambda_log_group" {
     name              = "/aws/lambda/processing_handler"
+}
+
+# Log group for third lambda
+resource "aws_cloudwatch_log_group" "loading_lambda_log_group" {
+    name              = "/aws/lambda/loading_handler"
 }
 
 # Policies for accessing secrets
