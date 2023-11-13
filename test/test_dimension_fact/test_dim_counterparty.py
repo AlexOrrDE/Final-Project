@@ -13,10 +13,12 @@ values2 = [[1, 'Fahey and Sons', 15, 'Micheal Toy', 'Mrs. Lucy Runolfsdottir', '
 
 df = pd.DataFrame(values, columns=columns)
 
+
 def test_should_return_a_pandas_dataframe():
     result = create_dim_counterparty(df)
 
     assert isinstance(result, pd.core.frame.DataFrame)
+
 
 def test_should_return_dataframe_with_correct_columns():
     result = create_dim_counterparty(df)
@@ -34,6 +36,7 @@ def test_should_return_dataframe_with_correct_columns():
 # different datatypes so trying == but might be flagged by pep8 compliance
     assert result.columns.values.tolist() == expected
 
+
 def test_should_return_columns_with_correct_datatypes():
     result = create_dim_counterparty(df)
     output_columns = [result['counterparty_legal_name'], result['counterparty_legal_name'], result['counterparty_legal_address_line_1'], result['counterparty_legal_address_line_2'], result['counterparty_legal_district'], result['counterparty_legal_city'], result['counterparty_legal_postal_code'], result['counterparty_legal_country'], result['counterparty_legal_phone_number']]
@@ -41,6 +44,7 @@ def test_should_return_columns_with_correct_datatypes():
     assert pd.api.types.is_numeric_dtype(result['counterparty_id'])
     for result in output_columns:
         assert pd.api.types.is_string_dtype(result)
+
 
 def test_should_raise_key_error_if_given_incorrect_dataframe():
     with raises(KeyError):
