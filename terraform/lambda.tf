@@ -6,6 +6,14 @@ resource "aws_lambda_layer_version" "packages_layer" {
   compatible_runtimes = ["python3.11"]
 }
 
+# Since we use connection.py from the first lambda in the third lambda, we make the first lambda a layer for the third.
+resource "aws_lambda_layer_version" "ingestion_functions_into_layer" {
+  s3_bucket =  aws_s3_bucket.code_bucket.id
+  s3_key = aws_s3_object.lambda_code.key
+  layer_name = "ingestion_functions_into_layer"
+  compatible_runtimes = ["python3.11"]
+}
+
 resource "aws_lambda_function" "handler" {
   function_name = "handler"
   role = aws_iam_role.lambda_role.arn
@@ -38,7 +46,7 @@ resource "aws_lambda_function" "loading_handler" {
   role = aws_iam_role.lambda_role.arn
   s3_bucket = aws_s3_bucket.code_bucket.id
   s3_key = aws_s3_object.loading_lambda_code.key
-  layers = [aws_lambda_layer_version.packages_layer.arn]
+  layers = [aws_lambda_layer_version.packages_layer.arn, aws_lambda_layer_version.ingestion_functions_into_layer.arn]
   handler = "handler.handler"
   runtime = "python3.11"
   timeout = 300
