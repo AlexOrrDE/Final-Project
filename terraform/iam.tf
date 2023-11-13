@@ -44,7 +44,7 @@ resource "aws_iam_role_policy_attachment" "lambda_access_s3_attach" {
 }
 
 # Data for the policy for allowing the invokation of lambdas
-data "aws_iam_policy_document" "example" {
+data "aws_iam_policy_document" "invoke_lambda_policy_data" {
   statement {
     actions   = ["lambda:InvokeFunction"]
     resources = ["${aws_lambda_function.handler.arn}", "${aws_lambda_function.loading_handler.arn}"]
@@ -53,14 +53,14 @@ data "aws_iam_policy_document" "example" {
 }
 
 # Make a policy of the above data
-resource "aws_iam_policy" "test_policy" {
-    policy = data.aws_iam_policy_document.example.json
+resource "aws_iam_policy" "invoke_lambda_policy" {
+    policy = data.aws_iam_policy_document.invoke_lambda_policy_data.json
 }
 
 # Attach policy for executing lambdas to the eventbridge role
-resource "aws_iam_role_policy_attachment" "test_attach" {
+resource "aws_iam_role_policy_attachment" "invoke_lambda_policy_attach" {
   role = aws_iam_role.eventbride_role.name
-  policy_arn = aws_iam_policy.test_policy.arn
+  policy_arn = aws_iam_policy.invoke_lambda_policy.arn
 }
 
 # Policy for invoking the second lambda. This will be used by the first lambda when it is finished.
@@ -78,7 +78,7 @@ resource "aws_iam_policy" "invoke_second_lambda_policy" {
 }
 
 # Attach this policy to the general lambda role
-resource "aws_iam_role_policy_attachment" "charles_attach" {
+resource "aws_iam_role_policy_attachment" "invoke_second_lambda_policy_attach" {
   role = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.invoke_second_lambda_policy.arn
 }
@@ -103,7 +103,6 @@ resource "aws_iam_role" "eventbride_role" {
 
 # General Cloudwatch policy
 resource "aws_iam_policy" "cloudwatch_log_policy" {
-  # name   = "function-logging-policy"
   policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -120,7 +119,7 @@ resource "aws_iam_policy" "cloudwatch_log_policy" {
 }
 
 # Attach cloudwatch log policy to the general lambda role, so we can log with any lambda
-resource "aws_iam_role_policy_attachment" "test_joe_attach" {
+resource "aws_iam_role_policy_attachment" "cloudwatch_log_policy_attach" {
   role = aws_iam_role.lambda_role.id
   policy_arn = aws_iam_policy.cloudwatch_log_policy.arn
 }
