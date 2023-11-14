@@ -1,7 +1,7 @@
-from .connection import connect_to_database
-from .fetch_tables_with_pk import fetch_tables_with_pk
-from .fetch_s3_data import fetch_data_from_s3
-from .upload_to_warehouse import upload_to_warehouse
+from connection import connect_to_database
+from fetch_tables_with_pk import fetch_tables_with_pk
+from fetch_s3_data import fetch_data_from_s3
+from upload_to_warehouse import upload_to_warehouse
 import boto3
 import logging
 
