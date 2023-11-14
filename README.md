@@ -57,7 +57,7 @@ This document provides an overview of the successfully implemented features and 
 - Code Quality Assurance:
     - Python code thoroughly tested and PEP8 compliant.
     - Security vulnerabilities checked using safety and bandit packages.
-    - Test coverage exceeds 90%.
+    - Test coverage exceeds 95%.
 
 7. Automation
 - Infrastructure Deployment:
@@ -82,8 +82,8 @@ This document provides an overview of the successfully implemented features and 
 - Install dependencies and check for errors:
 
         - pip install -r lambda_requirements.txt -t ./layer/python
+        - pip install -r lambda_requirements_2.txt -t ./layer_2/python
         - make requirements
-        - make run-checks
 
 - Deploy using Terraform:
 
@@ -156,6 +156,10 @@ This python application runs on a schedule in AWS Lambda, and performs the follo
 - Logs relevant information and handles errors gracefully.
 
 ## Diagrams and Schema <a name="diagrams-and-schema"></a>
+
+__ETL Diagram:__
+
+![etl_diagram](./diagrams/etl_diagram.png)
 
 __Target schema:__
 
