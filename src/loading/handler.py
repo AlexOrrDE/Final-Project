@@ -28,9 +28,9 @@ def handler(event, context):
                 table["primary_key"],
             )
             logging.info(f"Fetched table {table_name}")
-
-        for s3_key in keys:
-            for table in tables_names:
+        
+        for table in tables_names:
+            for s3_key in keys:
                 table_name, primary_key_column = (
                     table["table_name"],
                     table["primary_key"],
