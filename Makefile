@@ -8,7 +8,7 @@ PROJECT_NAME = Final-Project
 REGION = eu-west-2
 PYTHON_INTERPRETER = python
 WD=$(shell pwd)
-PYTHONPATH=${WD}:./src/
+PYTHONPATH=${WD}:./src
 SHELL := /bin/bash
 PROFILE = default
 PIP:=pip
@@ -75,8 +75,12 @@ run-flake:
 	$(call execute_in_env, flake8  ./src/*/*.py ./src/*/*/*.py ./test/*.py)
 
 ## Run the unit tests
-unit-test:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} python -m pytest -vrP test)
+unit-test-ingestion:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/ingestion python -m pytest -vrP test/test_ingestion)
+unit-test-processing:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/processing python -m pytest -vrP test/test_processing)
+unit-test-loading:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/loading python -m pytest -vrP test/test_loading)
 
 ## Run the coverage check
 check-coverage:
