@@ -6,6 +6,14 @@ resource "aws_lambda_layer_version" "packages_layer" {
   compatible_runtimes = ["python3.11"]
 }
 
+# Make a layer from the s3 object that is the zipped packages (second batch)
+resource "aws_lambda_layer_version" "packages_layer_2" {
+  s3_bucket =  aws_s3_bucket.code_bucket.id
+  s3_key = aws_s3_object.packages_2.key
+  layer_name = "packages_layer_2"
+  compatible_runtimes = ["python3.11"]
+}
+
 # Lambda function for the first lambda (ingestion)
 resource "aws_lambda_function" "handler" {
   function_name = "handler"
@@ -42,7 +50,7 @@ resource "aws_lambda_function" "loading_handler" {
   role = aws_iam_role.lambda_role.arn
   s3_bucket = aws_s3_bucket.code_bucket.id
   s3_key = aws_s3_object.loading_lambda_code.key
-  layers = [aws_lambda_layer_version.packages_layer.arn]
+  layers = [aws_lambda_layer_version.packages_layer.arn, aws_lambda_layer_version.packages_layer_2.arn]
   handler = "handler.handler"
   runtime = "python3.11"
   timeout = 300

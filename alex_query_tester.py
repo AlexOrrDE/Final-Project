@@ -9,7 +9,7 @@ def query_database():
     try:
         cursor = conn.cursor()
 
-        sql_query = "SELECT * FROM dim_date;"
+        sql_query = "SELECT * FROM fact_sales_order;"
         cursor.execute(sql_query)
         rows = cursor.fetchall()
         for row in rows:
