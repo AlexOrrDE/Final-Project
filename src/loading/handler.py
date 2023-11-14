@@ -22,8 +22,7 @@ def handler(event, context):
 
         tables_names = fetch_tables_with_pk(conn)
         response = s3.list_objects_v2(Bucket=bucket_name)
-        keys = [obj["Key"] for obj in response.get("Contents", [])]
-
+        keys = [obj["Key"] for obj in response.get("Contents", []) if "loaded" not in obj["Key"]]
         for table in tables_names:
             table_name, primary_key_column = (
                 table["table_name"],
@@ -37,8 +36,7 @@ def handler(event, context):
                     table["table_name"],
                     table["primary_key_column"],
                 )
-                if table["table_name"] in s3_key and "loaded" not in s3_key:
-                    print("match", s3_key, table)
+                if table["table_name"] in s3_key:
                     df = fetch_data_from_s3(s3, bucket_name, s3_key)
                     if df is not None:
                         upload_to_warehouse(
@@ -47,6 +45,7 @@ def handler(event, context):
                         copy_source = {'Bucket': bucket_name, 'Key': s3_key}
                         s3.copy_object(CopySource=copy_source, Bucket=bucket_name, Key=f'loaded/{s3_key}')
                         s3.delete_object(Bucket=bucket_name, Key =s3_key)
+
                         
     except Exception as e:
         logging.error(f"An error occurred: {e}")
