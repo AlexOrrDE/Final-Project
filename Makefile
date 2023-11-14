@@ -82,6 +82,8 @@ unit-test-processing:
 unit-test-loading:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/loading python -m pytest -vrP test/test_loading)
 
+run-unit-tests: unit-test-ingestion unit-test-processing unit-test-loading
+
 ## Run the coverage check
 check-coverage:
 	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} coverage run -m --omit 'venv/*' -m pytest --ignore=layer && coverage report -m)
