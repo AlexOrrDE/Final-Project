@@ -1,4 +1,4 @@
-from src.ingestion.connection import connect_to_database
+from src.loading.psycopg2_conn import connect_to_warehouse
 from src.loading.fetch_tables_with_pk import fetch_tables_with_pk
 from src.loading.fetch_s3_data import fetch_data_from_s3
 from src.loading.upload_to_warehouse import upload_to_warehouse
@@ -9,7 +9,6 @@ import re
 logging.basicConfig(level=logging.INFO)
 
 
-
 def handler(event, context):
     """Fetches parquet files from S3 and uploads data to warehouse."""
 
@@ -17,7 +16,7 @@ def handler(event, context):
     s3 = boto3.client("s3")
 
     try:
-        conn = connect_to_database("warehouse")
+        conn = connect_to_warehouse("warehouse")
         logging.info("Connected to the local database")
 
         tables_names = fetch_tables_with_pk(conn)
