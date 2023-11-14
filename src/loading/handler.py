@@ -26,8 +26,6 @@ def handler(event, context):
             table_name = table["table_name"]
             primary_key = table["primary_key"]
             logging.info(f"Fetched table {table_name}")
-            
-            if table_name =="dim_date": table_name="123"
 
             response = s3.list_objects_v2(Bucket=bucket_name)
             keys = [obj["Key"] for obj in response.get("Contents", [])]

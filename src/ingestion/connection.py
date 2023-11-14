@@ -1,7 +1,8 @@
 import json
 import boto3
 import logging
-from pg8000.dbapi import Connection, InterfaceError
+# from pg8000.dbapi import Connection, InterfaceError
+import psycopg2
 
 
 class InvalidStoredCredentials(Exception):
@@ -26,7 +27,7 @@ def connect_to_database(db="Totesys"):
 
     try:
         credentials = retrieve_credentials(f"{db.capitalize()}-Credentials")
-        conn = Connection(
+        conn = psycopg2.connect(
             host=credentials["host"],
             port=credentials["port"],
             database=credentials["database"],
@@ -35,7 +36,7 @@ def connect_to_database(db="Totesys"):
         )
         return conn
 
-    except InterfaceError as db_connection_error:
+    except psycopg2.InterfaceError as db_connection_error:
         logging.error("Error occured in connect_to_database")
         raise db_connection_error
 

@@ -20,5 +20,4 @@ def fetch_tables_with_pk(conn):
 
     table_info = [{"table_name": row[0], "primary_key": row[1]}
                   for row in data]
-    print(table_info)
     return table_info
