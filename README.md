@@ -13,7 +13,7 @@ For more information regarding the project specifications, please refer to the _
 
 [How does it work?](#how-does-it-work)
 
-[Diagrams and Schemas](#diagrams-and-schemas)
+[Diagrams and Schema](#diagrams-and-schema)
 
 ## Features Overview <a name="features-overview"></a>
 
@@ -81,12 +81,13 @@ This document provides an overview of the successfully implemented features and 
 
 - Install dependencies and check for errors:
 
+        - pip install -r lambda_requirements.txt -t ./layer/python
         - make requirements
         - make run-checks
 
 - Deploy using Terraform:
 
-        - cd terraform/
+        - cd terraform
         - terraform init
         - terraform plan
         - terraform apply
@@ -154,7 +155,7 @@ This python application runs on a schedule in AWS Lambda, and performs the follo
 
 - Logs relevant information and handles errors gracefully.
 
-## Diagrams and Schema <a name="diagrams-and-schemas"></a>
+## Diagrams and Schema <a name="diagrams-and-schema"></a>
 
 __Target schema:__
 
