@@ -5,6 +5,7 @@ import pytest
 import boto3
 from src.loading.handler import handler
 
+
 @pytest.fixture(scope="function")
 def aws_credentials():
     """Mocked AWS Credentials for moto."""
