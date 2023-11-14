@@ -29,7 +29,7 @@ def secrets_client(aws_credentials):
 
 
 def test_retrieve_credentials_returns_dictionary(secrets_client):
-    """check retrieve_totesys_credentials function always return
+    """check retrieve_credentials function always return
     a dictionary when secret stored in a valid json format"""
 
     secrets_client.create_secret(
@@ -51,18 +51,16 @@ def test_retrieve_credentials_returns_dictionary(secrets_client):
     ]
 
 
-def test_retrieve_credentials_returns_error_when_json_invalid(
-        create_invalid_secret):
-    """check retrieve_totesys_credentials function returns
+def test_retrieve_credentials_returns_error_when_json_invalid(secrets_client):
+    """check retrieve_credentials function returns
     a json.JSONDecodeError when secret stored with invalid json format.
     Example no key-value format"""
     with pytest.raises(json.JSONDecodeError):
         retrieve_credentials("Totesys-Credentials")
 
 
-def test_retrieve_credentials_throws_InvalidCredentials_error(
-        create_wrong_secret):
-    """check retrieve_totesys_credentials function returns
+def test_retrieve_credentials_throws_InvalidCredentials_error(secrets_client):
+    """check retrieve_credentials function returns
     InvalidStoredCredentials error when secret
     stored doesn't have all the required to connect.
     Example when the json is missing a required keys

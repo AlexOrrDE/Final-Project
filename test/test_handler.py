@@ -57,12 +57,12 @@ def create_secret(secrets_client):
 
 def test_handler_uses_mock_aws_credentials():
     """Checks the tests aren't using the actual AWS keys at any point"""
-    logging.info(os.environ["AWS_ACCESS_KEY_ID"])
-    logging.info(os.environ["AWS_SECRET_ACCESS_KEY"])
-    logging.info(os.environ["AWS_DEFAULT_REGION"])
-    assert os.environ["AWS_ACCESS_KEY_ID"] == "test"
-    assert os.environ["AWS_SECRET_ACCESS_KEY"] == "test"
-    assert os.environ["AWS_DEFAULT_REGION"] == "eu-west-2"
+    logging.info(os.environ['AWS_ACCESS_KEY_ID'])
+    logging.info(os.environ['AWS_SECRET_ACCESS_KEY'])
+    logging.info(os.environ['AWS_DEFAULT_REGION'])
+    assert os.environ['AWS_ACCESS_KEY_ID'] == "test"
+    assert os.environ['AWS_SECRET_ACCESS_KEY'] == "test"
+    assert os.environ['AWS_DEFAULT_REGION'] == "eu-west-2"
 
 
 def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
@@ -71,8 +71,7 @@ def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
     """Tests the handler produces logs for pulling data when a bucket is empty.
     Tests for incorrect logs being sent."""
     secrets_client.create_secret(
-        Name="Totesys-Credentials",
-        SecretString="""
+        Name="Totesys-Credentials", SecretString="""
                         {
                             "host": "x",
                             "port": "x",
@@ -80,25 +79,21 @@ def test_handler_logs_bucket_empty_and_pulling_dataset_when_needed(
                             "user": "x",
                             "password" : "x"
                         }
-                        """,
+                        """
     )
     s3_client.create_bucket(
         Bucket="ingestion-data-bucket-marble",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
-    with (
-        patch("src.ingestion.handler.connect_to_database") as conn,
-        patch("src.ingestion.handler.fetch_tables",
-              return_value=["table1", "table2", "table3"]),
-        patch("src.ingestion.handler.get_previous_update_dt",
-              return_value=True),
-        patch("src.ingestion.handler.fetch_data_from_tables",
-              return_value={"table_name": "table1", "data": ["data1"]})):
-        conn.cursor = True
-        conn.execute = True
-        handler("event", "context")
-        assert "has been updated. Pulling new data" in caplog.text
-        assert "No need to update." not in caplog.text
+    with patch('src.ingestion.handler.connect_to_database') as mock:
+        with patch('src.ingestion.handler.fetch_tables', return_value=['table1','table2','table3']):
+            with patch('src.ingestion.handler.get_previous_update_dt', return_value=True):
+                with patch('src.ingestion.handler.fetch_data_from_tables', return_value={'table_name':'table1', 'data':['data1']}):
+                    mock.cursor = True
+                    mock.execute = True
+                    handler("event", "context")
+                    assert "has been updated. Pulling new data" in caplog.text
+                    assert "No need to update." not in caplog.text
 
 
 def test_handler_logs_no_need_to_update_if_bucket_has_file(
@@ -108,8 +103,7 @@ def test_handler_logs_no_need_to_update_if_bucket_has_file(
     when most recent file is up to date. Tests for incorrect
     logs being sent."""
     secrets_client.create_secret(
-        Name="Totesys-Credentials",
-        SecretString="""
+        Name="Totesys-Credentials", SecretString="""
                         {
                             "host": "x",
                             "port": "x",
@@ -117,13 +111,13 @@ def test_handler_logs_no_need_to_update_if_bucket_has_file(
                             "user": "x",
                             "password" : "x"
                         }
-                        """,
+                        """
     )
     s3_client.create_bucket(
         Bucket="ingestion-data-bucket-marble",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
-    with patch("src.ingestion.handler.connect_to_database") as mock:
+    with patch('src.ingestion.handler.connect_to_database') as mock:
         mock.cursor = True
         mock.execute = True
         file_names = [
@@ -143,8 +137,7 @@ def test_handler_logs_no_need_to_update_if_bucket_has_file(
         for name in file_names:
             s3_client.put_object(
                 Bucket="ingestion-data-bucket-marble",
-                Key=f"{prefix}-{name}.csv"
-            )
+                Key=f"{prefix}-{name}.csv")
         handler("event", "context")
     assert "has been updated. Pulling new data" not in caplog.text
     assert "has no initial data. Pulling data" not in caplog.text
