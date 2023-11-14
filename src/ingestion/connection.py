@@ -2,7 +2,6 @@ import json
 import boto3
 import logging
 from pg8000.dbapi import Connection, InterfaceError
-import psycopg2
 
 
 class InvalidStoredCredentials(Exception):
