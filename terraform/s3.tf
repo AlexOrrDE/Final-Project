@@ -71,3 +71,17 @@ resource "aws_s3_object" "packages" {
   key = "layer"
   source = "${path.module}/../layer.zip"
 }
+
+#  Zip up modules (second batch)
+data "archive_file" "modules_2" {
+  type        = "zip"
+  source_dir = "../layer_2"
+  output_path = "../layer_2.zip"
+}
+
+# Turn modules (second batch) to s3 object
+resource "aws_s3_object" "packages_2" {
+  bucket = aws_s3_bucket.code_bucket.id
+  key = "layer_2"
+  source = "${path.module}/../layer_2.zip"
+}
