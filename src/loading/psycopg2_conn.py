@@ -11,9 +11,6 @@ def connect_to_warehouse(db="warehouse"):
             Defaults to 'Totesys'. If set to 'Warehouse', it connects to
             the data warehouse.
 
-    Returns:
-        pg8000.dbapi.Connection: A connection object for specified database.
-
     Raises:
         InterfaceError: If there is an error in connecting to the database.
     """
