@@ -8,8 +8,6 @@ from get_table_data import fetch_data_from_tables
 from find_latest import get_previous_update_dt
 from botocore.exceptions import ClientError
 import boto3
-import logging
-import json
 from pg8000 import DatabaseError, InterfaceError
 
 logging.getLogger().setLevel(logging.INFO)
@@ -48,7 +46,7 @@ def handler(event, context):
         table_data = None
 
         updated_tables = {}
-
+        print(table_names)
         for table in table_names:
             latest_update = get_previous_update_dt(table)
             if latest_update:
