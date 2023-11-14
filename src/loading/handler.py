@@ -4,16 +4,15 @@ from fetch_s3_data import fetch_data_from_s3
 from upload_to_warehouse import upload_to_warehouse
 import boto3
 import logging
-import re
 
 logging.getLogger().setLevel(logging.INFO)
+
 
 def handler(event, context):
     """Fetches parquet files from S3 and uploads data to warehouse."""
 
     bucket_name = "processed-data-bucket-marble"
     s3 = boto3.client("s3")
-    s3_resource = boto3.resource("s3")
 
     try:
         conn = connect_to_warehouse()
@@ -21,14 +20,17 @@ def handler(event, context):
 
         tables_names = fetch_tables_with_pk(conn)
         response = s3.list_objects_v2(Bucket=bucket_name)
-        keys = [obj["Key"] for obj in response.get("Contents", []) if "loaded" not in obj["Key"]]
+        keys = [
+            obj["Key"] for obj in response.get(
+                "Contents",
+                []) if "loaded" not in obj["Key"]]
         for table in tables_names:
             table_name, primary_key_column = (
                 table["table_name"],
                 table["primary_key"],
             )
             logging.info(f"Fetched table {table_name}")
-        
+
         for table in tables_names:
             for s3_key in keys:
                 table_name, primary_key_column = (
@@ -42,10 +44,12 @@ def handler(event, context):
                             conn, table_name, primary_key_column, df
                         )
                         copy_source = {'Bucket': bucket_name, 'Key': s3_key}
-                        s3.copy_object(CopySource=copy_source, Bucket=bucket_name, Key=f'loaded/{s3_key}')
-                        s3.delete_object(Bucket=bucket_name, Key =s3_key)
+                        s3.copy_object(
+                            CopySource=copy_source,
+                            Bucket=bucket_name,
+                            Key=f'loaded/{s3_key}')
+                        s3.delete_object(Bucket=bucket_name, Key=s3_key)
 
-                        
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         raise
