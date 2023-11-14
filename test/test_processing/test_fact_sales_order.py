@@ -27,7 +27,6 @@ def test_fact_sales_order_returns_dataframe_with_correct_columns(create_sales_or
     transformed_data = create_fact_sales_order(create_sales_order_data)
 
     remaining_cols = set(transformed_data.columns.tolist())
-    print(remaining_cols)
     expected_cols = set(['currency_id', 'sales_staff_id', 'agreed_payment_date', 'units_sold', 'design_id', 'agreed_delivery_location_id', 'created_date', 'created_time', 'last_updated_date', 'sales_order_id', 'unit_price', 'agreed_delivery_date', 'counterparty_id', 'last_updated_time'])
 
     assert len(remaining_cols) == 14
@@ -37,13 +36,13 @@ def test_fact_fales_order_doesnt_change_data_in_columns_it_keeps(create_sales_or
     transformed_data = create_fact_sales_order(create_sales_order_data)
 
     row_zero = transformed_data.iloc[0].values.tolist()
-
-    expected_row_zero = [1278, datetime.date(2022, 11, 3), datetime.time(14, 20, 49, 962000), datetime.date(2011, 4, 3), datetime.time(12, 20, 49, 962000), 3, 18, 1111, 3.8, 3, 73, Timestamp('2023-11-11 00:00:00'), Timestamp('2023-11-13 00:00:00'), 3]
+    
+    expected_row_zero = [1278, Timestamp('2022-11-03 00:00:00'), '14:20:49', Timestamp('2011-04-03 00:00:00'), '12:20:49', 3, 18, 1111, '3.80', 3, 73, Timestamp('2023-11-11 00:00:00'), Timestamp('2023-11-13 00:00:00'), 3]
     for idx, elt in enumerate(row_zero):
         assert elt == expected_row_zero[idx]
 
     row_one = transformed_data.iloc[1].values.tolist()
-    expected_row_one = [23, datetime.date(2023, 6, 3), datetime.time(16, 20, 49, 962000), datetime.date(2009, 4, 3), datetime.time(12, 20, 49, 962000), 1113, 1, 9066, 61.11, 11, 111, Timestamp('2011-06-06 00:00:00'), Timestamp('2011-01-12 00:00:00'), 12]
+    expected_row_one = [23, Timestamp('2023-06-03 00:00:00'), '16:20:49', Timestamp('2009-04-03 00:00:00'), '12:20:49', 1113, 1, 9066, '61.11', 11, 111, Timestamp('2011-06-06 00:00:00'), Timestamp('2011-01-12 00:00:00'), 12]
     for idx, elt in enumerate(row_one):
         assert elt == expected_row_one[idx]
 

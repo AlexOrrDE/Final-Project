@@ -43,7 +43,9 @@ def test_create_dim_currency_returns_correct_columns():
     pd.testing.assert_frame_equal(result_df, pd.DataFrame(expected_result))
 
 def test_should_return_columns_with_correct_datatypes():
-    '''Test dim_currency returns a dataframe with columns that have the required datatypes'''
+    """
+    Test dim_currency returns a dataframe with columns that have the required datatypes
+    """
     test_data = {
         "currency_id": [1],
         "currency_code": ["GBP"],

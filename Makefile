@@ -85,12 +85,16 @@ unit-test-loading:
 run-unit-tests: unit-test-ingestion unit-test-processing unit-test-loading
 
 ## Run the coverage check
-check-coverage:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} coverage run -m --omit 'venv/*' -m pytest --ignore=layer && coverage report -m)
+check-coverage-ingestion:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/ingestion coverage run -m --omit 'venv/*' -m pytest test/test_ingestion --ignore=layer && coverage report -m)
+check-coverage-processing:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/processing coverage run -m --omit 'venv/*' -m pytest test/test_processing --ignore=layer && coverage report -m)
+check-coverage-loading:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/loading coverage run -m --omit 'venv/*' -m pytest test/test_loading --ignore=layer && coverage report -m)
 
-
+run-coverage-checks: check-coverage-ingestion check-coverage-processing check-coverage-loading
 ## Run all checks
-run-checks: security-test run-flake unit-test check-coverage
+run-checks: security-test run-flake run-unit-tests run-coverage-checks
 
 ###############################################################################################
 
