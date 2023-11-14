@@ -10,14 +10,8 @@ resource "aws_s3_bucket" "ingestion_data_bucket" {
 
 resource "aws_s3_bucket" "processed_data_bucket" {
   bucket = "processed-data-bucket-marble"
+  force_destroy = true
 }
-
-# If we just want to zip one python file (with not local dependencies)
-# data "archive_file" "lambda_zip" {
-#   type        = "zip"
-#   source_file = "${path.module}/../src/ingestion/handler.py"
-#   output_path = "${path.module}/../handler.zip"
-# }
 
 # Zip directory with each of our ingestion python files
 data "archive_file" "lambda_zip" {
@@ -49,6 +43,21 @@ resource "aws_s3_object" "processing_lambda_code"{
   source_hash = data.archive_file.processing_lambda_zip.output_base64sha256
 }
 
+# Zip directory with each of our loading python files
+data "archive_file" "loading_lambda_zip"{
+  type = "zip"
+  source_dir = "../src/loading"
+  output_path = "../loading_handler.zip"
+}
+
+# Turn zipped functions into s3 object
+resource "aws_s3_object" "loading_lambda_code"{
+  bucket = aws_s3_bucket.code_bucket.id
+  key = "loading/loading_handler.zip"
+  source = "${path.module}/../loading_handler.zip"
+  source_hash = data.archive_file.loading_lambda_zip.output_base64sha256
+}
+
 #  Zip up modules
 data "archive_file" "modules" {
   type        = "zip"
@@ -61,4 +70,18 @@ resource "aws_s3_object" "packages" {
   bucket = aws_s3_bucket.code_bucket.id
   key = "layer"
   source = "${path.module}/../layer.zip"
+}
+
+#  Zip up modules (second batch)
+data "archive_file" "modules_2" {
+  type        = "zip"
+  source_dir = "../layer_2"
+  output_path = "../layer_2.zip"
+}
+
+# Turn modules (second batch) to s3 object
+resource "aws_s3_object" "packages_2" {
+  bucket = aws_s3_bucket.code_bucket.id
+  key = "layer_2"
+  source = "${path.module}/../layer_2.zip"
 }

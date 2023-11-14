@@ -6,6 +6,15 @@ resource "aws_lambda_layer_version" "packages_layer" {
   compatible_runtimes = ["python3.11"]
 }
 
+# Make a layer from the s3 object that is the zipped packages (second batch)
+resource "aws_lambda_layer_version" "packages_layer_2" {
+  s3_bucket =  aws_s3_bucket.code_bucket.id
+  s3_key = aws_s3_object.packages_2.key
+  layer_name = "packages_layer_2"
+  compatible_runtimes = ["python3.11"]
+}
+
+# Lambda function for the first lambda (ingestion)
 resource "aws_lambda_function" "handler" {
   function_name = "handler"
   role = aws_iam_role.lambda_role.arn
@@ -17,8 +26,10 @@ resource "aws_lambda_function" "handler" {
   timeout = 300
   depends_on    = [aws_cloudwatch_log_group.lambda_log_group]
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  reserved_concurrent_executions = 1
 }
 
+# Lambda function for the second lambda (processing)
 resource "aws_lambda_function" "processing_handler" {
   function_name = "processing_handler"
   role = aws_iam_role.lambda_role.arn
@@ -30,5 +41,20 @@ resource "aws_lambda_function" "processing_handler" {
   timeout = 300
   depends_on = [aws_cloudwatch_log_group.processing_lambda_log_group]
   source_code_hash = data.archive_file.processing_lambda_zip.output_base64sha256
+  reserved_concurrent_executions = 1
+}
+
+# Lambda function for the third lambda (loading)
+resource "aws_lambda_function" "loading_handler" {
+  function_name = "loading_handler"
+  role = aws_iam_role.lambda_role.arn
+  s3_bucket = aws_s3_bucket.code_bucket.id
+  s3_key = aws_s3_object.loading_lambda_code.key
+  layers = [aws_lambda_layer_version.packages_layer.arn, aws_lambda_layer_version.packages_layer_2.arn]
+  handler = "handler.handler"
+  runtime = "python3.11"
+  timeout = 300
+  depends_on = [aws_cloudwatch_log_group.loading_lambda_log_group]
+  source_code_hash = data.archive_file.loading_lambda_zip.output_base64sha256
   reserved_concurrent_executions = 1
 }

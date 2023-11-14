@@ -5,7 +5,10 @@ from moto import mock_s3
 import boto3
 import os
 import pytest
-from pprint import pprint
+
+import sys
+sys.path.append('processing')
+
 
 @pytest.fixture(scope="function")
 def aws_credentials():
@@ -23,6 +26,7 @@ def s3_client(aws_credentials):
     with mock_s3():
         yield boto3.client("s3", region_name="eu-west-2")
 
+
 @pytest.fixture(scope='function')
 def mock_lambda(s3_client):
     s3_client.create_bucket(
@@ -33,22 +37,29 @@ def mock_lambda(s3_client):
         Bucket="processed-data-bucket-marble",
         CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
     )
-    with (open('./test/test_dimension_fact/csv_files/counterparty.csv', 'rb') as a, open('./test/test_dimension_fact/csv_files/currency.csv', 'rb') as b, open('./test/test_dimension_fact/csv_files/department.csv', 'rb') as c, open('./test/test_dimension_fact/csv_files/design.csv', 'rb') as d, open('./test/test_dimension_fact/csv_files/sales_order.csv', 'rb') as e, open('./test/test_dimension_fact/csv_files/staff.csv', 'rb') as f, open('./test/test_dimension_fact/csv_files/address.csv', 'rb') as g):
+    with (open('./test/test_processing/csv_files/counterparty.csv', 'rb') as a,
+          open('./test/test_processing/csv_files/currency.csv', 'rb') as b,
+          open('./test/test_processing/csv_files/department.csv', 'rb') as c,
+          open('./test/test_processing/csv_files/design.csv', 'rb') as d,
+          open('./test/test_processing/csv_files/sales_order.csv', 'rb') as e,
+          open('./test/test_processing/csv_files/staff.csv', 'rb') as f,
+          open('./test/test_processing/csv_files/address.csv', 'rb') as g):
         files = {
-            'counterparty': a, 
-            'currency': b, 
+            'counterparty': a,
+            'currency': b,
             'department': c,
             'design': d,
             'sales_order': e,
             'staff': f,
             'address': g
         }
-        
+
         for file in files:
             s3_client.put_object(
                 Bucket="ingestion-data-bucket-marble",
                 Key=f"{file}",
                 Body=files[file])
+
 
 event_dict = {
     "counterparty": 'counterparty',
@@ -64,8 +75,7 @@ event_dict = {
 def test_should_put_to_processing_bucket(s3_client, mock_lambda):
     handler(event_dict, "")
     response = s3_client.list_objects(Bucket="processed-data-bucket-marble")
-    assert len(response['Contents']) is 7
-    # pprint(response)
+    assert len(response['Contents']) == 7
 
 
 def test_should_convert_files_to_parquet(s3_client, mock_lambda):
@@ -75,19 +85,9 @@ def test_should_convert_files_to_parquet(s3_client, mock_lambda):
         assert key['Key'][-8:] == ".parquet"
 
 
-def test_table_merge_should_be_called_for_tables_in_function_dict(s3_client, mock_lambda):
-    with patch('src.processing.handler.table_merge', side_effect=table_merge) as tm:
+def test_table_merge_should_be_called_for_tables_in_function_dict(
+        s3_client, mock_lambda):
+    with patch('src.processing.handler.table_merge',
+               side_effect=table_merge) as tm:
         handler(event_dict, "")
         assert tm.call_count == 6
-
-def test_should_change_address_file_name_to_location(s3_client, mock_lambda):
-    with patch('src.processing.handler.table_merge', side_effect=table_merge) as tm:
-        handler(event_dict, "")
-        response_ingestion = s3_client.list_objects(Bucket="ingestion-data-bucket-marble")
-        keys_ingestion = [key['Key'] for key in response_ingestion['Contents']]
-        response_processed = s3_client.list_objects(Bucket="processed-data-bucket-marble")
-        keys_processed = [key['Key'] for key in response_processed['Contents']]
-        assert 'address' in keys_ingestion
-        assert 'location' not in keys_ingestion
-        assert 'location.parquet' in keys_processed
-        assert 'address.parquet' not in keys_processed

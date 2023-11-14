@@ -8,7 +8,7 @@ def create_dim_counterparty(cp_merge_df):
         "city": "counterparty_legal_city",
         "postal_code": "counterparty_legal_postal_code",
         "country": "counterparty_legal_country",
-        "phone": "counterparty_legal_phone-number",
+        "phone": "counterparty_legal_phone_number",
     }
 
     cp_merge_df.rename(columns=column_name_mapping, inplace=True)

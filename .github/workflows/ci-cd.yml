@@ -32,7 +32,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
       - name: Run Coverage Check
-        run: make check-coverage
+        run: make run-check-coverage
 
   run-unit-test:
     name: Unit Tests
@@ -53,8 +53,8 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
-      - name: Run Unit Test
-        run: make unit-test
+      - name: Run Unit Tests
+        run: make run-unit-tests
   deploy:
     name: deploy
     runs-on: ubuntu-latest

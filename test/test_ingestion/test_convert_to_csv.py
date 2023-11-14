@@ -1,6 +1,6 @@
-from src.ingestion.convert_to_csv import convert_to_csv
 from pandas import Timestamp
 from pytest import raises
+from src.ingestion.convert_to_csv import convert_to_csv
 
 
 def test_should_accept_a_filetype_in_the_form_returned_by_get_table_data():

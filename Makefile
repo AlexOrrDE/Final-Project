@@ -8,7 +8,7 @@ PROJECT_NAME = Final-Project
 REGION = eu-west-2
 PYTHON_INTERPRETER = python
 WD=$(shell pwd)
-PYTHONPATH=${WD}:./src/ingestion
+PYTHONPATH=${WD}:./src
 SHELL := /bin/bash
 PROFILE = default
 PIP:=pip
@@ -72,19 +72,29 @@ security-test:
 
 ## Run the flake8 code check
 run-flake:
-	$(call execute_in_env, flake8  ./src/*/*.py ./src/*/*/*.py ./test/*.py)
+	$(call execute_in_env, flake8  ./src/*/*.py ./src/*/*/*.py ./test/*/*.py)
 
 ## Run the unit tests
-unit-test:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} pytest -vrP test)
+unit-test-ingestion:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/ingestion python -m pytest -vrP test/test_ingestion)
+unit-test-processing:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/processing python -m pytest -vrP test/test_processing)
+unit-test-loading:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/loading python -m pytest -vrP test/test_loading)
+
+run-unit-tests: unit-test-ingestion unit-test-processing unit-test-loading
 
 ## Run the coverage check
-check-coverage:
-	$(call execute_in_env, PYTHONPATH=${PYTHONPATH} coverage run -m --omit 'venv/*' -m pytest --ignore=layer && coverage report -m)
+check-coverage-ingestion:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/ingestion coverage run -m --omit 'venv/*' -m pytest test/test_ingestion --ignore=layer && coverage report -m)
+check-coverage-processing:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/processing coverage run -m --omit 'venv/*' -m pytest test/test_processing --ignore=layer && coverage report -m)
+check-coverage-loading:
+	$(call execute_in_env, PYTHONPATH=${PYTHONPATH}/loading coverage run -m --omit 'venv/*' -m pytest test/test_loading --ignore=layer && coverage report -m)
 
-
+run-coverage-checks: check-coverage-ingestion check-coverage-processing check-coverage-loading
 ## Run all checks
-run-checks: security-test run-flake unit-test check-coverage
+run-checks: security-test run-flake run-unit-tests run-coverage-checks
 
 ###############################################################################################
 
