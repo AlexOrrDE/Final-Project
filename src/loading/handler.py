@@ -17,7 +17,7 @@ def handler(event, context):
     s3_resource = boto3.resource("s3")
 
     try:
-        conn = connect_to_database()
+        conn = connect_to_warehouse()
         logging.info("Connected to the local database")
 
         tables_names = fetch_tables_with_pk(conn)
@@ -54,45 +54,3 @@ def handler(event, context):
 
     finally:
         logging.info("Data insertion complete.")
-
-
-handler(None, None)
-
-
-
-
-
-
-
-
-#     s3 = boto3.client("s3")
-
-#     try:
-#         conn = connect_to_warehouse("warehouse")
-#         logging.info("Connected to the local database")
-
-#         tables_names = fetch_tables_with_pk(conn)
-
-#         for table in tables_names:
-#             table_name = table["table_name"]
-#             primary_key = table["primary_key"]
-#             logging.info(f"Fetched table {table_name}")
-
-#             response = s3.list_objects_v2(Bucket=bucket_name)
-#             keys = [obj["Key"] for obj in response.get("Contents", [])]
-
-#             for s3_key in keys:
-#                 if re.search(table_name, s3_key):
-#                     df = fetch_data_from_s3(s3, bucket_name, s3_key)
-#                     if df is not None:
-#                         upload_to_warehouse(conn, table_name, primary_key, df)
-
-#     except Exception as e:
-#         logging.error(f"An error occurred: {e}")
-#         raise
-
-#     finally:
-#         logging.info("Data insertion complete.")
-
-
-# handler(None, None)
