@@ -41,7 +41,7 @@ def test_should_return_dictionaries_with_correct_keys():
 
     for table in result:
         assert "table_name" in table
-        assert "primary_key_column" in table
+        assert "primary_key" in table
 
 
 def test_should_assign_correct_result_to_each_key():
@@ -49,4 +49,4 @@ def test_should_assign_correct_result_to_each_key():
 
     for table in result:
         assert "dim" or "fact" in table["table_name"] 
-        assert "id" in table["primary_key_column"]
+        assert "id" in table["primary_key"]
