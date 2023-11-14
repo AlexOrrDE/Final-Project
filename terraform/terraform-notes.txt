@@ -6,11 +6,11 @@ We added a .gitkeep file to the layer/python folder as it is otherwise empty
 
 To fill out the layer/python folder we need to pip install there with (check this command)
 
-pip install -r requirements.txt -t ./layer/python
+pip install -r lambda_requirements.txt -t ./layer/python
 
 or maybe (from outside of Final-Project)
 
-pip install -r requirements.txt -t ./Final-Project/layer/python
+pip install -r lambda_requirements.txt -t ./Final-Project/layer/python
 
 In the lambda.tf file we have set specific runtimes for Python. These are required for a zip file but we can change them to be more recent ones probably.
 

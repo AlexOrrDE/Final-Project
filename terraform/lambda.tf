@@ -18,6 +18,7 @@ resource "aws_lambda_function" "handler" {
   timeout = 300
   depends_on    = [aws_cloudwatch_log_group.lambda_log_group]
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+  reserved_concurrent_executions = 1
 }
 
 # Lambda function for the second lambda (processing)
