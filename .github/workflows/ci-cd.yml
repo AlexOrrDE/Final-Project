@@ -58,7 +58,7 @@ jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
-    needs: run-unit-tests
+    needs: run-unit-test
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
