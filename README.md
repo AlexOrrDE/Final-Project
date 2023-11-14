@@ -79,7 +79,7 @@ This document provides an overview of the successfully implemented features and 
         - python -m venv venv
         - source venv/bin/activate
 
-- Install dependencies and check for errors:
+- Install dependencies:
 
         - pip install -r lambda_requirements.txt -t ./layer/python
         - pip install -r lambda_requirements_2.txt -t ./layer_2/python
