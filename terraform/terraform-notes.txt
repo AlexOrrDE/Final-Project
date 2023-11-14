@@ -44,3 +44,28 @@ Note that the name for the cloudwatch log group in the iam is important and conn
 
 Because (?) pandas depends on numpy we need to install that too.
 
+Links:
+
+For allowing a lambda access to s3:
+
+https://us-east-1.console.aws.amazon.com/iam/home#/policies/arn:aws:iam::aws:policy/AmazonS3FullAccess$jsonEditor
+
+Instead of attaching the policy directly we can instead create a policy from a JSON, see for more information
+https://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html
+https://developer.hashicorp.com/terraform/tutorials/aws/aws-iam-policy
+
+For example where we make a policy for invoking a (many) lambda, from
+https://docs.aws.amazon.com/scheduler/latest/UserGuide/setting-up.html#setting-up-execution-role
+
+Eventbridge policy:
+
+https://us-east-1.console.aws.amazon.com/iamv2/home?region=eu-west-2#/policies/details/arn%3Aaws%3Aiam%3A%3Aaws%3Apolicy%2FAmazonEventBridgeSchedulerFullAccess?section=permissions&view=json
+
+https://docs.aws.amazon.com/scheduler/latest/UserGuide/setting-up.html#setting-up-execution-role
+
+Define the log group
+https://stackoverflow.com/questions/59949808/write-aws-lambda-logs-to-cloudwatch-log-group-with-terraform#:~:text=If%20you%20want%20Terraform%20to,change%20the%20name%20at%20all.
+
+Policies for accessing secrets
+https://docs.aws.amazon.com/secretsmanager/latest/userguide/auth-and-access_examples.html
+

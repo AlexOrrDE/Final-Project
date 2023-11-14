@@ -1,0 +1,9 @@
+department_id,department_name,location,manager,created_at,last_updated
+1,Sales,Manchester,Richard Roma,2022-11-03 14:20:49.962,2022-11-03 14:20:49.962
+2,Purchasing,Manchester,Naomi Lapaglia,2022-11-03 14:20:49.962,2022-11-03 14:20:49.962
+3,Production,Leeds,Chester Ming,2022-11-03 14:20:49.962,2022-11-03 14:20:49.962
+4,Dispatch,Leds,Mark Hanna,2022-11-03 14:20:49.962,2022-11-03 14:20:49.962
+5,Finance,Manchester,Jordan Belfort,2022-11-03 14:20:49.962,2022-11-03 14:20:49.962
+6,Facilities,Manchester,Shelley Levene,2022-11-03 14:20:49.962,2022-11-03 14:20:49.962
+7,Communications,Leeds,Ann Blake,2022-11-03 14:20:49.962,2022-11-03 14:20:49.962
+8,HR,Leeds,James Link,2022-11-03 14:20:49.962,2022-11-03 14:20:49.962
