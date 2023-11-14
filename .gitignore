@@ -10,8 +10,6 @@ layer_2.zip
 __pycache__/
 *.py[cod]
 *$py.class
-layer/
-layer_2/
 
 # C extensions
 *.so
