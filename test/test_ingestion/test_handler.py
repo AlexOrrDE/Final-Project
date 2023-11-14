@@ -145,12 +145,12 @@ def test_handler_checks_for_initial_data(s3_client, secrets_client, caplog):
     )
 
     with (patch('src.ingestion.handler.connect_to_database') as mock_conn,
-         patch('src.ingestion.handler.fetch_tables',
-               return_value=['table1', 'table2', 'table3']),
-         patch('src.ingestion.handler.get_previous_update_dt',
-               return_value=False),
-         patch('src.ingestion.handler.fetch_data_from_tables',
-               return_value={'table_name': 'table1', 'data': ['data1']})):
+          patch('src.ingestion.handler.fetch_tables',
+                return_value=['table1', 'table2', 'table3']),
+          patch('src.ingestion.handler.get_previous_update_dt',
+                return_value=False),
+          patch('src.ingestion.handler.fetch_data_from_tables',
+                return_value={'table_name': 'table1', 'data': ['data1']})):
         mock_conn.cursor = True
         mock_conn.execute = True
         handler("event", "context")

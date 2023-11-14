@@ -3,9 +3,11 @@ import logging
 import boto3
 import json
 
+
 class InvalidStoredCredentials(Exception):
     def __init__(self):
         self.message = "Incorrect credentials"
+
 
 def connect_to_warehouse(db="warehouse"):
     """Starts a connection with the specified database.
@@ -33,7 +35,7 @@ def connect_to_warehouse(db="warehouse"):
     except psycopg2.InterfaceError as db_connection_error:
         logging.error("Error occured in connect_to_database")
         raise db_connection_error
-    
+
 
 def retrieve_credentials(secret_name):
     """
