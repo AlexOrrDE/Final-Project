@@ -20,6 +20,7 @@ def fetch_tables_with_pk(conn):
         cursor.execute(query)
         data = cursor.fetchall()
 
+<<<<<<< HEAD
         table_info = [{"table_name": row[0], "primary_key": row[1]}
                         for row in data]
     
@@ -30,3 +31,33 @@ def fetch_tables_with_pk(conn):
     except AttributeError as ae:
         logging.error("Error occured in fetch_table_with_pk")
         raise(ae)
+=======
+    query = """
+            SELECT table_name, column_name
+            FROM information_schema.key_column_usage
+            WHERE table_schema = 'project_team_1'
+            AND constraint_name IN (
+            SELECT constraint_name
+            FROM information_schema.table_constraints
+            WHERE table_schema = 'project_team_1'
+            AND constraint_type = 'PRIMARY KEY'
+            )
+            ORDER BY table_name, ordinal_position;
+            """
+    cursor.execute(query)
+    data = cursor.fetchall()
+
+    table_info = [{"table_name": row[0], "primary_key": row[1]}
+                  for row in data]
+
+    to_append = [
+        table for table in table_info
+        if table["table_name"] == "fact_sales_order"
+    ][0]
+    table_info = [
+        table for table in table_info
+        if table["table_name"] != "fact_sales_order"
+    ]
+    table_info.append(to_append)
+    return table_info
+>>>>>>> 3b30f30623f3ecb2985c9f4067cf7562109e1b48

@@ -71,16 +71,16 @@ def test_should_return_a_pandas_dataframe():
 def test_should_return_dataframe_with_correct_columns():
     result = create_dim_counterparty(df)
     expected = [
-            "counterparty_id",
-            "counterparty_legal_name",
-            "counterparty_legal_address_line_1",
-            "counterparty_legal_address_line_2",
-            "counterparty_legal_district",
-            "counterparty_legal_city",
-            "counterparty_legal_postal_code",
-            "counterparty_legal_country",
-            "counterparty_legal_phone_number",
-        ]
+        "counterparty_id",
+        "counterparty_legal_name",
+        "counterparty_legal_address_line_1",
+        "counterparty_legal_address_line_2",
+        "counterparty_legal_district",
+        "counterparty_legal_city",
+        "counterparty_legal_postal_code",
+        "counterparty_legal_country",
+        "counterparty_legal_phone_number",
+    ]
 # different datatypes so trying == but might be flagged by pep8 compliance
     assert result.columns.values.tolist() == expected
 

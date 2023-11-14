@@ -1,141 +1,166 @@
-# The Data Engineering Project
+# Marble - Data Engineering Project #
+Project link: https://github.com/RadGuav/Final-Project
 
-**Read this document carefully - it contains (almost) all you need to know about the project!**
+For more information regarding the project specifications, please refer to the _project_spec.md_ file included in this repository.
 
-## Objective
+**Read this document carefully - it contains information about the completed Minimum Viable Product (MVP).**
 
-The project phase is intended to allow you to showcase some of the skills and knowledge you have acquired over the past few weeks. You will create applications that will Extract, Transform and Load data from a prepared source into a data lake and warehouse hosted in AWS. Your solution should be reliable, resilient and (as far as possible) deployed and managed in code.
+## Table of Contents
 
-By the end of the project, you should have:
-- written some applications in Python that interact with AWS and database infrastructure and manipulate data as required
-- remodelled data into a data warehouse hosted in AWS
-- demonstrated that your project is well-monitored and that you can measure its performance
-- deployed at least part of the project using scripting or automation.
+[Features Overview](#features-overview)
 
-Your solution should showcase your knowledge of Python, SQL, database modelling, AWS, good operational practices and Agile working.
+[Setup](#setup)
 
-## The Minimum Viable Product (MVP)
+[How does it work?](#how-does-it-work)
 
-The intention is to create a data platform that extracts data from an operational database (and potentially other sources), archives it in a data lake, and makes it available in a remodelled OLAP data warehouse.
+[Diagrams and Schema](#diagrams-and-schema)
 
-The project is open-ended and could include any number of features, but **at a minimum**, you should seek to deliver the following:
-- Two S3 buckets (one for ingested data and one for processed data). Both buckets should be structured and well-organised so that data is easy to find. Data should be **immutable** - i.e. once you have written data to S3, it should not be amended or over-written. You should create new data files containing additions or amendments.
-- A Python application that continually ingests all tables from the `totesys` database (details below). The data should be saved in files in the "ingestion" S3 bucket in a suitable format. The application must:
-  - operate automatically on a schedule
-  - log progress to Cloudwatch
-  - trigger email alerts in the event of failures
-  - follow good security practices (for example, preventing SQL injection and maintaining password security)
-- A Python application that remodels __at least some__ of the data into a predefined schema suitable for a data warehouse and stores the data in Parquet format in the "processed" S3 bucket. The application must:
-  - trigger automatically when it detects the completion of an ingested data job
-  - be adequately logged and monitored
-  - populate the dimension and fact tables of a single "star" schema in the warehouse (see details below) 
-- A Python application that loads the data into a prepared data warehouse at defined intervals. Again the application should be adequately logged and monitored.
-- A Quicksight dashboard that allows users to view useful data in the warehouse (more on this below).
+## Features Overview <a name="features-overview"></a>
 
-All Python code should be thoroughly tested, PEP8 compliant, and tested for security vulnerabilities with the `safety` and `bandit` packages. Test coverage should exceed 90%.
+This document provides an overview of the successfully implemented features and components.
 
-As much as possible of the project should be deployed automatically using infrastucture-as-code and CI/CD techniques. The deployment scripts can be written as `bash` scripts, Python code or Terraform.
+1. S3 Buckets:
+- Ingestion Bucket:
+    - All ingested data is stored here.
+    - Data is organised by year, month, date and table.
 
-You should be able to demonstrate that a change to the source database will be reflected in the data warehouse within 30 minutes at most.
+- Processed Bucket:
+    - Processed data transformed for the data warehouse is stored here.
+    - Data is organized based on the warehouse schema.
 
-## The Data
+2. Ingestion Application:
+- Python Application deployed in AWS Lambda:
+    - Continuously ingests tables from the totesys database.
+    - Operates automatically on a schedule.
+    - Progress is logged to CloudWatch.
+    - Email alerts are triggered in case of failures.
+    - Adheres to good security practices.
 
-The primary data source for the project is a moderately complex (but not very large) database called `totesys` which is meant to simulate the back-end data of a commercial application. Data is inserted and updated into this database several times a day. (The data itself is entirely fake and meaningless, as a brief inspection will confirm.)
+3. Data Remodeling Application:
+- Python Application deployed in AWS Lambda:
+    - Remodels data into a predefined schema for the data warehouse.
+    - Stores data in Parquet format in the "processed" S3 bucket.
+    - Automatically triggers upon completion of an ingested data job.
+    - Provides adequate logging and monitoring.
 
-Each project team will be given read-only access credentials to this database. The full ERD for the database is detailed [here](https://dbdiagram.io/d/6332fecf7b3d2034ffcaaa92).
+4. Data Loading Application:
+- Python Application deployed in AWS Lambda:
+    - Loads data into the data warehouse at defined intervals.
+    - Provides adequate logging and monitoring.
 
-In addition, you will be given credentials for a data warehouse hosted in the Northcoders AWS account. The data will have to be remodelled for this warehouse into three overlapping star schemas. You can find the ERDs for these star schemas:
- - ["Sales" schema](https://dbdiagram.io/d/637a423fc9abfc611173f637)
- - ["Purchases" schema](https://dbdiagram.io/d/637b3e8bc9abfc61117419ee)
- - ["Payments" schema](https://dbdiagram.io/d/637b41a5c9abfc6111741ae8)
+5. Data Warehouse:
+- Star Schema Tables Populated:
+    - Fact Tables: fact_sales_order
+    - Dimension Tables: dim_staff, dim_location, dim_design, dim_date, dim_currency, dim_counterparty.
 
-The overall structure of the resulting data warehouse is shown [here](https://dbdiagram.io/d/63a19c5399cb1f3b55a27eca).
+6. Testing and Compliance
+- Code Quality Assurance:
+    - Python code thoroughly tested and PEP8 compliant.
+    - Security vulnerabilities checked using safety and bandit packages.
+    - Test coverage exceeds 95%.
 
-The tables to be ingested from `totesys` are:
-|tablename|
-|----------|
-|counterparty|
-|currency|
-|department|
-|design|
-|staff|
-|sales_order|
-|address|
-|payment|
-|purchase_order|
-|payment_type|
-|transaction|
-
-The list of tables in the complete warehouse is:
-|tablename|
-|---------|
-|fact_sales_order|
-|fact_purchase_orders|
-|fact_payment|
-|dim_transaction|
-|dim_staff|
-|dim_payment_type|
-|dim_location|
-|dim_design|
-|dim_date|
-|dim_currency|
-|dim_counterparty|
-
-However, for your minimum viable product, you need only populate the following:
-|tablename|
-|---------|
-|fact_sales_order|
-|dim_staff|
-|dim_location|
-|dim_design|
-|dim_date|
-|dim_currency|
-|dim_counterparty|
-
-This should be sufficient for a single [star-schema](https://dbdiagram.io/d/637a423fc9abfc611173f637).
-
-The structure of your "processed" S3 data should reflect these tables.
-
-Note that data types in some columns may have to be changed to conform to the warehouse data model.
-
-## The Dashboard
-To demonstrate the use of the warehouse, you will be required to display some of the data on an [AWS Quicksight](https://aws.amazon.com/quicksight/) dashboard. **You are not required to know how to construct a Quicksight dashboard** - Northcoders tutors will help with this part. However, you will be required to supply the SQL queries that are used to retrieve the data you wish to display.
-
-This aspect of the project should not be tackled until the final week of the course, more details will be given then. The major focus of your efforts should be to get the data into the data warehouse.
+7. Automation
+- Infrastructure Deployment:
+    - Requirements installation, security checks and tests on application code use Makefile scripts.
+    - Deployment scripts use Terraform.
+    - Automated deployment using CI/CD techniques in GitHub Actions.
+    - AWS Eventbridge schedules ingestion job checks for changes frequently.
 
 
-## Possible Extensions
+## Setup <a name="setup"></a>
 
-If you have time, you can enhance the MVP. The initial focus for any enhancement should be to ensure that all of the tables in the data warehouse are being updated. You could add other desirable features, such as a _schema registry_ or _data catalogue_ which contains the schema of the data you ingest from the database. Using this, you could check that incoming data has the required structure. If there is any anomaly (eg the database has been changed in some way), you can perform a failure action, such as redirecting the data to some sort of default destination (sometimes called a _dead letter queue_). 
+- Clone the repository:
 
-Another simple addition (which might make your presentation more visually appealing) could be a Jupyter Notebook that performs some kind of analysis of the data. (As previously noted, the data is random nonsense, so you won't find any real insights, but it would be good to demonstrate your knowledge of the tools.)
+        - git clone https://github.com/RadGuav/Final-Project.git
+        - cd Final-Project
 
-There are several ways to extend the scope of the project. 
-1. Ingest data from a file source - eg another S3 bucket. We can provide JSON files in a remote S3 bucket that can be fetched at intervals.
-1. Ingest data from an external API - eg you could retrieve relevant daily foreign exchange rates from `https://freeforexapi.com/Home/Api`. You can use the `requests` library to make the request and then save the results in S3.
+- Set up a virtual environment:
 
+        - python -m venv venv
+        - source venv/bin/activate
 
-## Technical Details
+- Install dependencies:
 
-To host your solution, each team will need to host your infrastructure in a single AWS account. You can use one of your Northcoders accounts and give each member of your team credentials to access this however these accounts are not permanent. It is likely that you will need several attempts to deploy the infrastructure correctly, so it is in your interest that you can script the creation of the resources so that they can be rebuilt as quickly and efficiently as possible.
+        - pip install -r lambda_requirements.txt -t ./layer/python
+        - pip install -r lambda_requirements_2.txt -t ./layer_2/python
+        - make requirements
 
+- Deploy using Terraform:
 
-### Required Components
+        - cd terraform
+        - terraform init
+        - terraform plan
+        - terraform apply
 
-You need to create:
-1. A job scheduler to run the ingestion job. AWS Eventbridge is the recommended way to do this. Since data has to be visible in the data warehouse within 30 minutes of being written to the database, you need to schedule your job to check for changes much more frequently.
-1. An S3 bucket that will act as a "landing zone" for ingested data.
-1. A Python application to check for changes to the database tables and ingest any new or updated data. It is strongly recommended that you use AWS Lambda as your computing solution. It is possible to use EC2, but it will be much harder to create event-driven jobs, and harder to log events in Cloudwatch. The data should be saved in the "ingestion" S3 bucket in a suitable format. Status and error messages should be logged to Cloudwatch.
-1. A Cloudwatch alert should be generated in the event of a major error - this should be sent to email.
-1. A second S3 bucket for "processed" data.
-1. A Python application to transform data landing in the "ingestion" S3 bucket and place the results in the "processed" S3 bucket. The data should be transformed to conform to the warehouse schema (see above). The job should be triggered by either an S3 event triggered when data lands in the ingestion bucket, or on a schedule. Again, status and errors should be logged to Cloudwatch, and an alert triggered if a serious error occurs.
-1. A Python application that will periodically schedule an update of the data warehouse from the data in S3. Again, status and errors should be logged to Cloudwatch, and an alert triggered if a serious error occurs.
-1. **In the final week of the course**, you will be asked to provide some SQL to perform a complex query on the data warehouse.
+- You're all set! After a few minutes, the data will be ingested, processed, and loaded into the database in the required schema. You can now query the database to retrieve any information you might need.
 
-## Finally...
+## How does it work? <a name="how-does-it-work"></a>
 
-This is a fairly realistic simulation of a typical data engineering project. In the real world, such a project would be undertaken over several weeks by a team of experienced data engineers. _It is highly unlikely that you will have time to complete a fully-functioning, "production-ready" solution._ However, you will have an opportunity to tackle lots of the typical problems faced in a real project, and put your skills in Python, data and DevOps to good use. As always, the journey is more important than the destination. 
+__Ingestion application:__
 
-Above all, don't rush: it will be better to deliver a high-quality MVP than a more complex but poorly-engineered platform. 
+This python application runs on a schedule in AWS Lambda, and performs the following:
 
-Enjoy this! And good luck!
+- Connects to source database using pg8000, retrieving required credentials from the Secrets Manager service in AWS;
+
+    - __Note__: You will need to set up your own secret credentials in AWS Secrets Manager, and ensure that the code in _src/ingestion/connection.py_ makes reference to the correct secret.
+
+- Queries the source database to retrieve all available table names. This scales dynamically for any number of tables in the database;
+
+- Checks if there are already files associated with the database tables stored in the S3 "ingestion" bucket. If not, performs an initial pull of all that table's data;
+
+- Reads each of the available tables' contents, and checks if there are differences between the database data and the associated data stored in the S3 "ingestion" bucket. If there are, only updated rows are fetched;
+
+- Converts the retrieved data to CSV format using the pandas module;
+
+- Uploads to S3 "ingestion" bucket with filepath in the form:
+
+        year/month/day/table_name/upload_time.csv
+
+- Logs relevant information and handles errors gracefully.
+
+__Processing application:__
+
+This python application runs on a trigger when an object is put in the "ingestion" bucket in AWS Lambda, and performs the following for that object:
+
+- Checks that the file data is for an expected table associated with the source database;
+
+- Processes the file contents to fit the target database schema:
+    - Reassigns table columns as necessary,
+    - Creates merged tables where appropriate,
+    - Adds required columns and calculates any associated values.
+
+- Converts resulting dimension and fact tables to Parquet format;
+
+- Uploads to S3 "processed" bucket with filepath in the form:
+
+        year/month/day/processed_table_name/upload_time.parquet
+
+- Additionally, checks if there is a "dim_date" file in the "processed" bucket. If not, creates and uploads this table file containing rows for every date within a given range;
+
+- Logs relevant information and handles errors gracefully.
+
+__Loading application:__
+
+This python application runs on a schedule in AWS Lambda, and performs the following:
+
+- Connects to the target database using psycopg2 module, retrieving required credentials from the Secrets Manager service in AWS;
+
+    - __Note__: You will need to set up your own secret credentials in AWS Secrets Manager, and ensure that the code in _src/ingestion/connection.py_ makes reference to the correct secret.
+
+- Queries the target database to retrieve all available table names with their associated primary keys. This scales dynamically for any number of tables in the database;
+
+- Gets files from S3 "processed" bucket and reads Parquet contents, tagging retrieved files as such to avoid inserting duplicate data;
+
+- Inserts table data into associated table in target database using psycopg2 SQL methods;
+
+- Logs relevant information and handles errors gracefully.
+
+## Diagrams and Schema <a name="diagrams-and-schema"></a>
+
+__ETL Diagram:__
+
+![etl_diagram](./diagrams/etl_diagram.png)
+
+__Target schema:__
+
+![target-schema](./diagrams/target_schema.png)
