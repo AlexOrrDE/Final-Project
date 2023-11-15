@@ -81,10 +81,10 @@ def test_retrieve_credentials_throws_InvalidCredentials_error(secrets_client):
         retrieve_credentials("Warehouse-Credentials")
 
 
-def test_connection_throws_InterfaceError_when_cannot_connect_to_database(
+def test_connection_throws_operational_error_when_cannot_connect_to_database(
     secrets_client,
 ):
-    """check that totesys_connection returns an InterfaceError when
+    """check that connect_to_warehouse returns an OperationalError when
     it fails to connect to the database, when aws secret has all
     the required keys but the credentials are wrong."""
 
