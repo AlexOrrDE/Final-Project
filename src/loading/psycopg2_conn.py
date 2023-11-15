@@ -70,3 +70,21 @@ def retrieve_credentials(secret_name):
     if sorted(valid_keys) != sorted(credentials_keys):
         raise InvalidStoredCredentials()
     return credentials
+
+
+def get_bucket_name_by_prefix(bucket_prefix):
+    """
+    Retrieve an AWS S3 bucket by searching for a specific prefix in its name.
+
+    Parameters:
+    - bucket_prefix (str): The prefix to search for in S3 bucket names.
+
+    Returns:
+    - str or None: If a matching bucket is found, returns the bucket name. If no
+      matching bucket is found, returns None.
+    """
+    s3 = boto3.client('s3')
+    response = s3.list_buckets()
+    for bucket in response['Buckets']:
+        if bucket['Name'].startswith(bucket_prefix):
+            return bucket['Name']

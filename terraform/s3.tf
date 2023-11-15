@@ -4,12 +4,12 @@ resource "aws_s3_bucket" "code_bucket" {
 }
 
 resource "aws_s3_bucket" "ingestion_data_bucket" {
-  bucket = "ingestion-data-bucket-marble"
+  bucket_prefix = "ingestion-data-bucket-marble"
   force_destroy = true
 }
 
 resource "aws_s3_bucket" "processed_data_bucket" {
-  bucket = "processed-data-bucket-marble"
+  bucket_prefix = "processed-data-bucket-marble"
   force_destroy = true
 }
 

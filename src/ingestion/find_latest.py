@@ -3,11 +3,11 @@ import re
 import logging
 from botocore.exceptions import ClientError
 from datetime import datetime
+from connection import get_bucket_name_by_prefix
 
 
 def get_previous_update_dt(
-        table_name,
-        bucket_name="ingestion-data-bucket-marble"):
+        table_name):
     """Connects to s3 bucket using boto resource
     searches the bucket for keys with table name
     pushes the date from the key to a previous updates list
@@ -16,9 +16,7 @@ def get_previous_update_dt(
     """
 
     try:
-        s3 = boto3.resource("s3")
-        bucket = s3.Bucket("ingestion-data-bucket-marble")
-        s3 = boto3.resource('s3')
+        bucket = get_bucket_name_by_prefix("ingestion-data-bucket")
         objects = list(bucket.objects.all())
         previous_updates = []
         for object in objects:

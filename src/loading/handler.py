@@ -4,6 +4,7 @@ from fetch_s3_data import fetch_data_from_s3
 from upload_to_warehouse import upload_to_warehouse
 import boto3
 import logging
+from psycopg2_conn import get_bucket_name_by_prefix
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -11,7 +12,7 @@ logging.getLogger().setLevel(logging.INFO)
 def handler(event, context):
     """Fetches parquet files from S3 and uploads data to warehouse."""
 
-    bucket_name = "processed-data-bucket-marble"
+    bucket_name = get_bucket_name_by_prefix("processed-data-bucket")
     s3 = boto3.client("s3")
 
     try:

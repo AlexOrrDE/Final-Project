@@ -15,6 +15,23 @@ from convert_to_parquet import convert_to_parquet
 
 logging.getLogger().setLevel(logging.INFO)
 
+def get_bucket_name_by_prefix(bucket_prefix):
+    """
+    Retrieve an AWS S3 bucket by searching for a specific prefix in its name.
+
+    Parameters:
+    - bucket_prefix (str): The prefix to search for in S3 bucket names.
+
+    Returns:
+    - str or None: If a matching bucket is found, returns the bucket name. If no
+      matching bucket is found, returns None.
+    """
+    s3 = boto3.client('s3')
+    response = s3.list_buckets()
+    for bucket in response['Buckets']:
+        if bucket['Name'].startswith(bucket_prefix):
+            return bucket['Name']
+
 function_dict = {
     "counterparty": create_dim_counterparty,
     "currency": create_dim_currency,
@@ -29,9 +46,9 @@ function_dict = {
 def handler(event, context):
     logging.info("Processing tables:")
     logging.info(event)
+    bucket = get_bucket_name_by_prefix("ingestion-data-bucket")
     s3 = boto3.client("s3")
-    s3_resource = boto3.resource("s3")
-    bucket = s3_resource.Bucket("ingestion-data-bucket-marble")
+    
 
     check_dim_date = list(bucket.objects.all())
     if "dim_date" not in check_dim_date:
@@ -46,7 +63,7 @@ def handler(event, context):
         if table_name in function_dict:
             key = event[table_name]
             update_data = s3.get_object(
-                Bucket="ingestion-data-bucket-marble", Key=key)
+                Bucket=bucket, Key=key)
 
             read_update_data = update_data["Body"].read().decode("utf-8")
             update_file = io.StringIO(read_update_data)

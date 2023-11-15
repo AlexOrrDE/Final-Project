@@ -3,6 +3,7 @@ import logging
 import pandas as pd
 import boto3
 from botocore.exceptions import ClientError
+from handler import get_bucket_name_by_prefix
 
 
 def table_merge(source_df):
@@ -33,9 +34,10 @@ def table_merge(source_df):
             table_1_key = table_dict[table_1][1]
             table_2_key = f"{table_dict[table_1][0]}_id"
             # call to s3 client, lists objects in data bucket
+            bucket = get_bucket_name_by_prefix("ingestion-data-bucket")
             s3 = boto3.client("s3")
             response = s3.list_objects(
-                Bucket="ingestion-data-bucket-marble"
+                Bucket=bucket
             )
             second_tables = [
                 obj["Key"] for obj in response["Contents"]
@@ -49,7 +51,7 @@ def table_merge(source_df):
                 source_key = row[table_1_key]
                 for table in sorted_tables:
                     table_data = s3.get_object(
-                        Bucket="ingestion-data-bucket-marble", Key=table
+                        Bucket=bucket, Key=table
                     )
                     read_table_data = table_data["Body"].read().decode("utf-8")
                     table_file = io.StringIO(read_table_data)
