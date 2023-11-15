@@ -28,5 +28,9 @@ def upload_to_warehouse(conn, table_name, primary_key, df):
 
         conn.commit()
         logging.info(f"Data uploaded to {table_name} successfully.")
+    
+    except AttributeError as ae:
+        logging.error("Error occured in upload_to_warehouse")
+        raise ae
     finally:
         cursor.close()

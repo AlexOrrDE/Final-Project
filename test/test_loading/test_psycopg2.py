@@ -30,18 +30,13 @@ def secrets_client(aws_credentials):
 def test_retrieve_credentials_returns_dictionary(secrets_client):
     """check retrieve_credentials function always return
     a dictionary when secret stored in a valid json format"""
-
     secrets_client.create_secret(
         Name="Warehouse-Credentials",
-        SecretString="""
-                        {
-                            "host": "x",
+        SecretString="""{"host": "x",
                             "port": "x",
                             "database": "x",
                             "user": "x",
-                            "password" : "x"
-                        }
-                        """,
+                            "password" : "x"}""",
     )
     output = retrieve_credentials("Warehouse-Credentials")
     assert isinstance(output, dict)

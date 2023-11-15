@@ -32,7 +32,7 @@ def connect_to_warehouse(db="warehouse"):
         )
         return conn
 
-    except psycopg2.InterfaceError as db_connection_error:
+    except psycopg2.OperationalError as db_connection_error:
         logging.error("Error occured in connect_to_database")
         raise db_connection_error
 
