@@ -157,10 +157,14 @@ This python application runs on a schedule in AWS Lambda, and performs the follo
 
 ## Diagrams and Schema <a name="diagrams-and-schema"></a>
 
-__ETL Diagram:__
+__Source schema:__
 
-![etl_diagram](./diagrams/etl_diagram.png)
+![source-schema](./diagrams/source_schema.png)
 
 __Target schema:__
 
 ![target-schema](./diagrams/target_schema.png)
+
+__ETL Diagram:__
+
+![etl_diagram](./diagrams/etl_diagram.png)
