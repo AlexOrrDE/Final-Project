@@ -7,7 +7,7 @@ resource "aws_scheduler_schedule" "lambdascheduler" {
     mode = "OFF"
   }
 
-  schedule_expression = "rate(2 minutes)"
+  schedule_expression = "rate(5 minutes)"
 
   target {
     arn      = aws_lambda_function.handler.arn
@@ -24,7 +24,7 @@ resource "aws_scheduler_schedule" "thirdlambdascheduler" {
     mode = "OFF"
   }
 
-  schedule_expression = "rate(2 minutes)"
+  schedule_expression = "rate(5 minutes)"
 
   target {
     arn      = aws_lambda_function.loading_handler.arn
