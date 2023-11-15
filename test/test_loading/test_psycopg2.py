@@ -14,11 +14,11 @@ from psycopg2 import OperationalError
 @pytest.fixture(scope="function")
 def aws_credentials():
     """Mocked AWS Credentials for moto."""
-    os.environ['AWS_ACCESS_KEY_ID'] = 'test'
-    os.environ['AWS_SECRET_ACCESS_KEY'] = 'test'
-    os.environ['AWS_SECURITY_TOKEN'] = 'test'
-    os.environ['AWS_SESSION_TOKEN'] = 'test'
-    os.environ['AWS_DEFAULT_REGION'] = 'eu-west-2'
+    os.environ["AWS_ACCESS_KEY_ID"] = "test"
+    os.environ["AWS_SECRET_ACCESS_KEY"] = "test"
+    os.environ["AWS_SECURITY_TOKEN"] = "test"
+    os.environ["AWS_SESSION_TOKEN"] = "test"
+    os.environ["AWS_DEFAULT_REGION"] = "eu-west-2"
 
 
 @pytest.fixture(scope="function")
@@ -41,8 +41,12 @@ def test_retrieve_credentials_returns_dictionary(secrets_client):
     output = retrieve_credentials("Warehouse-Credentials")
     assert isinstance(output, dict)
     assert (sorted(list(output))) == [
-        "database", "host", "password", "port", "user"
-    ]
+        "database",
+        "host",
+        "password",
+        "port",
+        "user"]
+
 
 def test_retrieve_credentials_returns_error_when_json_invalid(secrets_client):
     """check retrieve_credentials function returns
@@ -59,6 +63,7 @@ def test_retrieve_credentials_returns_error_when_json_invalid(secrets_client):
     )
     with pytest.raises(json.JSONDecodeError):
         retrieve_credentials("Warehouse-Credentials")
+
 
 def test_retrieve_credentials_throws_InvalidCredentials_error(secrets_client):
     """check retrieve_credentials function returns
@@ -103,4 +108,3 @@ def test_connection_throws_operational_error_when_cannot_connect_to_database(
 
     with pytest.raises(OperationalError):
         connect_to_warehouse()
-    

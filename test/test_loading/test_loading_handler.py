@@ -51,18 +51,21 @@ def create_bucket(s3_client):
         "fact_sales_order",
     ]
     for file in parquets:
-        file_path = os.path.abspath(f"test/test_loading/parquet_files/{file}.parquet")
+        file_path = os.path.abspath(
+            f"test/test_loading/parquet_files/{file}.parquet")
         s3_client.upload_file(
             file_path, "processed-data-bucket-marble", f"{file}.parquet"
         )
 
 
-def test_handler_calls_connect_to_warehouse(s3_client, secrets_client):
+def test_handler_calls_connect_to_warehouse(
+        s3_client, secrets_client):
     with patch("src.loading.handler.connect_to_warehouse") as mock_conn:
         mock_conn.assert_called
 
 
-def test_handler_calls_fetch_tables_with_pk(create_bucket, s3_client, secrets_client):
+def test_handler_calls_fetch_tables_with_pk(
+        create_bucket, s3_client, secrets_client):
     with (
         patch("src.loading.handler.connect_to_warehouse"),
         patch("src.loading.handler.fetch_tables_with_pk") as fetch_pk,
@@ -71,22 +74,26 @@ def test_handler_calls_fetch_tables_with_pk(create_bucket, s3_client, secrets_cl
         fetch_pk.assert_called
 
 
-def test_handler_calls_fetch_data_from_s3(create_bucket, s3_client, secrets_client):
+def test_handler_calls_fetch_data_from_s3(
+        create_bucket, s3_client, secrets_client):
     table_dict = [{"table_name": "test_table", "primary_key": "test_key"}]
     with (
         patch("src.loading.handler.connect_to_warehouse"),
-        patch("src.loading.handler.fetch_tables_with_pk", return_value=table_dict),
+        patch("src.loading.handler.fetch_tables_with_pk",
+              return_value=table_dict),
         patch("src.loading.handler.fetch_data_from_s3") as fetch_s3,
     ):
         handler("event", "context")
         fetch_s3.assert_called
 
 
-def test_handler_calls_upload_to_warehouse(create_bucket, s3_client, secrets_client):
+def test_handler_calls_upload_to_warehouse(
+        create_bucket, s3_client, secrets_client):
     table_dict = [{"table_name": "test_table", "primary_key": "test_key"}]
     with (
         patch("src.loading.handler.connect_to_warehouse"),
-        patch("src.loading.handler.fetch_tables_with_pk", return_value=table_dict),
+        patch("src.loading.handler.fetch_tables_with_pk",
+              return_value=table_dict),
         patch("src.loading.handler.upload_to_warehouse") as warehouse_up,
     ):
         handler("event", "context")
