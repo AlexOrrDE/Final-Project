@@ -1,5 +1,13 @@
 terraform/.terraform
 
+handler.zip
+processing_handler.zip
+loading_handler.zip
+layer.zip
+layer_2.zip
+layer/python/*
+layer_2/python/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
