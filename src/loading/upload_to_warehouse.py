@@ -5,12 +5,10 @@ from psycopg2 import sql, extras
 def upload_to_warehouse(conn, table_name, primary_key, df):
     """Uploads data database in a single query, handling duplicates."""
 
-    columns = ', '.join(df.columns)
-    conflict_update = ', '.join(
-        [
-            f'"{col}"=EXCLUDED."{col}"' for col in df.columns
-            if col != primary_key
-        ]
+    columns = ", ".join(df.columns)
+    conflict_update = ", ".join(
+        [f'"{col}"=EXCLUDED."{col}"'
+         for col in df.columns if col != primary_key]
     )
 
     insert_query = sql.SQL(
@@ -28,7 +26,7 @@ def upload_to_warehouse(conn, table_name, primary_key, df):
 
         conn.commit()
         logging.info(f"Data uploaded to {table_name} successfully.")
-    
+
     except AttributeError as ae:
         logging.error("Error occured in upload_to_warehouse")
         raise ae
