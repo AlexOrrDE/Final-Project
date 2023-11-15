@@ -4,6 +4,7 @@ from fetch_s3_data import fetch_data_from_s3
 from upload_to_warehouse import upload_to_warehouse
 import boto3
 import logging
+from psycopg2 import OperationalError
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -50,9 +51,12 @@ def handler(event, context):
                             Key=f'loaded/{s3_key}')
                         s3.delete_object(Bucket=bucket_name, Key=s3_key)
 
+    except OperationalError as oe:
+        logging.error("Cannot connect to database")
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         raise
+
 
     finally:
         logging.info("Data insertion complete.")
