@@ -33,7 +33,7 @@ def create_bucket(s3_client):
 
 def test_should_pull_parquet_file_from_bucket(s3_client, create_bucket):
     file_path = os.path.abspath(
-        "test/test_loading/parquet_files/design.parquet")
+        "test/test_loading/parquet_files/dim_design.parquet")
     s3_client.upload_file(
         file_path,
         "processed-data-bucket-marble",
