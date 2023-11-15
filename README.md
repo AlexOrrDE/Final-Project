@@ -1,5 +1,7 @@
 # Marble - Data Engineering Project #
 Project link: https://github.com/RadGuav/Final-Project
+____
+This project encapsulates a series of applications which interact with AWS and database infrastructure, manipulating table data to fit the target schema, and loading it into a data warehouse. The aim of this project is to display proficiency and confidence in working with data pipelines and adjacent programmatic concepts. Infrastructure such as that provided here has the potential to play crucial roles in enhancing data accessibility and analytical capabilities, enabling more informed decision-making within organisations.
 
 For more information regarding the project specifications, please refer to the _project_spec.md_ file included in this repository.
 
